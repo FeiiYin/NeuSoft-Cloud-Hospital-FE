@@ -401,10 +401,41 @@ export const asyncRoutes = [
         meta: { title: '诊断目录管理', noCache: true }
       },
       {
-        path: '404',
-        component: () => import('@/views/error-page/404'),
-        name: 'Page404',
-        meta: { title: '404', noCache: true }
+        path: 'schedule',
+        component: () => import('@/views/basicInfo/schedule'),
+        name: 'schedule',
+        meta: { title: '医生排班管理', noCache: true }
+      },
+      {
+        path: 'department',
+        component: () => import('@/views/basicInfo/department'),
+        name: 'department',
+        meta: { title: '科室管理', noCache: true }
+      }
+    ]
+  },
+
+  {
+    path: '/medicalRecord',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'medicalRecord',
+    meta: {
+      title: '门诊医生工作站',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/medicalRecord/index'),
+        name: 'medicalIndex',
+        meta: { title: '病历管理', noCache: true }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/medicalRecord/index'),
+        name: 'medicalIndex',
+        meta: { title: '病历管理', noCache: true }
       }
     ]
   },

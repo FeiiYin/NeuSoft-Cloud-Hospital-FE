@@ -17,28 +17,31 @@
                 @check-change="handleCheckChange">
             </el-tree>
         </div></el-col>
+
         <el-col :span="18"><div class="grid-content bg-purple-light">
             <aside>疾病目录列表</aside>
-            <el-table
+        <el-table
+            v-loading="listLoading"
+            highlight-current-row
             ref="multipleTable"
-            :data="tableData3"
+            :data="diseaseTable"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange">
-            <el-table-column
-            type="selection"
-            width="55">
+
+            <el-table-column type="selection" width="55">
             </el-table-column>
-            <el-table-column
-            label="疾病编码"
-            width="120">
-            <template slot-scope="scope">{{ scope.row.date }}</template>
+
+            <el-table-column prop="diseaseCode" label="疾病编码" width="120">
+              <template slot-scope="scope">{{ scope.row.diseaseCode }}</template>
             </el-table-column>
-            <el-table-column
-            prop="name"
-            label="疾病名称"
-            width="120">
+
+            <el-table-column prop="diseaseName" label="疾病名称" width="120">
+              <template slot-scope="scope">
+                <span>{{ scope.row.diseaseName }}</span>
+              </template>
             </el-table-column>
+
             <el-table-column
             prop="address"
             label="拼音码"
@@ -55,6 +58,7 @@
             show-overflow-tooltip>
             </el-table-column>
         </el-table>
+
         <div style="margin-top: 20px; margin-left: 20px;">
             <el-button @click="toggleSelection()">取消选择</el-button>
             <!-- Form -->
@@ -103,10 +107,11 @@
                 :page-sizes="[20, 50, 100, 200]"
                 :page-size="50"
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="200">
+                v-show="total>0"
+                :total="total">
             </el-pagination>
         </div>
-
+        
         <div style="height:30px;" />        
         </div></el-col>
     <!-- <el-col :span="16"><div class="grid-content bg-purple"></div></el-col> -->
@@ -116,28 +121,28 @@
   </div>
 </template>
 
-<script>    
+<script>   
+  import { fetchList } from '@/api/basicInfo/diagnosis.js'
+  import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+
   export default {
      data() {
       return {
+        // tree 目录
         props: {
           label: 'name',
           children: 'zones'
         },
         count: 1,
-        tableData3: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+
+        // table 
+        listLoading: true,
+        diseaseTable: [{
+          diseaseCode: null,
+          diseaseName: null,
+          address: null
         }],
+        
         multipleSelection: [],
 
         dialogFormVisible: false,
@@ -154,7 +159,21 @@
         formLabelWidth: '120px'
       };
     },
+    
+    created() {
+      this.getList()
+    },
+
     methods: {
+      getList() {
+        this.listLoading = true
+        fetchList(this.listQuery).then(response => {
+          this.list = response.data.items;
+          this.total = response.data.total;
+          this.listLoading = false;
+        })
+      },
+
       toggleSelection(rows) {
         if (rows) {
           rows.forEach(row => {
@@ -273,32 +292,6 @@
     margin-bottom:2px;
   }
 
-  .el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
   h3 {
     margin: 10px;
   }
