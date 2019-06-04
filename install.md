@@ -58,10 +58,7 @@ Error: spawn xxxx ENOENT
 
 Path 环境变量配置不当，导致无法找到指定的程序，如`Error: spawn cmd.exe ENOENT`，出现该问题的原因是因为没有将`%SystemRoot%\system32` 加入path变量中。
 
-
-
 :-(  
-
 
 
 ## 框架
