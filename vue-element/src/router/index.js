@@ -432,10 +432,10 @@ export const asyncRoutes = [
         meta: { title: '病历管理', noCache: true }
       },
       {
-        path: 'index',
-        component: () => import('@/views/medicalRecord/index'),
-        name: 'medicalIndex',
-        meta: { title: '病历管理', noCache: true }
+        path: 'medicine',
+        component: () => import('@/views/medicalRecord/medicine'),
+        name: 'medicalMedicine',
+        meta: { title: '门诊诊断药品处理', noCache: true }
       }
     ]
   },
