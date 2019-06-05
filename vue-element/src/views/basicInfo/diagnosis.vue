@@ -222,7 +222,6 @@ export default {
 <style scoped>
   .wordbox {
     margin: 2%;
-    display: inline-block;
     background: #eef1f6;
     padding: 8px 24px;
     padding-top: 20px;
