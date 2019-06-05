@@ -1,16 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-Vue.use(Router)
-
 /* Layout */
 import Layout from '@/layout'
-
 /* Router Modules */
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
+
+Vue.use(Router)
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -69,6 +67,81 @@ export const constantRoutes = [
     path: '/401',
     component: () => import('@/views/error-page/401'),
     hidden: true
+  },
+  {
+    path: '/registration', // 挂号
+    component: Layout,
+    redirect: '/registration/registration',
+    children: [
+      {
+        path: 'registration',
+        component: () => import('@/views/registration/registration'),
+        name: 'Registration',
+        meta: { title: '挂号', icon: 'theme' }
+      }
+    ]
+  },
+
+  {
+    path: '/basicInfo',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'basicInfo',
+    meta: {
+      title: '基础信息管理',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'diagnosis',
+        component: () => import('@/views/basicInfo/diagnosis'),
+        name: 'diagnosis',
+        meta: { title: '诊断目录管理', noCache: true }
+      },
+      {
+        path: 'schedule',
+        component: () => import('@/views/basicInfo/schedule'),
+        name: 'schedule',
+        meta: { title: '医生排班管理', noCache: true }
+      },
+      {
+        path: 'department',
+        component: () => import('@/views/basicInfo/department'),
+        name: 'department',
+        meta: { title: '科室管理', noCache: true }
+      }
+    ]
+  },
+
+  {
+    path: '/medicalRecord',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'medicalRecord',
+    meta: {
+      title: '门诊医生工作站',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/medicalRecord/index'),
+        name: 'medicalIndex',
+        meta: { title: '病历管理', noCache: true }
+      },
+      {
+        path: 'medicine',
+        component: () => import('@/views/medicalRecord/medicine'),
+        name: 'medicalMedicine',
+        meta: { title: '门诊诊断药品处理', noCache: true }
+      },
+      {
+        path: 'test',
+        component: () => import('@/views/medicalRecord/test'),
+        name: 'medicalTest',
+        meta: { title: '测试', noCache: true }
+      }
+    ]
   },
   {
     path: '/',
@@ -367,81 +440,6 @@ export const asyncRoutes = [
         component: () => import('@/views/clipboard/index'),
         name: 'ClipboardDemo',
         meta: { title: 'Clipboard', icon: 'clipboard' }
-      }
-    ]
-  },
-  {
-    path: '/registration', // 挂号
-    component: Layout,
-    redirect: '/registration/registration',
-    children: [
-      {
-        path: 'registration',
-        component: () => import('@/views/registration/registration'),
-        name: 'Registration',
-        meta: { title: '挂号', icon: 'theme' }
-      }
-    ]
-  },
-
-  {
-    path: '/basicInfo',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'basicInfo',
-    meta: {
-      title: '基础信息管理',
-      icon: 'example'
-    },
-    children: [
-      {
-        path: 'diagnosis',
-        component: () => import('@/views/basicInfo/diagnosis'),
-        name: 'diagnosis',
-        meta: { title: '诊断目录管理', noCache: true }
-      },
-      {
-        path: 'schedule',
-        component: () => import('@/views/basicInfo/schedule'),
-        name: 'schedule',
-        meta: { title: '医生排班管理', noCache: true }
-      },
-      {
-        path: 'department',
-        component: () => import('@/views/basicInfo/department'),
-        name: 'department',
-        meta: { title: '科室管理', noCache: true }
-      }
-    ]
-  },
-
-  {
-    path: '/medicalRecord',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'medicalRecord',
-    meta: {
-      title: '门诊医生工作站',
-      icon: 'example'
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/medicalRecord/index'),
-        name: 'medicalIndex',
-        meta: { title: '病历管理', noCache: true }
-      },
-      {
-        path: 'medicine',
-        component: () => import('@/views/medicalRecord/medicine'),
-        name: 'medicalMedicine',
-        meta: { title: '门诊诊断药品处理', noCache: true }
-      },
-      {
-        path: 'test',
-        component: () => import('@/views/medicalRecord/test'),
-        name: 'medicalTest',
-        meta: { title: '测试', noCache: true }
       }
     ]
   },
