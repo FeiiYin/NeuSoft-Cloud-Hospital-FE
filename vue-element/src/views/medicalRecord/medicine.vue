@@ -12,15 +12,14 @@
               <el-header>
                     <span style="margin-left:30px;">处方类型</span>
                     <el-select v-model="value8" filterable placeholder="从上面传过来" style="margin-left:30px;">
-                        <el-option
-                        v-for="item in options"
+                        <el-option  v-for="item in options"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
                         </el-option>
                     </el-select>
                     <span style="margin-left:30px;">处方金额</span>
-                    <el-input placeholder="请输入内容" v-model="input1" :disabled="true">
+                    <el-input placeholder="请输入内容" v-model="input1" :disabled="true" style="width:30%;margin-left:30px;">
                     </el-input>
               </el-header>
               <el-main id="subOutputRank-print">
