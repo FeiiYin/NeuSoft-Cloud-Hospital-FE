@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: '东软云医院', // 网页标题后缀
 
   /**
    * @type {boolean} true | false

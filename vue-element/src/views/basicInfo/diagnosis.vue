@@ -111,9 +111,9 @@
 </template>
 
 <script>
-  import {fetchDiseaseCategory, fetchDiseaseList} from '@/api/basicInfo/diagnosis.js'
+import { fetchDiseaseCategory, fetchDiseaseList } from '@/api/basicInfo/diagnosis.js'
 
-  export default {
+export default {
   data() {
     return {
       // 页面左侧：疾病种类

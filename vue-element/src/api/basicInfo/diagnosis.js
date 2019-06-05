@@ -5,7 +5,7 @@ export function fetchDiseaseList(query) {
     url: '/diagnostic_catalog/list_disease',
     method: 'get',
     params: query,
-    baseURL: process.env.TOMCAT_API
+    baseURL: 'http://localhost:8081/NeuSoft_Cloud_Hospital_war/'
   })
 }
 
@@ -14,6 +14,6 @@ export function fetchDiseaseCategory(query) {
     url: '/diagnostic_catalog/list_disease_category',
     method: 'get',
     params: query,
-    baseURL: process.env.TOMCAT_API
+    baseURL: 'http://localhost:8081/NeuSoft_Cloud_Hospital_war/'
   })
 }
