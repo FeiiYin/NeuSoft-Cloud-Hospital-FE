@@ -100,13 +100,14 @@
                   </el-button>
                 </el-form-item>
 
-                <!-- 选中 -->
+                <!-- 选中 穿梭框 -->
                 <el-transfer
                   filterable
                   :filter-method="filterMethod"
                   filter-placeholder="请输入城市拼音"
                   v-model="transfer_value"
-                  :data="transfer_data">
+                  :data="transfer_data"
+                  style="margin-left:60px;">
                 </el-transfer>
 
               </el-form>

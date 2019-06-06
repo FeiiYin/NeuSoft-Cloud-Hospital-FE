@@ -71,13 +71,30 @@ export const constantRoutes = [
   {
     path: '/registration', // 挂号
     component: Layout,
-    redirect: '/registration/registration',
+    redirect: 'noRedirect',
+    name: 'registration',
+    meta: {
+      title: '挂号信息管理',
+      icon: 'theme'
+    },
     children: [
       {
         path: 'registration',
         component: () => import('@/views/registration/registration'),
         name: 'Registration',
-        meta: { title: '挂号', icon: 'theme' }
+        meta: { title: '挂号', noCache: true }
+      },
+      {
+        path: 'registrationListSearch',
+        component: () => import('@/views/registration/registrationListSearch'),
+        name: 'registrationListSearch',
+        meta: { title: '挂号列表搜索', noCache: true }
+      },
+      {
+        path: 'registrationCharge',
+        component: () => import('@/views/registration/registrationCharge'),
+        name: 'registrationCharge',
+        meta: { title: '挂号缴费', noCache: true }
       }
     ]
   },
