@@ -442,6 +442,12 @@ export const asyncRoutes = [
         component: () => import('@/views/medicalRecord/test'),
         name: 'medicalTest',
         meta: { title: '测试', noCache: true }
+      },
+      {
+        path: 'test2',
+        component: () => import('@/views/medicalRecord/test2'),
+        name: 'medicalTest2',
+        meta: { title: '测试2', noCache: true }
       }
     ]
   },
