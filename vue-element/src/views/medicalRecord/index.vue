@@ -142,6 +142,7 @@ export default {
         activeName: '1',
         model_array: 1,
 
+        activeName_tmp: '1',
         ruleForm: {
           name: '',
           region: '',
