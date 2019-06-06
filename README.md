@@ -11,11 +11,17 @@ NeuSoft hospital information system
 - 建议使用 WebStorm 开发。
 - node.js & npm
 - vue-element-admin 后台前端框架
+- vue-element-extends
+
+```
+npm install xe-utils vue-element-extends --save
+npm i vue-element-extends
+```
 
 ### 网络
 
-项目默认使用端口号 9527.
-
+- 前端默认使用端口号 9527，与服务器端的交互请查阅 `vue-element/.env.development`，`vue-element/src/utils/request.js`.
+ 
 ### 与服务器端交互
 
 客户端与服务器端的交互通过相关 API 实现。

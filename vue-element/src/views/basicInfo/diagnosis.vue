@@ -111,20 +111,19 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/basicInfo/diagnosis.js'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { fetchDiseaseCategory, fetchDiseaseList } from '@/api/basicInfo/diagnosis.js'
 
 export default {
   data() {
     return {
-      // tree 目录
+      // 页面左侧：疾病种类
       props: {
         label: 'name',
         children: 'zones'
       },
       count: 1,
 
-      // table
+      // 页面右侧：具体的疾病
       listLoading: true,
       diseaseTable: [{
         diseaseCode: null, // 疾病编码
@@ -147,7 +146,9 @@ export default {
         resource: '',
         desc: ''
       },
-      formLabelWidth: '120px'
+      formLabelWidth: '120px',
+      currentPage: 1, // 当前页
+      pageSize: 20 // 每页大小
     }
   },
 
@@ -157,11 +158,23 @@ export default {
 
   methods: {
     getList() { // 获取列表
+      this.getDiseaseList()
+      this.getDiseaseCategory()
+    },
+
+    getDiseaseList() { // 获取页面右侧的疾病信息表格
       this.listLoading = true // 列表正在加载
-      fetchList(this.listQuery).then(response => {
+      this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
+      fetchDiseaseList(this.query).then(response => {
         this.list = response.data.items // 数据列表
         this.total = response.data.total // 数据项数量
         this.listLoading = false // 列表加载完成
+      })
+    },
+
+    getDiseaseCategory() { // 获取页面左侧的疾病种类
+      fetchDiseaseCategory(this.listQuery).then(response => {
+        // todo
       })
     },
 
