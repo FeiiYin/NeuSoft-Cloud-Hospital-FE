@@ -1,6 +1,6 @@
 <template>
   <div style="padding:1%;" class="app-container">
-    <aside>医生排班规则维护</aside>
+    <aside>科室管理</aside>
 
     <el-table
       ref="multipleTable"
@@ -61,8 +61,6 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/basicInfo/diagnosis.js'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
   data() {

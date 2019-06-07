@@ -56,7 +56,7 @@
           <div style="margin-top: 20px; margin-left: 20px;">
             <el-button @click="toggleSelection()">取消选择</el-button>
 
-            <!-- 添加疾病的表单 -->
+            <!-- 新建条目的表单 -->
             <el-button @click="dialogFormVisible = true">新建条目</el-button>
 
             <el-dialog title="新建条目" :visible.sync="dialogFormVisible">
@@ -91,7 +91,7 @@
           <div class="block;margin-left:20px;">
             <el-pagination
               v-show="total>0"
-              :current-page="currentPage4"
+              :current-page="currentPage"
               :page-sizes="[20, 50, 100, 200]"
               :page-size="50"
               layout="total, sizes, prev, pager, next, jumper"
@@ -100,7 +100,6 @@
               @current-change="handleCurrentChange"
             />
           </div>
-
           <div style="height:30px;" />
         </div>
       </el-col>
@@ -132,6 +131,7 @@ export default {
         pinyinCode: null, // 拼音码
         diseaseCategory: null // 疾病种类
       }],
+      total: 0, // 疾病数据项数量
 
       multipleSelection: [],
 
@@ -148,7 +148,7 @@ export default {
       },
       formLabelWidth: '120px',
       currentPage: 1, // 当前页
-      pageSize: 20 // 每页大小
+      pageSize: 50 // 每页大小
     }
   },
 
@@ -159,22 +159,37 @@ export default {
   methods: {
     getList() { // 获取列表
       this.getDiseaseList()
-      this.getDiseaseCategory()
+      // this.getDiseaseCategory()
     },
-
-    getDiseaseList() { // 获取页面右侧的疾病信息表格
+    /**
+       * 获取页面右侧的疾病信息表格
+       */
+    getDiseaseList() {
       this.listLoading = true // 列表正在加载
       this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
       fetchDiseaseList(this.query).then(response => {
-        this.list = response.data.items // 数据列表
-        this.total = response.data.total // 数据项数量
+        console.log('fetchDiseaseList response: ')
+        console.log(response)
+        // todo
+        // this.list = response.data.list // 数据列表
+        // this.total = response.data.total // 数据项数量
         this.listLoading = false // 列表加载完成
+      }).catch(error => {
+        console.log('fetchDiseaseList error: ')
+        console.log(error)
       })
     },
-
-    getDiseaseCategory() { // 获取页面左侧的疾病种类
+    /**
+       * 获取页面左侧的疾病种类
+       */
+    getDiseaseCategory() {
       fetchDiseaseCategory(this.listQuery).then(response => {
+        console.log('fetchDiseaseCategory response: ')
+        console.log(response)
         // todo
+      }).catch(error => {
+        console.log('fetchDiseaseList error: ')
+        console.log(error)
       })
     },
 

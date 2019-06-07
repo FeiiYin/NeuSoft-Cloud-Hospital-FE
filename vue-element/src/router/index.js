@@ -69,12 +69,42 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/registration', // 挂号
+    path: '/basicInfo',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'basicInfo',
+    meta: {
+      title: '基础信息维护',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'department',
+        component: () => import('@/views/basicInfo/department'),
+        name: 'department',
+        meta: { title: '科室管理', noCache: true }
+      },
+      {
+        path: 'diagnosis',
+        component: () => import('@/views/basicInfo/diagnosis'),
+        name: 'diagnosis',
+        meta: { title: '诊断目录管理', noCache: true }
+      },
+      {
+        path: 'schedule',
+        component: () => import('@/views/basicInfo/schedule'),
+        name: 'schedule',
+        meta: { title: '医生排班管理', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/registration',
     component: Layout,
     redirect: 'noRedirect',
     name: 'registration',
     meta: {
-      title: '挂号信息管理',
+      title: '门诊挂号收费',
       icon: 'theme'
     },
     children: [
@@ -101,37 +131,6 @@ export const constantRoutes = [
         component: () => import('@/views/registration/dailyCheck'),
         name: 'dailyCheck',
         meta: { title: '日结', noCache: true }
-      }
-    ]
-  },
-
-  {
-    path: '/basicInfo',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'basicInfo',
-    meta: {
-      title: '基础信息管理',
-      icon: 'example'
-    },
-    children: [
-      {
-        path: 'diagnosis',
-        component: () => import('@/views/basicInfo/diagnosis'),
-        name: 'diagnosis',
-        meta: { title: '诊断目录管理', noCache: true }
-      },
-      {
-        path: 'schedule',
-        component: () => import('@/views/basicInfo/schedule'),
-        name: 'schedule',
-        meta: { title: '医生排班管理', noCache: true }
-      },
-      {
-        path: 'department',
-        component: () => import('@/views/basicInfo/department'),
-        name: 'department',
-        meta: { title: '科室管理', noCache: true }
       }
     ]
   },
