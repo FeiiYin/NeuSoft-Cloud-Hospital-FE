@@ -2,88 +2,77 @@
   <div style="padding:1%;" class="app-container">
     <aside>科室管理</aside>
 
-    <el-table
-      ref="multipleTable"
-      v-loading="listLoading"
-      highlight-current-row
-      :data="diseaseTable"
-      tooltip-effect="dark"
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-    >
+    <el-row>
+      <el-col :span="2">
+        <div class="grid-content bg-purple">
+          <el-checkbox v-model="clinical_department_checked">临床科室</el-checkbox>
+          <el-checkbox v-model="technology_department_checked">医技科室</el-checkbox>
+        </div>
+      </el-col>
 
-      <el-table-column type="selection" width="55" />
+      <el-col :span="22">
+        <div class="grid-content bg-purple-light">
+          <el-table
+            v-loading="listLoading"
+            :data="departmentTableData"
+            height="250"
+            border
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="departmentCode"
+              label="科室编码"
+            />
+            <el-table-column
+              prop="departmentName"
+              label="科室名称"
+            />
+            <el-table-column
+              prop="category"
+              label="科室分类"
+            />
+            <el-table-column
+              prop="type"
+              label="科室类别"
+            />
+          </el-table>
+        </div>
+      </el-col>
+    </el-row>
 
-      <el-table-column prop="diseaseCode" label="疾病编码" width="120">
-        <template slot-scope="scope">{{ scope.row.diseaseCode }}</template>
-      </el-table-column>
-    </el-table>
-    <aside>
-      医生排班信息
-    </aside>
-
-    <div>
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="活动时间">
-          <el-col :span="11">
-            <el-date-picker v-model="form.date1" type="date" placeholder="选择日期" style="width: 80%;" />
-          </el-col>
-          <el-col class="line" :span="2"><b>结束时间</b></el-col>
-          <el-col :span="11">
-            <el-date-picker v-model="form.date1" type="date" placeholder="选择日期" style="width: 80%;" />
-          </el-col>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">立即创建</el-button>
-          <el-button>取消</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <el-table
-      ref="multipleTable"
-      v-loading="listLoading"
-      highlight-current-row
-      :data="diseaseTable"
-      tooltip-effect="dark"
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-    >
-
-      <el-table-column type="selection" width="55" />
-
-      <el-table-column prop="diseaseCode" label="疾病编码" width="120">
-        <template slot-scope="scope">{{ scope.row.diseaseCode }}</template>
-      </el-table-column>
-    </el-table>
   </div>
 </template>
 
 <script>
 
+import { fetchDepartmentList } from '../../api/basicInfo/department'
+
 export default {
   data() {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      }
+      clinical_department_checked: true, // 临床科室多选框
+      technology_department_checked: true, // 医技科室多选框
+      departmentTableData: [] // 科室表格数据
     }
   },
 
   created() {
+    this.getDepartmentList()
   },
 
   methods: {
-    onSubmit() {
-      console.log('submit!')
+    getDepartmentList() {
+      this.listLoading = true
+      this.query = ''
+      fetchDepartmentList(this.query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentTableData = response.data
+        this.listLoading = false // 列表加载完成
+      }).catch(error => {
+        console.log('fetchDepartmentList error: ')
+        console.log(error)
+      })
     }
   }
 }
