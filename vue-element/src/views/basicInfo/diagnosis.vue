@@ -4,25 +4,55 @@
       <el-col :span="6">
         <div class="grid-content bg-purple">
           <aside>疾病目录分类</aside>
-          <aside>
-            <svg-icon icon-class="search" />
-            搜索
-            <el-input v-model="form.name" />
-          </aside>
-
-          <el-tree
-            :props="props"
-            :load="loadNode"
-            lazy
-            show-checkbox
-            @check-change="handleCheckChange"
-          />
+          <template>
+            <el-select filterable placeholder="搜索选择疾病分类">
+              <el-option
+                v-for="item in diseaseCategoryList"
+                :key="item.diseaseId"
+                :label="item.diseaseName"
+                :value="item.diseaseId"
+              />
+              <!-- label 是显示的标签-->
+            </el-select>
+          </template>
         </div>
       </el-col>
 
       <el-col :span="18">
         <div class="grid-content bg-purple-light">
           <aside>疾病目录列表</aside>
+
+          <div style="margin-top: 20px; margin-left: 20px;">
+            <el-button @click="toggleSelection()">取消</el-button>
+            <!--新增疾病信息的按钮-->
+            <el-button @click="dialogFormVisible = true">新增</el-button>
+            <!--新增疾病信息的对话框-->
+            <el-dialog title="新增" :visible.sync="dialogFormVisible">
+              <!-- 新建疾病信息的表单 -->
+              <el-form :model="diseaseForm">
+                <el-form-item label="疾病编码" :label-width="formLabelWidth">
+                  <el-input v-model="diseaseForm.diseaseIcd" auto-complete="off" />
+                </el-form-item>
+                <el-form-item label="疾病名称" :label-width="formLabelWidth">
+                  <el-input v-model="diseaseForm.diseaseName" auto-complete="off" />
+                </el-form-item>
+                <el-form-item label="拼音码" :label-width="formLabelWidth">
+                  <el-input v-model="diseaseForm.diseaseCode" auto-complete="off" />
+                </el-form-item>
+                <el-form-item label="疾病种类" :label-width="formLabelWidth">
+                  <el-input v-model="diseaseForm.diseaseCategory" auto-complete="off" />
+                </el-form-item>
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+              </div>
+            </el-dialog>
+
+            <el-button @click="toggleSelection()">删除</el-button>
+            <el-button @click="toggleSelection()">保存</el-button>
+          </div>
+
           <el-table
             ref="multipleTable"
             v-loading="listLoading"
@@ -35,58 +65,31 @@
 
             <el-table-column type="selection" width="55" />
 
-            <el-table-column prop="diseaseCode" label="疾病编码" width="120">
-              <template slot-scope="scope">{{ scope.row.diseaseCode }}</template>
-            </el-table-column>
-
-            <el-table-column prop="diseaseName" label="疾病名称" width="120">
+            <el-table-column prop="diseaseIcd" label="疾病编码" width="150">
               <template slot-scope="scope">
-                <span>{{ scope.row.diseaseName }}</span>
+                {{ scope.row.diseaseIcd }}
               </template>
             </el-table-column>
 
-            <el-table-column prop="pinyinCode" label="拼音码" show-overflow-tooltip />
+            <el-table-column prop="diseaseName" label="疾病名称" width="300">
+              <template slot-scope="scope">
+                {{ scope.row.diseaseName }}
+              </template>
+            </el-table-column>
 
-            <el-table-column prop="ICDCode" label="ICD码" show-overflow-tooltip />
+            <el-table-column prop="diseaseCode" label="拼音码" width="150">
+              <template slot-scope="scope">
+                {{ scope.row.diseaseCode }}
+              </template>
+            </el-table-column>
 
-            <el-table-column prop="diseaseCategory" label="疾病种类" show-overflow-tooltip />
+            <!--            <el-table-column prop="diseaseCategory" label="疾病种类" width="150">-->
+            <!--              <template slot-scope="scope">-->
+            <!--                {{ scope.row.diseaseCategory }}-->
+            <!--              </template>-->
+            <!--            </el-table-column>-->
 
           </el-table>
-
-          <div style="margin-top: 20px; margin-left: 20px;">
-            <el-button @click="toggleSelection()">取消选择</el-button>
-
-            <!-- 新建条目的表单 -->
-            <el-button @click="dialogFormVisible = true">新建条目</el-button>
-
-            <el-dialog title="新建条目" :visible.sync="dialogFormVisible">
-
-              <el-form :model="form">
-                <el-form-item label="疾病名称" :label-width="formLabelWidth">
-                  <el-input v-model="form.diseaseCode" auto-complete="off" />
-                </el-form-item>
-                <el-form-item label="疾病编码" :label-width="formLabelWidth">
-                  <el-input v-model="form.diseaseName" auto-complete="off" />
-                </el-form-item>
-                <el-form-item label="疾病ICD码" :label-width="formLabelWidth">
-                  <el-input v-model="form.ICDCode" auto-complete="off" />
-                </el-form-item>
-                <el-form-item label="拼音码" :label-width="formLabelWidth">
-                  <el-input v-model="form.pinyinCode" auto-complete="off" />
-                </el-form-item>
-                <el-form-item label="疾病种类" :label-width="formLabelWidth">
-                  <el-input v-model="form.diseaseCategory" auto-complete="off" />
-                </el-form-item>
-              </el-form>
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-              </div>
-            </el-dialog>
-
-            <el-button @click="toggleSelection()">删除条目</el-button>
-            <el-button @click="toggleSelection()">保存修改</el-button>
-          </div>
           <div style="height:30px;" />
           <div class="block;margin-left:20px;">
             <el-pagination
@@ -105,7 +108,6 @@
       </el-col>
       <!-- <el-col :span="16"><div class="grid-content bg-purple"></div></el-col> -->
     </el-row>
-
   </div>
 </template>
 
@@ -116,36 +118,24 @@ export default {
   data() {
     return {
       // 页面左侧：疾病种类
-      props: {
-        label: 'name',
-        children: 'zones'
-      },
-      count: 1,
-
+      diseaseCategoryList: [{
+        diseaseId: null,
+        diseaseName: null
+      }],
       // 页面右侧：具体的疾病
       listLoading: true,
       diseaseTable: [{
-        diseaseCode: null, // 疾病编码
+        diseaseIcd: null, // 疾病编码
         diseaseName: null, // 疾病名称
-        ICDCode: null, // ICD 码
-        pinyinCode: null, // 拼音码
+        diseaseCode: null, // 拼音码
         diseaseCategory: null // 疾病种类
       }],
       total: 0, // 疾病数据项数量
 
       multipleSelection: [],
-
+      diseaseForm: {},
       dialogFormVisible: false,
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
+      searchDiseaseCategoryName: null,
       formLabelWidth: '120px',
       currentPage: 1, // 当前页
       pageSize: 50 // 每页大小
@@ -158,26 +148,8 @@ export default {
 
   methods: {
     getList() { // 获取列表
+      this.getDiseaseCategory()
       this.getDiseaseList()
-      // this.getDiseaseCategory()
-    },
-    /**
-       * 获取页面右侧的疾病信息表格
-       */
-    getDiseaseList() {
-      this.listLoading = true // 列表正在加载
-      this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
-      fetchDiseaseList(this.query).then(response => {
-        console.log('fetchDiseaseList response: ')
-        console.log(response)
-        // todo
-        // this.list = response.data.list // 数据列表
-        // this.total = response.data.total // 数据项数量
-        this.listLoading = false // 列表加载完成
-      }).catch(error => {
-        console.log('fetchDiseaseList error: ')
-        console.log(error)
-      })
     },
     /**
        * 获取页面左侧的疾病种类
@@ -186,62 +158,31 @@ export default {
       fetchDiseaseCategory(this.listQuery).then(response => {
         console.log('fetchDiseaseCategory response: ')
         console.log(response)
-        // todo
+        // todo 选择器渲染
+        this.diseaseCategoryList = response.data
       }).catch(error => {
         console.log('fetchDiseaseList error: ')
         console.log(error)
       })
     },
-
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-      }
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate)
-    },
-    handleNodeClick(data) {
-      console.log(data)
-    },
-
-    loadNode(node, resolve) {
-      if (node.level === 0) {
-        return resolve([{ name: 'region1' }, { name: 'region2' }])
-      }
-      if (node.level > 3) return resolve([])
-
-      var hasChild
-      if (node.data.name === 'region1') {
-        hasChild = true
-      } else if (node.data.name === 'region2') {
-        hasChild = false
-      } else {
-        hasChild = Math.random() > 0.5
-      }
-
-      setTimeout(() => {
-        let data
-        if (hasChild) {
-          data = [{
-            name: 'zone' + this.count++
-          }, {
-            name: 'zone' + this.count++
-          }]
-        } else {
-          data = []
-        }
-
-        resolve(data)
-      }, 500)
+    /**
+       * 获取页面右侧的疾病信息表格
+       */
+    getDiseaseList() {
+      this.query = { 'constant_type_code': 'DeptCategory' }
+      this.listLoading = true // 列表正在加载
+      this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
+      fetchDiseaseList(this.query).then(response => {
+        console.log('fetchDiseaseList response: ')
+        console.log(response)
+        // todo 分页按钮，分页数量，每页大小等
+        this.diseaseTable = response.data.list // 数据列表
+        // this.total = response.data.total // 数据项数量
+        this.listLoading = false // 列表加载完成
+      }).catch(error => {
+        console.log('fetchDiseaseList error: ')
+        console.log(error)
+      })
     }
   }
 }
