@@ -3,92 +3,89 @@
     <aside>科室管理</aside>
 
     <el-row>
-      <el-col :span="3">
-        <div class="grid-content bg-purple">
-          <el-checkbox v-model="clinical_department_checked">临床科室</el-checkbox>
-          <el-checkbox v-model="technology_department_checked">医技科室</el-checkbox>
-          <el-checkbox v-model="other_department_checked">其他科室</el-checkbox>
-        </div>
-
-      </el-col>
-
-      <el-col :span="21">
-        <el-row>
-          <el-button @click="toggleSelection()">取消</el-button>
-          <el-button @click="addDepartmentDialogVisible = true">新增</el-button>
-          <el-button>删除</el-button>
-        </el-row>
-        <div class="grid-content bg-purple-light">
-          <el-table
-            v-loading="listLoading"
-            :data="departmentTableData"
-            height="250"
-            border
-            style="width: 100%"
-          >
-            <el-table-column type="selection" width="55" />
-
-            <el-table-column
-              prop="departmentCode"
-              label="科室编码"
-              width="150"
-            />
-            <el-table-column
-              prop="departmentName"
-              label="科室名称"
-              width="150"
-            />
-            <el-table-column
-              prop="category"
-              label="科室分类"
-              width="150"
-            />
-            <!--            <el-table-column-->
-            <!--              prop="type"-->
-            <!--              label="科室类别"-->
-            <!--            />-->
-            <el-table-column
-              prop="edit"
-              label="编辑"
-              width="50"
-            >
-              <!--编辑 按钮-->
-            </el-table-column>
-          </el-table>
-        </div>
-        <el-dialog
-          title="新增科室"
-          :visible.sync="addDepartmentDialogVisible"
-          width="30%"
-          :before-close="handleClose"
-        >
-          <el-form :model="departmentForm">
-            <el-form-item label="科室编码" :label-width="formLabelWidth">
-              <el-input v-model="departmentForm.departmentCode" auto-complete="off" />
-            </el-form-item>
-            <el-form-item label="科室名称" :label-width="formLabelWidth">
-              <el-input v-model="departmentForm.departmentName" auto-complete="off" />
-            </el-form-item>
-            <el-form-item label="科室分类" :label-width="formLabelWidth">
-              <el-dropdown>
-                <el-button type="primary">
-                  请选择<i class="el-icon-arrow-down el-icon--right" />
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <!--科室分类的下拉菜单-->
-                  <!--todo-->
-                </el-dropdown-menu>
-              </el-dropdown>
-            </el-form-item>
-          </el-form>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addDepartmentDialogVisible = false">确 定</el-button>
-          </span>
-        </el-dialog>
-      </el-col>
-
+      <span>
+        <el-checkbox-group size="medium">
+          <el-checkbox-button :checked="clinical_department_checked">临床科室</el-checkbox-button>
+          <el-checkbox-button :checked="technology_department_checked">医技科室</el-checkbox-button>
+          <el-checkbox-button :checked="other_department_checked">其他科室</el-checkbox-button>
+        </el-checkbox-group>
+      </span>
+      <el-button @click="toggleSelection()">取消</el-button>
+      <el-button @click="addDepartmentDialogVisible = true">新增</el-button>
+      <el-button>删除</el-button>
     </el-row>
+    <div class="grid-content bg-purple-light">
+      <el-table
+        v-loading="listLoading"
+        :data="departmentTableData"
+        height="250"
+        border
+        style="width: 100%"
+      >
+        <el-table-column type="selection" width="55" />
+
+        <el-table-column
+          prop="departmentCode"
+          label="科室编码"
+          width="150"
+        />
+        <el-table-column
+          prop="departmentName"
+          label="科室名称"
+          width="150"
+        />
+        <el-table-column
+          prop="category"
+          label="科室分类"
+          width="150"
+        />
+        <!--            <el-table-column-->
+        <!--              prop="type"-->
+        <!--              label="科室类别"-->
+        <!--            />-->
+        <el-table-column
+          prop="edit"
+          label="编辑"
+          width="50"
+        >
+          <!--todo 编辑每项科室信息的按钮-->
+        </el-table-column>
+      </el-table>
+    </div>
+    <!--新增科室的对话框-->
+    <el-dialog
+      title="新增科室"
+      :visible.sync="addDepartmentDialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-form :model="departmentForm">
+        <el-form-item label="科室编码" :label-width="formLabelWidth">
+          <el-input v-model="departmentForm.departmentCode" auto-complete="off" />
+        </el-form-item>
+        <el-form-item label="科室名称" :label-width="formLabelWidth">
+          <el-input v-model="departmentForm.departmentName" auto-complete="off" />
+        </el-form-item>
+        <el-form-item label="科室分类" :label-width="formLabelWidth">
+          <!--新增科室对话框中，选择科室分类-->
+          <!--todo 科室分类的选择器-->
+          <template>
+            <el-select filterable placeholder="请选择">
+              <el-option
+                v-for="(departmentCategoryId, departmentCategoryName) in departmentConstant"
+                :key="departmentCategoryId"
+                :label="departmentCategoryId"
+                :value="departmentCategoryName"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addDepartmentDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -104,7 +101,7 @@ export default {
       technology_department_checked: true, // 医技科室多选框
       other_department_checked: true, // 其他科室多选框
       departmentTableData: [], // 科室表格数据
-      departmentConstant: [], // 科室数据常量
+      departmentConstant: [], // 科室数据常量，是 科室类别编号 到 科室类别名称 的映射
       listLoading: false, // 科室列表加载状态
       addDepartmentDialogVisible: false, // 新增科室对话框可见
       departmentForm: { // 科室信息表单
@@ -122,12 +119,12 @@ export default {
   methods: {
     getDepartmentList() {
       this.query = { 'constant_type_code': 'DeptCategory' }
-      fetchConstantMap(this.query).then(response => {
+      fetchConstantMap(this.query).then(response => { // 首先获取科室信息常量表，用于将科室类别的常数表示替换为文字
         console.log('fetchConstantMap response: ')
         console.log(response)
         this.departmentConstant = response.data
-        this.listLoading = true
-        fetchDepartmentList().then(response => {
+        this.listLoading = true // 列表开始加载
+        fetchDepartmentList().then(response => { // 然后获取科室信息列表
           console.log('fetchDepartmentList response: ')
           console.log(response)
           this.departmentTableData = response.data
@@ -147,6 +144,15 @@ export default {
         console.log('fetchConstantMap error: ')
         console.log(error)
       })
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
     }
   }
 }

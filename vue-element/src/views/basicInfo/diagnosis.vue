@@ -5,14 +5,14 @@
         <div class="grid-content bg-purple">
           <aside>疾病目录分类</aside>
           <template>
-            <el-select filterable placeholder="搜索选择疾病分类">
+            <el-select v-model="searchDiseaseCategoryId" filterable placeholder="搜索选择疾病分类" @change="getDiseaseList">
               <el-option
                 v-for="item in diseaseCategoryList"
                 :key="item.diseaseId"
                 :label="item.diseaseName"
                 :value="item.diseaseId"
               />
-              <!-- label 是显示的标签-->
+              <!-- label 是显示的标签，value 是值-->
             </el-select>
           </template>
         </div>
@@ -50,7 +50,6 @@
             </el-dialog>
 
             <el-button @click="toggleSelection()">删除</el-button>
-            <el-button @click="toggleSelection()">保存</el-button>
           </div>
 
           <el-table
@@ -71,7 +70,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="diseaseName" label="疾病名称" width="300">
+            <el-table-column prop="diseaseName" label="疾病名称" width="350">
               <template slot-scope="scope">
                 {{ scope.row.diseaseName }}
               </template>
@@ -123,19 +122,14 @@ export default {
         diseaseName: null
       }],
       // 页面右侧：具体的疾病
-      listLoading: true,
-      diseaseTable: [{
-        diseaseIcd: null, // 疾病编码
-        diseaseName: null, // 疾病名称
-        diseaseCode: null, // 拼音码
-        diseaseCategory: null // 疾病种类
-      }],
+      listLoading: false,
+      diseaseTable: [],
       total: 0, // 疾病数据项数量
 
       multipleSelection: [],
       diseaseForm: {},
       dialogFormVisible: false,
-      searchDiseaseCategoryName: null,
+      searchDiseaseCategoryId: null,
       formLabelWidth: '120px',
       currentPage: 1, // 当前页
       pageSize: 50 // 每页大小
@@ -143,14 +137,10 @@ export default {
   },
 
   created() {
-    this.getList()
+    this.getDiseaseCategory()
   },
 
   methods: {
-    getList() { // 获取列表
-      this.getDiseaseCategory()
-      this.getDiseaseList()
-    },
     /**
        * 获取页面左侧的疾病种类
        */
@@ -158,7 +148,6 @@ export default {
       fetchDiseaseCategory(this.listQuery).then(response => {
         console.log('fetchDiseaseCategory response: ')
         console.log(response)
-        // todo 选择器渲染
         this.diseaseCategoryList = response.data
       }).catch(error => {
         console.log('fetchDiseaseList error: ')
@@ -169,9 +158,12 @@ export default {
        * 获取页面右侧的疾病信息表格
        */
     getDiseaseList() {
-      this.query = { 'constant_type_code': 'DeptCategory' }
       this.listLoading = true // 列表正在加载
-      this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
+      this.query = {
+        'current_page': this.currentPage,
+        'page_size': this.pageSize,
+        'disease_category': this.searchDiseaseCategoryId
+      }
       fetchDiseaseList(this.query).then(response => {
         console.log('fetchDiseaseList response: ')
         console.log(response)
