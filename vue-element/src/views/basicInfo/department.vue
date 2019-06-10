@@ -4,11 +4,12 @@
 
     <el-row>
       <el-col :span="18">
-        <el-checkbox-group size="medium">
-          <el-checkbox-button :checked="clinical_department_checked">临床科室</el-checkbox-button>
-          <el-checkbox-button :checked="technology_department_checked">医技科室</el-checkbox-button>
-          <el-checkbox-button :checked="other_department_checked">其他科室</el-checkbox-button>
-        </el-checkbox-group>
+        <el-radio-group v-model="radioSelect" size="medium" @change="radioChangeGetList()">
+          <el-radio-button label="所有科室"></el-radio-button>
+          <el-radio-button label="临床科室" ></el-radio-button>
+          <el-radio-button label="医技科室"></el-radio-button>
+          <el-radio-button label="其他科室"></el-radio-button>          
+        </el-radio-group>
       </el-col>
       <el-col :span="6">
         <el-button @click="toggleSelection()">取消</el-button>
@@ -146,14 +147,18 @@
 
 <script>
 import { fetchConstantMap } from '../../api/constItem'
-import { addDepartment, fetchDepartmentList } from '../../api/basicInfo/department'
+import { addDepartment, fetchDepartmentList, deleteDepartmentByPrimaryKey } from '../../api/basicInfo/department'
 
 export default {
   data() {
     return {
+      // 单选框
+      radioSelect: '所有科室',
+
       clinical_department_checked: true, // 临床科室多选框
       technology_department_checked: true, // 医技科室多选框
       other_department_checked: true, // 其他科室多选框
+
       departmentTableData: [], // 科室表格数据
       departmentConstant: [{
         constantItemId: '',
@@ -207,6 +212,14 @@ export default {
   },
 
   methods: {
+    radioChangeGetList() {
+      // this.$notify({
+      //   title: '成功',
+      //   message: this.radioSelect,
+      //   type: 'success'
+      // });
+      
+    },
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)
       this.$set(this.editDepartmentForm, 'category', val)
@@ -339,6 +352,18 @@ export default {
           type: 'success',
           message: '删除成功!'
         })
+        let deleteList = [];
+        for (var i = 0; i < this.multipleSelection.length; ++i) {
+          deleteList.push(this.multipleSelection.departmentId);
+        }
+        // this.$notify({
+        //     title: '成功',
+        //     message: this.multipleSelection,
+        //     type: 'success'
+        //   });
+        deleteDepartmentByPrimaryKey(deleteList);
+        this.currentPage = 1;
+        this.queryDepartmentListWithPage();
       }).catch(() => {
         this.$message({
           type: 'info',
