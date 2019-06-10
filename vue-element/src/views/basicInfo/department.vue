@@ -50,7 +50,10 @@
           <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="editDepartmentFormFunction(scope.$index, scope.row)">编辑</el-button>
+            @click="editDepartmentFormFunction(scope.$index, scope.row)">
+            <i class="el-icon-edit" />
+            编辑
+          </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -204,6 +207,7 @@ export default {
       selectEditValue: '',
       // 删除用
       multipleSelection: [],
+      department_id_list: [],
     }
   },
 
@@ -348,16 +352,17 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let deleteList = [];
+        this.department_id_list.splice(0, this.department_id_list.length);
         for (var i = 0; i < this.multipleSelection.length; ++i) {
-          deleteList.push(this.multipleSelection.departmentId);
+          this.department_id_list.push(this.multipleSelection[i].departmentId);
         }
-        // this.$notify({
-        //     title: '成功',
-        //     message: this.multipleSelection,
-        //     type: 'success'
-        //   });
-        deleteDepartmentByPrimaryKey(deleteList).then(response => {
+          this.$notify({
+            title: '成功',
+            message: this.department_id_list,
+            type: 'success'
+          });
+
+        deleteDepartmentByPrimaryKey(this.department_id_list).then(response => {
           console.log('deleteDepartmentByPrimaryKey response: ');
           console.log(response);
           this.$message({
