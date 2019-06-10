@@ -1,18 +1,20 @@
 <template>
-  <div style="padding:1%;" class="app-container">
+  <div class="app-container">
     <aside>科室管理</aside>
 
     <el-row>
-      <span>
+      <el-col :span="18">
         <el-checkbox-group size="medium">
           <el-checkbox-button :checked="clinical_department_checked">临床科室</el-checkbox-button>
           <el-checkbox-button :checked="technology_department_checked">医技科室</el-checkbox-button>
           <el-checkbox-button :checked="other_department_checked">其他科室</el-checkbox-button>
         </el-checkbox-group>
-      </span>
-      <el-button @click="toggleSelection()">取消</el-button>
-      <el-button @click="addDepartmentDialogVisible = true">新增</el-button>
-      <el-button>删除</el-button>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="toggleSelection()">取消</el-button>
+        <el-button @click="addDepartmentDialogVisible = true">新增</el-button>
+        <el-button>删除</el-button>
+      </el-col>
     </el-row>
     <div class="grid-content bg-purple-light">
       <el-table
@@ -73,9 +75,9 @@
             <el-select filterable placeholder="请选择">
               <el-option
                 v-for="(departmentCategoryId, departmentCategoryName) in departmentConstant"
-                :key="departmentCategoryId"
+                :key="departmentCategoryName"
                 :label="departmentCategoryId"
-                :value="departmentCategoryName"
+                :value="departmentCategoryId"
               />
             </el-select>
           </template>
@@ -84,6 +86,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addDepartmentDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="testShow()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -101,7 +104,10 @@ export default {
       technology_department_checked: true, // 医技科室多选框
       other_department_checked: true, // 其他科室多选框
       departmentTableData: [], // 科室表格数据
-      departmentConstant: [], // 科室数据常量，是 科室类别编号 到 科室类别名称 的映射
+      departmentConstant: [{
+        departmentCategoryId: '',
+        departmentCategoryName: '' 
+      }], // 科室数据常量，是 科室类别编号 到 科室类别名称 的映射
       listLoading: false, // 科室列表加载状态
       addDepartmentDialogVisible: false, // 新增科室对话框可见
       departmentForm: { // 科室信息表单
@@ -117,6 +123,15 @@ export default {
   },
 
   methods: {
+    testShow() {
+      var str = "";
+      
+      this.$notify({
+          title: '成功',
+          message: this.departmentConstant,
+          type: 'success'
+        });
+    },
     getDepartmentList() {
       this.query = { 'constant_type_code': 'DeptCategory' }
       fetchConstantMap(this.query).then(response => { // 首先获取科室信息常量表，用于将科室类别的常数表示替换为文字
@@ -133,6 +148,7 @@ export default {
           const len = this.departmentTableData.length
           for (; i < len; i++) {
             this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
+            // _this.$set(_this.departmentForm)
           }
           this.listLoading = false // 列表加载完成
         }).catch(error => {
@@ -153,7 +169,7 @@ export default {
       } else {
         this.$refs.multipleTable.clearSelection()
       }
-    }
+    },
   }
 }
 </script>
@@ -174,12 +190,11 @@ export default {
   .el-row {
     margin-bottom: 20px;
 
-  &
-  :last-child {
-    margin-bottom: 0;
+    /* &
+    :last-child {
+      margin-bottom: 0; */
   }
 
-  }
   .el-col {
     border-radius: 4px;
   }
