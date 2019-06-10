@@ -5,10 +5,10 @@
     <el-row>
       <el-col :span="18">
         <el-radio-group v-model="radioSelect" size="medium" @change="radioChangeGetList()">
-          <el-radio-button label="所有科室"></el-radio-button>
-          <el-radio-button label="临床科室" ></el-radio-button>
-          <el-radio-button label="医技科室"></el-radio-button>
-          <el-radio-button label="其他科室"></el-radio-button>          
+          <el-radio-button label="所有科室" />
+          <el-radio-button label="临床科室" />
+          <el-radio-button label="医技科室" />
+          <el-radio-button label="其他科室" />
         </el-radio-group>
       </el-col>
       <el-col :span="6">
@@ -48,12 +48,12 @@
           label="编辑"
         >
           <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="editDepartmentFormFunction(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
-            编辑
-          </el-button>
+            <el-button
+              size="mini"
+              @click="editDepartmentFormFunction(scope.$index, scope.row)"
+            >
+              <i class="el-icon-edit" />
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -76,7 +76,7 @@
       :visible.sync="addDepartmentDialogVisible"
       width="30%"
     >
-      <el-form :model="departmentForm" :rules="rules" ref="departmentForm">
+      <el-form ref="departmentForm" :model="departmentForm" :rules="rules">
         <el-form-item label="科室编码" prop="departmentCode">
           <el-input v-model="departmentForm.departmentCode" auto-complete="off" />
         </el-form-item>
@@ -107,14 +107,14 @@
         <el-button type="primary" @click="submitDepartmentForm('departmentForm')">确 定</el-button>
       </span>
     </el-dialog>
-    
+
     <!--修改科室的对话框-->
     <el-dialog
       title="修改科室"
       :visible.sync="editDepartmentDialogVisible"
       width="30%"
     >
-      <el-form :model="editDepartmentForm" :rules="rules" ref="editDepartmentForm">
+      <el-form ref="editDepartmentForm" :model="editDepartmentForm" :rules="rules">
         <el-form-item label="科室编码" prop="departmentCode">
           <el-input v-model="editDepartmentForm.departmentCode" auto-complete="off" />
         </el-form-item>
@@ -149,10 +149,10 @@
 </template>
 
 <script>
-import { fetchConstantMap } from '../../api/constItem'
-import { addDepartment, fetchDepartmentList, deleteDepartmentByPrimaryKey } from '../../api/basicInfo/department'
+  import {fetchConstantMap} from '../../api/constItem'
+  import {addDepartment, deleteDepartmentByPrimaryKey, fetchDepartmentList} from '../../api/basicInfo/department'
 
-export default {
+  export default {
   data() {
     return {
       // 单选框
@@ -190,14 +190,14 @@ export default {
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
         category: [
-          { required: true, message: '请选择', trigger: 'blur' },
-        ],
+          { required: true, message: '请选择', trigger: 'blur' }
+        ]
       },
       // 分页
       currentPage: 1, // 当前页码
       pageSize: 50, // 页码大小
       totalNumber: 0,
-      // 修改科室
+      // 用于修改科室
       editDepartmentDialogVisible: false,
       editDepartmentForm: { // 科室信息表单
         departmentCode: '',
@@ -205,9 +205,10 @@ export default {
         category: ''
       },
       selectEditValue: '',
-      // 删除用
+      // 用于删除科室
       multipleSelection: [],
       department_id_list: [],
+      department_id: []
     }
   },
 
@@ -222,7 +223,7 @@ export default {
       //   message: this.radioSelect,
       //   type: 'success'
       // });
-      
+
     },
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)
@@ -251,11 +252,9 @@ export default {
             for (let j = 0; j < departmentConstantLen; ++j) {
               if (this.departmentConstant[j].constantItemId === this.departmentTableData[i].category) {
                 this.departmentTableData[i].category = this.departmentConstant[j].constantName
-                break;
+                break
               }
             }
-            // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
-            // _this.$set(_this.departmentForm)
           }
           this.listLoading = false // 列表加载完成
         }).catch(error => {
@@ -320,95 +319,99 @@ export default {
     submitDepartmentForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.addDepartmentDialogVisible = false;
-           // this.departmentForm.category = 
+          this.addDepartmentDialogVisible = false
+          // this.departmentForm.category =
           // console.log(this.departmentForm);
           addDepartment(this.departmentForm).then(response => {
-            console.log('addDepartment response: ');
-            console.log(response);
-            this.totalNumber += 1;
-            var tmp = Math.ceil(this.totalNumber / this.pageSize);
-            this.currentPage = tmp;
-            this.$refs['departmentForm'].resetFields();
-            this.selectValue = '';
-            this.queryDepartmentListWithPage();
+            console.log('addDepartment response: ')
+            console.log(response)
+            this.totalNumber += 1
+            var tmp = Math.ceil(this.totalNumber / this.pageSize)
+            this.currentPage = tmp
+            this.$refs['departmentForm'].resetFields()
+            this.selectValue = ''
+            this.queryDepartmentListWithPage()
           }).catch(error => {
-            console.log('addDepartment error: ');
-            console.log(error);
+            console.log('addDepartment error: ')
+            console.log(error)
           })
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
-    openConfirmDeleteMessageBox() { 
+    openConfirmDeleteMessageBox() {
       if (this.multipleSelection.length == 0 || this.multipleSelection.length == null) {
-        this.$message.error('错误，当前未选中任何条目！');
-        return;
-      }        
-      this.$confirm('此操作将永久删除这些条目, 是否继续?', '提示', {
+        this.$message.error('请选择您要删除的记录。')
+        return
+      }
+      this.$confirm('这将永久删除这些记录, 是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.department_id_list.splice(0, this.department_id_list.length);
-        for (var i = 0; i < this.multipleSelection.length; ++i) {
-          this.department_id_list.push(this.multipleSelection[i].departmentId);
+      }).then(response => {
+        this.department_id_list = []
+        for (let i = 0; i < this.multipleSelection.length; ++i) {
+          this.department_id_list.push(this.multipleSelection[i].departmentId)
         }
-          this.$notify({
-            title: '成功',
-            message: this.department_id_list,
-            type: 'success'
-          });
+        this.department_id_list = { 'department_id_list': this.department_id_list }
+        this.$notify({
+          title: '成功',
+          message: this.department_id_list,
+          type: 'success'
+        })
 
+        /**
+         * 按主键删除科室信息的请求
+         */
         deleteDepartmentByPrimaryKey(this.department_id_list).then(response => {
-          console.log('deleteDepartmentByPrimaryKey response: ');
-          console.log(response);
+          console.log('deleteDepartmentByPrimaryKey response: ')
+          console.log(response)
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: '已删除'
           })
         }).catch(error => {
-          console.log('deleteDepartmentByPrimaryKey error: ');
-          console.log(error);
-          this.$message.error('删除失败');
+          console.log('deleteDepartmentByPrimaryKey error: ')
+          console.log(error)
+          this.$message.error('删除失败')
         })
-        this.currentPage = 1;
-        this.queryDepartmentListWithPage();
+        this.currentPage = 1
+        this.queryDepartmentListWithPage()
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
+        })
+      })
     },
     editDepartmentFormFunction(index, row) {
-      this.editDepartmentDialogVisible = true;
-      this.editDepartmentForm.departmentName = row.departmentName;
-      this.editDepartmentForm.departmentCode = row.departmentCode;
-      this.editDepartmentForm.category = row.category;
-      this.selectEditValue = row.category;
+      this.editDepartmentDialogVisible = true
+      this.editDepartmentForm.departmentName = row.departmentName
+      this.editDepartmentForm.departmentCode = row.departmentCode
+      this.editDepartmentForm.category = row.category
+      this.selectEditValue = row.category
     },
     submitEditDepartmentForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.editDepartmentDialogVisible = false;
-           // this.departmentForm.category = 
+          this.editDepartmentDialogVisible = false
+          // this.departmentForm.category =
           // console.log(this.departmentForm);
           this.$notify({
             title: '成功',
             message: '后台还未写好',
             type: 'success'
-          });
+          })
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val;
+      this.multipleSelection = val
     }
   }
 }
