@@ -303,14 +303,22 @@ export default {
     submitDepartmentForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
           this.addDepartmentDialogVisible = false;
            // this.departmentForm.category = 
           // console.log(this.departmentForm);
-          var query = {'departmentCode':this.departmentForm.departmentCode,
-          'departmentName':this.departmentForm.departmentName,
-          'category':this.departmentForm.category};
-          addDepartment(query);
+          addDepartment(this.departmentForm).then(response => {
+            console.log('addDepartment response: ');
+            console.log(response);
+            this.totalNumber += 1;
+            var tmp = Math.ceil(this.totalNumber / this.pageSize);
+            this.currentPage = tmp;
+            this.$refs['departmentForm'].resetFields();
+            this.selectValue = '';
+            this.queryDepartmentListWithPage();
+          }).catch(error => {
+            console.log('addDepartment error: ');
+            console.log(error);
+          })
         } else {
           console.log('error submit!!');
           return false;
