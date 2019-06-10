@@ -13,7 +13,7 @@
       <el-col :span="6">
         <el-button @click="toggleSelection()">取消</el-button>
         <el-button @click="addDepartmentDialogVisible = true">新增</el-button>
-        <el-button>删除</el-button>
+        <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>
     </el-row>
     <div class="grid-content bg-purple-light">
@@ -21,7 +21,6 @@
         v-loading="listLoading"
         ref="multipleTable"
         :data="departmentTableData"
-        height="450"
         border
       >
         <el-table-column type="selection"  />
@@ -55,7 +54,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[50, 100, 200, 400]"
+        :page-sizes="[20, 50, 100, 200]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalNumber">
@@ -96,7 +95,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDepartmentDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addDepartment()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -244,7 +243,29 @@
     },
     handleClose() {
       this.$message('取消新建条目');
-    }
+    },
+    addDepartment() {
+      addDepartmentDialogVisible = false;
+      
+    },
+    openConfirmDeleteMessageBox() {
+      
+      this.$confirm('此操作将永久删除这些条目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    }   
   }
 }
 </script>
