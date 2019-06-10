@@ -19,7 +19,7 @@ export function fetchDepartmentList(query) {
 
 /**
  * 添加科室信息
- * @param query 科室信息
+ * @param query 新增的科室信息
  */
 export function addDepartment(query) {
   console.log('addDepartment: ')
@@ -28,6 +28,42 @@ export function addDepartment(query) {
     {
       url: '/department/add',
       method: 'post',
+      params: query,
+      baseURL: 'http://localhost:8081/cloud-hospital/',
+      contentType: 'application/x-wwww-form-urlencoded'
+    }
+  )
+}
+
+/**
+ * 修改科室信息
+ * @param query 修改后的科室信息，将根据主键找到原信息进行修改
+ */
+export function updateDepartmentByPrimaryKey(query) {
+  console.log('updateDepartmentByPrimaryKey: ')
+  console.log(query)
+  return request(
+    {
+      url: '/department/update',
+      method: 'put',
+      params: query,
+      baseURL: 'http://localhost:8081/cloud-hospital/',
+      contentType: 'application/x-wwww-form-urlencoded'
+    }
+  )
+}
+
+/**
+ * 删除科室信息
+ * @param query 删除科室信息的主键列表
+ */
+export function deleteDepartmentByPrimaryKey(query) {
+  console.log('deleteDepartmentByPrimaryKey: ')
+  console.log(query)
+  return request(
+    {
+      url: '/department/delete',
+      method: 'delete',
       params: query,
       baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
