@@ -75,10 +75,10 @@
             <el-select  v-model="value" filterable placeholder="请选择"
               @change="forceChange">
               <el-option
-                v-for="item in selectionConstant"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in departmentConstant"
+                :key="item.constantItemId"
+                :label="item.constantName"
+                :value="item.constantItemId"
               >
               </el-option>
             </el-select>
@@ -114,12 +114,6 @@ export default {
         valid: null
       }], 
       // departmentConstant: [],// 科室数据常量，是 科室类别编号 到 科室类别名称 的映射
-      selectionConstant: [
-        {
-          value: '',
-          label: ''
-        }
-      ],
       listLoading: false, // 科室列表加载状态
       addDepartmentDialogVisible: false, // 新增科室对话框可见
       departmentForm: { // 科室信息表单
@@ -154,11 +148,11 @@ export default {
         console.log(response)
         this.departmentConstant = response.data
         // this.$set(this.departmentConstant, response.data);
-        for (var i = 0; i <this.departmentConstant.length; ++i) {
-          this.selectionConstant.push({'value':this.departmentConstant[i].constantItemId,'label':this.departmentConstant[i].constantName});
-          // this.$set(this.selectionConstant, 'value', this.departmentConstant.constantItemId);
-          // this.$set(this.selectionConstant, 'label', this.departmentConstant.constantName);
-        }
+        // for (var i = 0; i <this.departmentConstant.length; ++i) {
+        //   this.selectionConstant.push({'value':this.departmentConstant[i].constantItemId,'label':this.departmentConstant[i].constantName});
+        //   // this.$set(this.selectionConstant, 'value', this.departmentConstant.constantItemId);
+        //   // this.$set(this.selectionConstant, 'label', this.departmentConstant.constantName);
+        // }
 
         this.listLoading = true // 列表开始加载
         fetchDepartmentList().then(response => { // 然后获取科室信息列表
