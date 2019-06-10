@@ -49,17 +49,17 @@
         </el-table-column>
       </el-table>
       <div class="block">
-      
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[20, 50, 100, 200]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalNumber">
-      </el-pagination>
-    </div>
+
+        <el-pagination
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100, 200]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalNumber"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
     <!--新增科室的对话框-->
     <el-dialog
@@ -96,7 +96,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDepartment()">确 定</el-button>
+        <el-button type="primary" @click="submitForm()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -105,8 +105,7 @@
 
 <script>
 import { fetchConstantMap } from '../../api/constItem'
-import { fetchDepartmentList } from '../../api/basicInfo/department'
-import { addDepartment } from '../../api/basicInfo/department'
+import { addDepartment, fetchDepartmentList } from '../../api/basicInfo/department'
 
 export default {
   data() {
@@ -215,8 +214,6 @@ export default {
               break
             }
           }
-          // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
-          // _this.$set(_this.departmentForm)
         }
         this.listLoading = false // 列表加载完成
       }).catch(error => {
@@ -235,16 +232,19 @@ export default {
       this.queryDepartmentListWithPage()
     },
     handleClose() {
-      this.$message('取消新建条目');
+      this.$message('取消新建条目')
     },
-    addDepartment() {
-      this.addDepartmentDialogVisible = false;
-      // this.departmentForm.category = 
-      console.log(this.departmentForm);
-      addDepartment(this.departmentForm);
+    submitForm() {
+      this.addDepartmentDialogVisible = false
+      addDepartment(this.departmentForm).then(response => {
+        console.log('addDepartment response: ')
+        console.log(response)
+      }).catch(error => {
+        console.log('addDepartment error: ')
+        console.log(error)
+      })
     },
     openConfirmDeleteMessageBox() {
-      
       this.$confirm('此操作将永久删除这些条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -253,14 +253,14 @@ export default {
         this.$message({
           type: 'success',
           message: '删除成功!'
-        });
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
-    }   
+        })
+      })
+    }
   }
 }
 </script>

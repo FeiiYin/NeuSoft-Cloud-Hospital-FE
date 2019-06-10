@@ -19,16 +19,16 @@ export function fetchDepartmentList(query) {
 
 /**
  * 添加科室信息
- * @param query 新增的科室信息
+ * @param newDepartment 新增的科室信息
  */
-export function addDepartment(query) {
+export function addDepartment(newDepartment) {
   console.log('addDepartment: ')
-  console.log(query)
+  console.log(newDepartment)
   return request(
     {
       url: '/department/add',
       method: 'post',
-      params: query,
+      params: newDepartment,
       baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
