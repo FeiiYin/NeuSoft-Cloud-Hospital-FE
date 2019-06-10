@@ -54,17 +54,17 @@
         </el-table-column>
       </el-table>
       <div class="block">
-      
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[20, 50, 100, 200]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalNumber">
-      </el-pagination>
-    </div>
+
+        <el-pagination
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100, 200]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalNumber"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
     <!--新增科室的对话框-->
     <el-dialog
@@ -146,8 +146,7 @@
 
 <script>
 import { fetchConstantMap } from '../../api/constItem'
-import { fetchDepartmentList } from '../../api/basicInfo/department'
-import { addDepartment } from '../../api/basicInfo/department'
+import { addDepartment, fetchDepartmentList } from '../../api/basicInfo/department'
 
 export default {
   data() {
@@ -281,8 +280,6 @@ export default {
               break
             }
           }
-          // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
-          // _this.$set(_this.departmentForm)
         }
         this.listLoading = false // 列表加载完成
       }).catch(error => {
@@ -301,7 +298,7 @@ export default {
       this.queryDepartmentListWithPage()
     },
     handleClose() {
-      this.$message('取消新建条目');
+      this.$message('取消新建条目')
     },
     submitDepartmentForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -333,7 +330,7 @@ export default {
         this.$message({
           type: 'success',
           message: '删除成功!'
-        });
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
