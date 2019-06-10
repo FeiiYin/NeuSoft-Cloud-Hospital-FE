@@ -55,16 +55,16 @@ export function updateDepartmentByPrimaryKey(query) {
 
 /**
  * 删除科室信息
- * @param query 删除科室信息的主键列表
+ * @param departmentIdList 删除科室信息的主键列表
  */
-export function deleteDepartmentByPrimaryKey(query) {
+export function deleteDepartmentByPrimaryKey(departmentIdList) {
   console.log('deleteDepartmentByPrimaryKey: ')
-  console.log(query)
+  console.log(departmentIdList)
   return request(
     {
       url: '/department/delete',
       method: 'delete',
-      params: query,
+      params: departmentIdList,
       baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }

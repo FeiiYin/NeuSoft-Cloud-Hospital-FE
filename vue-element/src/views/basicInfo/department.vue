@@ -348,10 +348,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
         let deleteList = [];
         for (var i = 0; i < this.multipleSelection.length; ++i) {
           deleteList.push(this.multipleSelection.departmentId);
@@ -361,7 +357,18 @@ export default {
         //     message: this.multipleSelection,
         //     type: 'success'
         //   });
-        deleteDepartmentByPrimaryKey(deleteList);
+        deleteDepartmentByPrimaryKey(deleteList).then(response => {
+          console.log('deleteDepartmentByPrimaryKey response: ');
+          console.log(response);
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        }).catch(error => {
+          console.log('deleteDepartmentByPrimaryKey error: ');
+          console.log(error);
+          this.$message.error('删除失败');
+        })
         this.currentPage = 1;
         this.queryDepartmentListWithPage();
       }).catch(() => {
