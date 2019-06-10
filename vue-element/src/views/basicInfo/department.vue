@@ -22,6 +22,7 @@
         v-loading="listLoading"
         :data="departmentTableData"
         border
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" />
 
@@ -45,7 +46,11 @@
           prop="edit"
           label="编辑"
         >
-          <!--todo 编辑每项科室信息的按钮-->
+          <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="editDepartmentFormFunction(scope.$index, scope.row)">编辑</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <div class="block">
@@ -67,16 +72,15 @@
       :visible.sync="addDepartmentDialogVisible"
       width="30%"
     >
-      <el-form :model="departmentForm">
-        <el-form-item label="科室编码">
+      <el-form :model="departmentForm" :rules="rules" ref="departmentForm">
+        <el-form-item label="科室编码" prop="departmentCode">
           <el-input v-model="departmentForm.departmentCode" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="科室名称">
+        <el-form-item label="科室名称" prop="departmentName">
           <el-input v-model="departmentForm.departmentName" auto-complete="off" />
         </el-form-item>
-        <el-form-item v-model="departmentForm.category" label="科室分类">
+        <el-form-item v-model="departmentForm.category" label="科室分类" prop="category">
           <!--新增科室对话框中，选择科室分类-->
-          <!--todo 科室分类的选择器-->
           <template>
             <el-select
               v-model="selectValue"
@@ -96,10 +100,47 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDepartment()">确 定</el-button>
+        <el-button type="primary" @click="submitDepartmentForm('departmentForm')">确 定</el-button>
       </span>
     </el-dialog>
-
+    
+    <!--修改科室的对话框-->
+    <el-dialog
+      title="修改科室"
+      :visible.sync="editDepartmentDialogVisible"
+      width="30%"
+    >
+      <el-form :model="editDepartmentForm" :rules="rules" ref="editDepartmentForm">
+        <el-form-item label="科室编码" prop="departmentCode">
+          <el-input v-model="editDepartmentForm.departmentCode" auto-complete="off" />
+        </el-form-item>
+        <el-form-item label="科室名称" prop="departmentName">
+          <el-input v-model="editDepartmentForm.departmentName" auto-complete="off" :disabled="true" />
+        </el-form-item>
+        <el-form-item v-model="editDepartmentForm.category" label="科室分类" prop="category">
+          <!--新增科室对话框中，选择科室分类-->
+          <template>
+            <el-select
+              v-model="selectEditValue"
+              filterable
+              placeholder="请选择"
+              @change="forceChange"
+            >
+              <el-option
+                v-for="item in departmentConstant"
+                :key="item.constantItemId"
+                :label="item.constantName"
+                :value="item.constantItemId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDepartmentDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitEditDepartmentForm('editDepartmentForm')">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -131,10 +172,34 @@ export default {
         departmentName: '',
         category: ''
       },
+      // 提交验证
+      rules: {
+        departmentCode: [
+          { required: true, message: '请输入科室编码', trigger: 'blur' },
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        ],
+        departmentName: [
+          { required: true, message: '请输入科室名称', trigger: 'blur' },
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        ],
+        category: [
+          { required: true, message: '请选择', trigger: 'blur' },
+        ],
+      },
       // 分页
       currentPage: 1, // 当前页码
       pageSize: 50, // 页码大小
-      totalNumber: 0
+      totalNumber: 0,
+      // 修改科室
+      editDepartmentDialogVisible: false,
+      editDepartmentForm: { // 科室信息表单
+        departmentCode: '',
+        departmentName: '',
+        category: ''
+      },
+      selectEditValue: '',
+      // 删除用
+      multipleSelection: [],
     }
   },
 
@@ -145,6 +210,7 @@ export default {
   methods: {
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)
+      this.$set(this.editDepartmentForm, 'category', val)
     },
     getDepartmentList() {
       this.query = { 'constant_type_code': 'DeptCategory' }
@@ -169,7 +235,7 @@ export default {
             for (let j = 0; j < departmentConstantLen; ++j) {
               if (this.departmentConstant[j].constantItemId === this.departmentTableData[i].category) {
                 this.departmentTableData[i].category = this.departmentConstant[j].constantName
-                break
+                break;
               }
             }
             // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
@@ -237,14 +303,28 @@ export default {
     handleClose() {
       this.$message('取消新建条目');
     },
-    addDepartment() {
-      this.addDepartmentDialogVisible = false;
-      // this.departmentForm.category = 
-      console.log(this.departmentForm);
-      addDepartment(this.departmentForm);
+    submitDepartmentForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!');
+          this.addDepartmentDialogVisible = false;
+           // this.departmentForm.category = 
+          // console.log(this.departmentForm);
+          var query = {'departmentCode':this.departmentForm.departmentCode,
+          'departmentName':this.departmentForm.departmentName,
+          'category':this.departmentForm.category};
+          addDepartment(query);
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     },
-    openConfirmDeleteMessageBox() {
-      
+    openConfirmDeleteMessageBox() { 
+      if (this.multipleSelection.length == 0 || this.multipleSelection.length == null) {
+        this.$message.error('错误，当前未选中任何条目！');
+        return;
+      }        
       this.$confirm('此操作将永久删除这些条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -260,7 +340,34 @@ export default {
           message: '已取消删除'
         });
       });
-    }   
+    },
+    editDepartmentFormFunction(index, row) {
+      this.editDepartmentDialogVisible = true;
+      this.editDepartmentForm.departmentName = row.departmentName;
+      this.editDepartmentForm.departmentCode = row.departmentCode;
+      this.editDepartmentForm.category = row.category;
+      this.selectEditValue = row.category;
+    },
+    submitEditDepartmentForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.editDepartmentDialogVisible = false;
+           // this.departmentForm.category = 
+          // console.log(this.departmentForm);
+          this.$notify({
+            title: '成功',
+            message: '后台还未写好',
+            type: 'success'
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    }
   }
 }
 </script>
