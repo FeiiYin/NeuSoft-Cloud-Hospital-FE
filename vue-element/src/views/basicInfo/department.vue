@@ -68,19 +68,22 @@
         <el-form-item label="科室名称" :label-width="formLabelWidth">
           <el-input v-model="departmentForm.departmentName" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="科室分类" :label-width="formLabelWidth" v-model="departmentForm.category" >
+        <el-form-item v-model="departmentForm.category" label="科室分类" :label-width="formLabelWidth">
           <!--新增科室对话框中，选择科室分类-->
           <!--todo 科室分类的选择器-->
           <template>
-            <el-select  v-model="value" filterable placeholder="请选择"
-              @change="forceChange">
+            <el-select
+              v-model="value"
+              filterable
+              placeholder="请选择"
+              @change="forceChange"
+            >
               <el-option
                 v-for="item in departmentConstant"
                 :key="item.constantItemId"
                 :label="item.constantName"
                 :value="item.constantItemId"
-              >
-              </el-option>
+              />
             </el-select>
           </template>
         </el-form-item>
@@ -96,10 +99,10 @@
 </template>
 
 <script>
-import { fetchConstantMap } from '../../api/constItem'
-import { fetchDepartmentList } from '../../api/basicInfo/department'
+  import {fetchConstantMap} from '../../api/constItem'
+  import {fetchDepartmentList} from '../../api/basicInfo/department'
 
-export default {
+  export default {
   data() {
     return {
       clinical_department_checked: true, // 临床科室多选框
@@ -107,12 +110,12 @@ export default {
       other_department_checked: true, // 其他科室多选框
       departmentTableData: [], // 科室表格数据
       departmentConstant: [{
-        constantItemId: '', 
-        constantTypeId: '', 
-        constantCode: '', 
-        constantName: '', 
+        constantItemId: '',
+        constantTypeId: '',
+        constantCode: '',
+        constantName: '',
         valid: null
-      }], 
+      }],
       // departmentConstant: [],// 科室数据常量，是 科室类别编号 到 科室类别名称 的映射
       listLoading: false, // 科室列表加载状态
       addDepartmentDialogVisible: false, // 新增科室对话框可见
@@ -120,7 +123,9 @@ export default {
         departmentCode: '',
         departmentName: '',
         category: ''
-      }
+      },
+      currentPage: 1, // 当前页码
+      pageSize: 50 // 页码大小
     }
   },
 
@@ -130,16 +135,16 @@ export default {
 
   methods: {
     testShow() {
-      var str = "";
-      
+      var str = ''
+
       this.$notify({
-          title: '成功',
-          message: this.departmentConstant,
-          type: 'success'
-        });
+        title: '成功',
+        message: this.departmentConstant,
+        type: 'success'
+      })
     },
     forceChange(val) {
-      this.$set(this.departmentForm,'category', val);
+      this.$set(this.departmentForm, 'category', val)
     },
     getDepartmentList() {
       this.query = { 'constant_type_code': 'DeptCategory' }
@@ -155,17 +160,20 @@ export default {
         // }
 
         this.listLoading = true // 列表开始加载
-        fetchDepartmentList().then(response => { // 然后获取科室信息列表
+        this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
+        fetchDepartmentList(this.query).then(response => { // 然后获取科室信息列表
           console.log('fetchDepartmentList response: ')
           console.log(response)
-          this.departmentTableData = response.data
+          // response.data 对应 PageInfo<Department>
+          this.departmentTableData = response.data.list
+
           let i = 0
           const len = this.departmentTableData.length
           for (; i < len; i++) {
             for (var j = 0; j < this.departmentConstant.length; ++j) {
               if (this.departmentConstant[j].constantItemId == this.departmentTableData[i].category) {
-                this.departmentTableData[i].category = this.departmentConstant[j].constantName;
-                break;
+                this.departmentTableData[i].category = this.departmentConstant[j].constantName
+                break
               }
             }
             // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
@@ -190,7 +198,7 @@ export default {
       } else {
         this.$refs.multipleTable.clearSelection()
       }
-    },
+    }
   }
 }
 </script>
