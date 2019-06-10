@@ -82,6 +82,7 @@
               v-model="selectValue"
               filterable
               placeholder="请选择"
+              @change="forceChange"
             >
               <el-option
                 v-for="item in departmentConstant"
@@ -105,6 +106,7 @@
 <script>
 import { fetchConstantMap } from '../../api/constItem'
 import { fetchDepartmentList } from '../../api/basicInfo/department'
+import { addDepartment } from '../../api/basicInfo/department'
 
 export default {
   data() {
@@ -129,7 +131,6 @@ export default {
         departmentName: '',
         category: ''
       },
-
       // 分页
       currentPage: 1, // 当前页码
       pageSize: 50, // 页码大小
@@ -237,8 +238,10 @@ export default {
       this.$message('取消新建条目');
     },
     addDepartment() {
-      addDepartmentDialogVisible = false;
-      
+      this.addDepartmentDialogVisible = false;
+      // this.departmentForm.category = 
+      console.log(this.departmentForm);
+      addDepartment(this.departmentForm);
     },
     openConfirmDeleteMessageBox() {
       
