@@ -72,10 +72,10 @@
           <template>
             <el-select filterable placeholder="请选择">
               <el-option
-                v-for="(departmentCategoryId, departmentCategoryName) in departmentConstant"
-                :key="departmentCategoryId"
-                :label="departmentCategoryId"
-                :value="departmentCategoryName"
+                v-for="item in departmentConstant"
+                :key="item.constantItemId"
+                :label="item.constantName"
+                :value="item.constantItemId"
               />
             </el-select>
           </template>
