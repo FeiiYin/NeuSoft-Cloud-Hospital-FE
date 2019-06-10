@@ -18,13 +18,13 @@
     </el-row>
     <div class="grid-content bg-purple-light">
       <el-table
-        v-loading="listLoading"
         ref="multipleTable"
+        v-loading="listLoading"
         :data="departmentTableData"
         height="450"
         border
       >
-        <el-table-column type="selection"  />
+        <el-table-column type="selection" />
 
         <el-table-column
           prop="departmentCode"
@@ -50,17 +50,17 @@
         </el-table-column>
       </el-table>
       <div class="block">
-      
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[50, 100, 200, 400]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalNumber">
-      </el-pagination>
-    </div>
+
+        <el-pagination
+          :current-page="currentPage"
+          :page-sizes="[50, 100, 200, 400]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalNumber"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
     <!--新增科室的对话框-->
     <el-dialog
@@ -69,13 +69,13 @@
       width="30%"
     >
       <el-form :model="departmentForm">
-        <el-form-item label="科室编码" >
+        <el-form-item label="科室编码">
           <el-input v-model="departmentForm.departmentCode" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="科室名称" >
+        <el-form-item label="科室名称">
           <el-input v-model="departmentForm.departmentName" auto-complete="off" />
         </el-form-item>
-        <el-form-item v-model="departmentForm.category" label="科室分类" >
+        <el-form-item v-model="departmentForm.category" label="科室分类">
           <!--新增科室对话框中，选择科室分类-->
           <!--todo 科室分类的选择器-->
           <template>
@@ -104,10 +104,10 @@
 </template>
 
 <script>
-  import {fetchConstantMap} from '../../api/constItem'
-  import {fetchDepartmentList} from '../../api/basicInfo/department'
+import { fetchConstantMap } from '../../api/constItem'
+import { fetchDepartmentList } from '../../api/basicInfo/department'
 
-  export default {
+export default {
   data() {
     return {
       clinical_department_checked: true, // 临床科室多选框
@@ -130,11 +130,11 @@
         departmentName: '',
         category: ''
       },
-      
+
       // 分页
       currentPage: 1, // 当前页码
       pageSize: 50, // 页码大小
-      totalNumber: 0,
+      totalNumber: 0
     }
   },
 
@@ -143,15 +143,6 @@
   },
 
   methods: {
-    testShow() {
-      var str = ''
-
-      this.$notify({
-        title: '成功',
-        message: this.departmentConstant,
-        type: 'success'
-      })
-    },
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)
     },
@@ -161,23 +152,24 @@
         console.log('fetchConstantMap response: ')
         console.log(response)
         this.departmentConstant = response.data
-       
+
         this.listLoading = true // 列表开始加载
         this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
         fetchDepartmentList(this.query).then(response => { // 然后获取科室信息列表
           console.log('fetchDepartmentList response: ')
           console.log(response)
-          this.totalNumber = response.data.total;
+          this.totalNumber = response.data.total
           // response.data 对应 PageInfo<Department>
           this.departmentTableData = response.data.list
 
           let i = 0
-          const len = this.departmentTableData.length
-          for (; i < len; i++) {
-            for (var j = 0; j < this.departmentConstant.length; ++j) {
-              if (this.departmentConstant[j].constantItemId == this.departmentTableData[i].category) {
+          const departmentTableDataLen = this.departmentTableData.length
+          const departmentConstantLen = this.departmentConstant.length
+          for (; i < departmentTableDataLen; ++i) {
+            for (let j = 0; j < departmentConstantLen; ++j) {
+              if (this.departmentConstant[j].constantItemId === this.departmentTableData[i].category) {
                 this.departmentTableData[i].category = this.departmentConstant[j].constantName
-                break;
+                break
               }
             }
             // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
@@ -210,17 +202,17 @@
       fetchDepartmentList(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchDepartmentList response: ')
         console.log(response)
-        this.totalNumber = response.data.total;
+        this.totalNumber = response.data.total
         // response.data 对应 PageInfo<Department>
         this.departmentTableData = response.data.list
 
-        let i = 0
-        const len = this.departmentTableData.length
-        for (; i < len; i++) {
-          for (var j = 0; j < this.departmentConstant.length; ++j) {
-            if (this.departmentConstant[j].constantItemId == this.departmentTableData[i].category) {
+        const departmentTableLen = this.departmentTableData.length
+        const departmentConstantLen = this.departmentConstant.length
+        for (let i = 0; i < departmentTableLen; ++i) {
+          for (let j = 0; j < departmentConstantLen; ++j) {
+            if (this.departmentConstant[j].constantItemId === this.departmentTableData[i].category) {
               this.departmentTableData[i].category = this.departmentConstant[j].constantName
-              break;
+              break
             }
           }
           // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
@@ -233,17 +225,17 @@
       })
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.queryDepartmentListWithPage();
+      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.queryDepartmentListWithPage()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      this.queryDepartmentListWithPage();
+      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.queryDepartmentListWithPage()
     },
     handleClose() {
-      this.$message('取消新建条目');
+      this.$message('取消新建条目')
     }
   }
 }
