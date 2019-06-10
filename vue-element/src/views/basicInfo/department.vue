@@ -19,10 +19,11 @@
     <div class="grid-content bg-purple-light">
       <el-table
         v-loading="listLoading"
+        ref="multipleTable"
         :data="departmentTableData"
-        height="250"
+        height="400"
         border
-        style="width: 100%"
+        width="1000"
       >
         <el-table-column type="selection" width="55" />
 
@@ -88,7 +89,6 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addDepartmentDialogVisible = false">确 定</el-button>
-        <el-button type="primary" @click="testShow()">确 定</el-button>
       </span>
     </el-dialog>
 
