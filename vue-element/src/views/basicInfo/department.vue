@@ -68,17 +68,19 @@
         <el-form-item label="科室名称" :label-width="formLabelWidth">
           <el-input v-model="departmentForm.departmentName" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="科室分类" :label-width="formLabelWidth">
+        <el-form-item label="科室分类" :label-width="formLabelWidth" v-model="departmentForm.category" >
           <!--新增科室对话框中，选择科室分类-->
           <!--todo 科室分类的选择器-->
           <template>
-            <el-select filterable placeholder="请选择">
+            <el-select  v-model="value" filterable placeholder="请选择"
+              @change="forceChange">
               <el-option
-                v-for="item in departmentConstant"
-                :key="item.constantItemId"
-                :label="item.constantName"
-                :value="item.constantItemId"
-              />
+                v-for="item in selectionConstant"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
             </el-select>
           </template>
         </el-form-item>
@@ -105,9 +107,19 @@ export default {
       other_department_checked: true, // 其他科室多选框
       departmentTableData: [], // 科室表格数据
       departmentConstant: [{
-        departmentCategoryId: '',
-        departmentCategoryName: '' 
-      }], // 科室数据常量，是 科室类别编号 到 科室类别名称 的映射
+        constantItemId: '', 
+        constantTypeId: '', 
+        constantCode: '', 
+        constantName: '', 
+        valid: null
+      }], 
+      // departmentConstant: [],// 科室数据常量，是 科室类别编号 到 科室类别名称 的映射
+      selectionConstant: [
+        {
+          value: '',
+          label: ''
+        }
+      ],
       listLoading: false, // 科室列表加载状态
       addDepartmentDialogVisible: false, // 新增科室对话框可见
       departmentForm: { // 科室信息表单
@@ -132,22 +144,37 @@ export default {
           type: 'success'
         });
     },
+    forceChange(val) {
+      this.$set(this.departmentForm,'category', val);
+    },
     getDepartmentList() {
       this.query = { 'constant_type_code': 'DeptCategory' }
       fetchConstantMap(this.query).then(response => { // 首先获取科室信息常量表，用于将科室类别的常数表示替换为文字
         console.log('fetchConstantMap response: ')
         console.log(response)
         this.departmentConstant = response.data
+        // this.$set(this.departmentConstant, response.data);
+        for (var i = 0; i <this.departmentConstant.length; ++i) {
+          this.selectionConstant.push({'value':this.departmentConstant[i].constantItemId,'label':this.departmentConstant[i].constantName});
+          // this.$set(this.selectionConstant, 'value', this.departmentConstant.constantItemId);
+          // this.$set(this.selectionConstant, 'label', this.departmentConstant.constantName);
+        }
+
         this.listLoading = true // 列表开始加载
         fetchDepartmentList().then(response => { // 然后获取科室信息列表
           console.log('fetchDepartmentList response: ')
           console.log(response)
           this.departmentTableData = response.data
-
           let i = 0
           const len = this.departmentTableData.length
           for (; i < len; i++) {
-            this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
+            for (var j = 0; j < this.departmentConstant.length; ++j) {
+              if (this.departmentConstant[j].constantItemId == this.departmentTableData[i].category) {
+                this.departmentTableData[i].category = this.departmentConstant[j].constantName;
+                break;
+              }
+            }
+            // this.departmentTableData[i].category = this.departmentConstant[this.departmentTableData[i].category]
             // _this.$set(_this.departmentForm)
           }
           this.listLoading = false // 列表加载完成
