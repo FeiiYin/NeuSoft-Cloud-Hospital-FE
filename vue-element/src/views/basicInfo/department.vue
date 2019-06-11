@@ -150,7 +150,12 @@
 
 <script>
 import { fetchConstantMap } from '../../api/constItem'
-import { addDepartment, deleteDepartmentByPrimaryKey, fetchDepartmentList, updateDepartmentByPrimaryKey } from '../../api/basicInfo/department'
+import {
+  addDepartment,
+  deleteDepartmentByPrimaryKey,
+  fetchDepartmentList,
+  updateDepartmentByPrimaryKey
+} from '../../api/basicInfo/department'
 
 export default {
   data() {
@@ -237,7 +242,7 @@ export default {
         this.departmentConstant = response.data
 
         this.listLoading = true // 列表开始加载
-        this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
+        this.query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
         fetchDepartmentList(this.query).then(response => { // 然后获取科室信息列表
           console.log('fetchDepartmentList response: ')
           console.log(response)
@@ -362,8 +367,8 @@ export default {
           type: 'success'
         })
         /**
-         * 按主键删除科室信息的请求
-         */
+           * 按主键删除科室信息的请求
+           */
         deleteDepartmentByPrimaryKey(this.department_id_list).then(response => {
           console.log('deleteDepartmentByPrimaryKey response: ')
           console.log(response)
@@ -399,12 +404,10 @@ export default {
           // this.departmentForm.category =
           // console.log(this.departmentForm);
 
-
-
           updateDepartmentByPrimaryKey(this.editDepartmentForm).then(response => {
             console.log('updateDepartmentByPrimaryKey response: ')
             console.log(response)
-                        
+
             var tmp = Math.ceil(this.totalNumber / this.pageSize)
             this.currentPage = tmp
             this.$refs['editDepartmentForm'].resetFields()
@@ -414,7 +417,6 @@ export default {
             console.log('addDepartment error: ')
             console.log(error)
           })
-
 
           this.$notify({
             title: '成功',

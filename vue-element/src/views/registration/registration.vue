@@ -22,30 +22,30 @@
       <div class="row">
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">姓名</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">性别</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">年龄</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">出生日期</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
       </div>
 
       <div class="row">
         <div class="word_input_2">
           <h4 class="row_h4">身份证号</h4>
-          <input id="projectinput1" type="text" class="registration_input_2" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input_2" placeholder="" name="fname">
         </div>
         <div class="word_input_2">
           <h4 class="row_h4">家庭住址</h4>
-          <input id="projectinput1" type="text" class="registration_input_2" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input_2" placeholder="" name="fname">
         </div>
       </div>
 
@@ -55,49 +55,49 @@
       <div class="row">
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">病历号</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">结算类别</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">医疗证号</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">医疗类别</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
       </div>
 
       <div class="row">
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">看诊日期</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">号列</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">挂号科室</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">看诊医生</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
       </div>
 
       <div class="row">
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">挂号来源</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">医保诊断</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">病历本</h4>
@@ -106,13 +106,13 @@
         </div>
         <div class="word_input_4">
           <h4 style="margin-bottom:2px;">应收金额</h4>
-          <input id="projectinput1" type="text" class="registration_input" placeholder="First Name" name="fname">
+          <input id="projectinput1" type="text" class="registration_input" placeholder="" name="fname">
         </div>
       </div>
 
       <div style="margin-top:80px;margin-bottom:40px;text-align:center">
         <el-button type="primary">提交</el-button>
-        <el-button type="info">清屏</el-button>
+        <el-button type="info">清空</el-button>
       </div>
     </div>
   </div>
