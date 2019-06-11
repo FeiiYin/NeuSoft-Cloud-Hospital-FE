@@ -195,7 +195,7 @@
           </el-col>
         </el-row>
         <div style="margin-top:80px;margin-bottom:40px;text-align:center">
-          <el-button type="primary">提交</el-button>
+          <el-button type="primary" @click="submitRegisterForm()">提交</el-button>
           <el-button type="info" @click="resetForm()">清空</el-button>
         </div>
       </el-form>
@@ -207,7 +207,9 @@
 <script>
   import {
     fetchPatientInfoByIdentityCardNo,
-    fetchDepartment
+    fetchDepartment,
+    fetchCurrentAvailableDoctor,
+    register
   } from '../../api/registrationCharge/registration'
 
   export default {
@@ -272,7 +274,7 @@
         console.log('fetchPatientInfoByIdentityCardNo response: ')
         console.log(response)
         if (response.message === "not found") {
-          return;
+          return
         } else {
           this.registrationForm.patientName = response.data.patientName
           this.registrationForm.gender = response.data.gender
@@ -299,35 +301,71 @@
     departmentSelectionChange(val) {
       this.boolDepartmentSelectionChange = false
       // TODO!!
-      fetch().then(response => { // 然后获取科室信息列表
-        console.log('fetchDepartment response: ')
+      this.query = { 'departmentId': val }
+      fetchCurrentAvailableDoctor(this.query).then(response => { // 然后获取科室信息列表
+        console.log('fetchCurrentAvailableDoctor response: ')
         console.log(response)
         this.doctorListOptions = response.data
       }).catch(error => {
-        console.log('fetchDepartment error: ')
+        console.log('fetchCurrentAvailableDoctor error: ')
+        console.log(error)
+      })
+    },
+    // 提交挂号表单
+    submitRegisterForm () {
+      var query = {
+        'registrationId': this.registrationForm.registrationId,
+        'patientName': this.registrationForm.patientName,
+        'gender': this.registrationForm.gender,
+        'age': this.registrationForm.age,
+        'birthday': this.registrationForm.birthday,
+        'registrationCategory': this.registrationCategory.registrationCategory,
+        'medicalCategory': this.registrationForm.medicalCategory,
+        'identityCardNo': this.registrationForm.identityCardNo,
+        'registrationStatus': this.registrationForm.registrationStatus,
+        'visitDate': this.registrationForm.visitDate, 
+        'registrationDate': this.registrationForm.registrationDate,
+        'departmentId': this.registrationForm.departmentId,
+        'doctorId': this.registrationForm.doctorId,
+        'registrationSource': this.registrationForm.registrationSource,
+        'settleAccountsCategory': this.registrationForm.settleAccountsCategory,
+        'isVisited': this.registrationForm.isVisited,
+        'familyAddress': this.registrationForm.familyAddress,
+        'collectorId': this.registrationForm.collectorId
+      }
+      register(query).then(response => {
+        console.log('register response: ')
+        console.log(response)
+        this.$notify({
+          title: '成功',
+          message: '提交挂号表单成功',
+          type: 'success'
+        });
+      }).catch(error => {
+        console.log('register error: ')
         console.log(error)
       })
     },
     // 清空表单
     resetForm() {
       this.registrationForm.identityCardNo = ''
-      this.registrationId = ''
-      this.patientName = ''
-      this.gender = ''
-      this.age = ''
-      this.birthday = ''
-      this.registrationCategory = ''
-      this.medicalCategory = ''
-      this.identityCardNo = ''
-      this.registrationStatus = ''
-      this.registrationDate = ''
-      this.departmentId = ''
-      this.doctorId = ''
-      this.registrationSource = ''
-      this.settleAccountsCategory = ''
-      this.familyAddress = ''
-      this.collectorId = ''
-      this.totalCharge = ''
+      this.registrationForm.registrationId = ''
+      this.registrationForm.patientName = ''
+      this.registrationForm.gender = ''
+      this.registrationForm.age = ''
+      this.registrationForm.birthday = ''
+      this.registrationForm.registrationCategory = ''
+      this.registrationForm.medicalCategory = ''
+      this.registrationForm.identityCardNo = ''
+      this.registrationForm.registrationStatus = ''
+      this.registrationForm.registrationDate = ''
+      this.registrationForm.departmentId = ''
+      this.registrationForm.doctorId = ''
+      this.registrationForm.registrationSource = ''
+      this.registrationForm.settleAccountsCategory = ''
+      this.registrationForm.familyAddress = ''
+      this.registrationForm.collectorId = ''
+      this.registrationForm.totalCharge = ''
     }
   }
 }
