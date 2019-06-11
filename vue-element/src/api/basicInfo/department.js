@@ -66,7 +66,7 @@ export function deleteDepartmentByPrimaryKey(departmentIdList) {
       method: 'delete',
       params: departmentIdList,
       baseURL: 'http://localhost:8081/cloud-hospital/',
-      contentType: 'application/x-wwww-form-urlencoded'
+      contentType: 'application/json'
     }
   )
 }
