@@ -362,7 +362,7 @@ export default {
             type: 'success'
           });
 
-        deleteDepartmentByPrimaryKey(this.department_id_list).then(response => {
+        deleteDepartmentByPrimaryKey("{'department_id_list':"+this.department_id_list+"}").then(response => {
           console.log('deleteDepartmentByPrimaryKey response: ');
           console.log(response);
           this.$message({
