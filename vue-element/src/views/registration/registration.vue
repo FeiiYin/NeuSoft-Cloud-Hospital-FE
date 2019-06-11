@@ -16,7 +16,8 @@
         </el-col>
         <el-col :span="7">
           <el-button type="primary" icon="document" @click="true">
-            <svg-icon icon-class="documentation" />挂号
+            <svg-icon icon-class="documentation" />
+            挂号
           </el-button>
           <el-button @click="true">
             预约选择
@@ -26,7 +27,8 @@
           </el-button>
         </el-col>
       </el-row>
-      <svg-icon style="display:inline-block;margin-right:20px;margin-top:20px;" icon-class="peoples" /> 个人信息
+      <svg-icon style="display:inline-block;margin-right:20px;margin-top:20px;" icon-class="peoples" />
+      个人信息
       <hr>
       <el-form ref="registrationForm" :model="registrationForm">
         <el-form-item label="">
@@ -79,7 +81,8 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <svg-icon style="margin-right:20px;margin-top:40px;" icon-class="tab" /> 病历信息
+        <svg-icon style="margin-right:20px;margin-top:40px;" icon-class="tab" />
+        病历信息
         <hr>
         <el-row :gutter="20">
           <el-col :span="6">
@@ -108,7 +111,12 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号日期</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.registrationDate" />
+              <el-date-picker
+                v-model="registrationForm.registrationDate"
+                type="date"
+                placeholder="选择日期"
+                style="width: 100%;"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -142,21 +150,21 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">当前收费员Id</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.collectorId" />
+              <el-input v-model="registrationForm.collectorId" :disabled="true" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">结算类别</h4>
             <el-form-item>
               <el-select
-                v-model="registrationForm.registrationSource"
-                placeholder="请选择挂号来源"
+                v-model="registrationForm.settleAccountsCategory"
+                placeholder="请选择结算类别"
                 style="width:100%"
               >
-                <el-option label="医院就诊" value="医院就诊" />
-                <el-option label="网上挂号" value="网上挂号" />
+                <el-option label="自费" value="自费" />
+                <el-option label="医保" value="医保" />
+                <el-option label="新农合" value="新农合" />
               </el-select>
-              <el-input v-model="registrationForm.settleAccountsCategory" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -182,7 +190,7 @@
 </template>
 
 <script>
-import { fetchPatientInfoByIdentifyCardNo } from '../../api/registrationCharge/registration'
+import { fetchPatientInfoByIdentityCardNo } from '../../api/registrationCharge/registration'
 
 export default {
   data() {
@@ -219,19 +227,24 @@ export default {
     // 如果 身份证输入框 发生改变，这个函数就会运行
     'registrationForm.identityCardNo': function() {
       if (this.registrationForm.identityCardNo.length === 18) {
-        this.invokeFetchPatientInfoByIdentifyCardNo()
+        this.invokeFetchPatientInfoByIdentityCardNo(this.registrationForm.identityCardNo)
       }
     }
   }, methods: {
     // 根据身份证号搜索个人信息
-    invokeFetchPatientInfoByIdentifyCardNo(identityCardNo) {
-      this.query = { 'identifyCardNo': identityCardNo }
-      alert('diaoyong')
-      fetchPatientInfoByIdentifyCardNo(this.query).then(response => { // 然后获取科室信息列表
-        console.log('fetchPatientInfoByIdentifyCardNo response: ')
+    invokeFetchPatientInfoByIdentityCardNo(identityCardNo) {
+      this.query = { 'identityCardNo': identityCardNo }
+      alert(identityCardNo)
+      fetchPatientInfoByIdentityCardNo(this.query).then(response => { // 然后获取科室信息列表
+        console.log('fetchPatientInfoByIdentityCardNo response: ')
         console.log(response)
+        if (response.message === 'not found') {
+          // 未找到患者信息，不填充
+          console.log('未找到患者信息')
+        }
+        // todo else {}
       }).catch(error => {
-        console.log('fetchPatientInfoByIdentifyCardNo error: ')
+        console.log('fetchPatientInfoByIdentityCardNo error: ')
         console.log(error)
       })
     },
@@ -260,7 +273,7 @@ export default {
 }
 </script>
 
-<style  scoped>
+<style scoped>
   .wordbox {
     display: inline-block;
     background: #eef1f6;
