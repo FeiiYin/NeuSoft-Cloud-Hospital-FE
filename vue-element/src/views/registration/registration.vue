@@ -95,16 +95,34 @@
             <!-- 普通或者城镇职工 -->
             <h4 style="margin-bottom:2px;">医疗类别</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.medicalCategory" />
+              <el-select
+                v-model="registrationForm.settleAccountsCategory"
+                placeholder="请选择医疗类别"
+                style="width:100%"
+              >
+                <el-option label="普通" value="普通" />
+                <el-option label="城镇职工医疗保险" value="城镇职工医疗保险" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <h4 style="margin-bottom:2px;">医疗证号</h4>
-            <el-input />
+            <h4 style="margin-bottom:2px;">病历本</h4>
+            <el-radio v-model="medicalRecordRadio" label="1">是</el-radio>
+            <el-radio v-model="medicalRecordRadio" label="2">否</el-radio>
           </el-col>
           <el-col :span="6">
-            <h4 style="margin-bottom:2px;">医疗类别</h4>
-            <el-input />
+            <h4 style="margin-bottom:2px;">结算类别</h4>
+            <el-form-item>
+              <el-select
+                v-model="registrationForm.settleAccountsCategory"
+                placeholder="请选择结算类别"
+                style="width:100%"
+              >
+                <el-option label="自费" value="自费" />
+                <el-option label="医保" value="医保" />
+                <el-option label="新农合" value="新农合" />
+              </el-select>
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
@@ -135,25 +153,15 @@
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号科室</h4>
-            <el-form-item>
-              <el-input v-model="registrationForm.departmentId" />
-            </el-form-item>
             <!-- TODO -->
-            <el-select
-              v-model="registrationForm.departmentId"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remoteMethod"
-              :loading="departmentListLoading"
-            >
+            <el-select v-model="registrationForm.departmentId" filterable placeholder="请选择"
+              style="width:100%;">
               <el-option
                 v-for="item in departmentListOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+                :key="item.departmentId"
+                :label="item.departmentName"
+                :value="item.departmentId">
+              </el-option>
             </el-select>
           </el-col>
           <el-col :span="6">
@@ -169,25 +177,6 @@
             <el-form-item>
               <el-input v-model="registrationForm.collectorId" :disabled="true" />
             </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <h4 style="margin-bottom:2px;">结算类别</h4>
-            <el-form-item>
-              <el-select
-                v-model="registrationForm.settleAccountsCategory"
-                placeholder="请选择结算类别"
-                style="width:100%"
-              >
-                <el-option label="自费" value="自费" />
-                <el-option label="医保" value="医保" />
-                <el-option label="新农合" value="新农合" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <h4 style="margin-bottom:2px;">病历本</h4>
-            <el-radio v-model="medicalRecordRadio" label="1">是</el-radio>
-            <el-radio v-model="medicalRecordRadio" label="2">否</el-radio>
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">应收金额</h4>
@@ -207,7 +196,10 @@
 </template>
 
 <script>
-  import {fetchPatientInfoByIdentityCardNo} from '../../api/registrationCharge/registration'
+  import {
+    fetchPatientInfoByIdentityCardNo,
+    fetchDepartment
+  } from '../../api/registrationCharge/registration'
 
   export default {
   data() {
@@ -235,14 +227,14 @@
         isVisited: '',
         valid: '',
         familyAddress: '',
-        collectorId: '',
+        collectorId: 1001,
         totalCharge: ''
       },
       // 远程搜索的科室列表
-      departmentListOptions: [],
-      departmentList: [],
-      departmentListLoading: false
-
+      departmentListOptions: [{
+        departmentId: '',
+        departmentName: '',
+      }],
     }
   },
   watch: {
@@ -252,39 +244,39 @@
         this.invokeFetchPatientInfoByIdentityCardNo(this.registrationForm.identityCardNo)
       }
     }
-  }, methods: {
+  },
+  created() {
+    this.invokefetchDepartment()
+  },
+  methods: {
     // 根据身份证号搜索个人信息
     invokeFetchPatientInfoByIdentityCardNo(identityCardNo) {
       this.query = { 'identityCardNo': identityCardNo }
-      alert(identityCardNo)
+      // alert(identityCardNo)
       fetchPatientInfoByIdentityCardNo(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchPatientInfoByIdentityCardNo response: ')
         console.log(response)
-
-        if (true) {
-
+        if (response.message === "not found") {
+          return;
         } else {
-
+          this.registrationForm.patientName = response.data.patientName
+          this.registrationForm.gender = response.data.gender
+          this.registrationForm.age = response.data.age
+          this.registrationForm.birthday = response.data.birthDate
+          this.registrationForm.familyAddress = response.data.familyAddress
         }
       }).catch(error => {
         console.log('fetchPatientInfoByIdentityCardNo error: ')
         console.log(error)
       })
     },
-    invokefetchDepartment(query) {
-      this.query = { 'identityCardNo': identityCardNo }
-      alert(identityCardNo)
-      fetchPatientInfoByIdentityCardNo(this.query).then(response => { // 然后获取科室信息列表
-        console.log('fetchPatientInfoByIdentityCardNo response: ')
+    invokefetchDepartment() {
+      fetchDepartment().then(response => { // 然后获取科室信息列表
+        console.log('fetchDepartment response: ')
         console.log(response)
-
-        if (true) {
-
-        } else {
-
-        }
+        this.departmentListOptions = response.data
       }).catch(error => {
-        console.log('fetchPatientInfoByIdentityCardNo error: ')
+        console.log('fetchDepartment error: ')
         console.log(error)
       })
     },

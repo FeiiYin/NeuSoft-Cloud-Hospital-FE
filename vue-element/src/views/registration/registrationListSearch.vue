@@ -1,82 +1,75 @@
 <template>
-    <div class="app-container">
-        <aside>
-            <span>当前挂号信息列表</span>
-            <el-button type="info" style="float:right">
-                <i class="el-icon-refresh" />
-                刷新
-            </el-button>
-        </aside>
-        <el-table
-            :data="tableData"
-            style="width: 100%">
-            <el-table-column
-            prop="date"
-            label="日期"
-            sortable
-            width="180">
-            </el-table-column>
-            <el-table-column
-            prop="name"
-            label="姓名"
-            width="180">
-            </el-table-column>
-            <el-table-column
-            prop="address"
-            label="地址"
-            :formatter="formatter">
-            </el-table-column>
-            <el-table-column
-            prop="tag"
-            label="标签"
-            width="100"
-            :filters="[{ text: '家', value: '家' }, { text: '公司', value: '公司' }]"
-            :filter-method="filterTag"
-            filter-placement="bottom-end">
-            <template slot-scope="scope">
-                <el-tag
-                :type="scope.row.tag === '家' ? 'primary' : 'success'"
-                close-transition>{{scope.row.tag}}</el-tag>
-            </template>
-            </el-table-column>
-        </el-table>
+  <div class="app-container">
+    <aside>
+      <span>当前挂号信息列表</span>
+      <el-button type="info" style="float:right">
+        <i class="el-icon-refresh" />
+        刷新
+      </el-button>
+    </aside>
+    <div>
+      <el-table :data="registrationList" style="width: 100%">
+        <el-table-column prop="registrationDate" label="挂号日期" sortable>
+        </el-table-column>
+        <el-table-column prop="medicalRecordId" label="病历号">
+        </el-table-column>
+        <el-table-column prop="patientName" label="姓名">
+        </el-table-column>
+        <el-table-column prop="identityCardNo" label="身份证号">
+        </el-table-column>
+        <el-table-column prop="isVisited" label="是否已诊">
+        </el-table-column>
+        <el-table-column prop="totalCharge" label="实收费用">
+        </el-table-column>
+        <el-table-column prop="valid" label="状态"
+          :filters="[{ text: '正常', value: '正常' }, { text: '已退号', value: '已退号' }]"
+          :filter-method="filterTag"
+          filter-placement="bottom-end">
+          <template slot-scope="scope">
+            <el-tag
+              :type="scope.row.valid === '已退号' ? 'primary' : 'success'"
+              close-transition>{{scope.row.valid}}
+            </el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+  </div>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄',
-          tag: '家'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄',
-          tag: '公司'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄',
-          tag: '家'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄',
-          tag: '公司'
-        }]
-      }
+export default {
+  data() {
+    return {
+      registrationList: [
+        {
+          registrationDate: '2016-05-02',
+          medicalRecordId: '',
+          patientName: '王小虎',
+          identityCardNo: '1111',
+          isVisited: '1',
+          totalCharge: '1',
+          valid: '正常'
+        },
+        {
+          registrationDate: '2016-05-02',
+          medicalRecordId: '',
+          patientName: '王小虎',
+          identityCardNo: '1111',
+          isVisited: '1',
+          totalCharge: '1',
+          valid: '已退号'
+        },
+      ]
+    }
+  },
+  methods: {
+    formatter(row, column) {
+      return row.address;
     },
-    methods: {
-      formatter(row, column) {
-        return row.address;
-      },
-      filterTag(value, row) {
-        return row.tag === value;
-      }
+    filterTag(value, row) {
+      return row.valid === value;
     }
   }
+}
 </script>

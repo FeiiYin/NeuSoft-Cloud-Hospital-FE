@@ -118,7 +118,7 @@ export const constantRoutes = [
         path: 'registrationListSearch',
         component: () => import('@/views/registration/registrationListSearch'),
         name: 'registrationListSearch',
-        meta: { title: '挂号列表搜索', noCache: true }
+        meta: { title: '门诊挂号管理', noCache: true }
       },
       {
         path: 'registrationCharge',
