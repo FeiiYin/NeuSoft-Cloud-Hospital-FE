@@ -148,26 +148,35 @@
                 <el-option label="医院就诊" value="医院就诊" />
                 <el-option label="网上挂号" value="网上挂号" />
               </el-select>
-
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号科室</h4>
-            <!-- TODO -->
-            <el-select v-model="registrationForm.departmentId" filterable placeholder="请选择"
-              style="width:100%;" @change="departmentSelectionChange">
-              <el-option
-                v-for="item in departmentListOptions"
-                :key="item.departmentId"
-                :label="item.departmentName"
-                :value="item.departmentId">
-              </el-option>
-            </el-select>
+            <el-form-item>
+              <el-select v-model="registrationForm.departmentId" filterable placeholder="请选择"
+                style="width:100%;" @change="departmentSelectionChange">
+                <el-option
+                  v-for="item in departmentListOptions"
+                  :key="item.departmentId"
+                  :label="item.departmentName"
+                  :value="item.departmentId">
+                </el-option>
+              </el-select>
+            </el-form-item>
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">看诊医生</h4>
-            <el-form-item>
-              <el-input v-model="registrationForm.doctorId" :disabled="boolDepartmentSelectionChange" />
+            <el-form-item>  
+              <!-- TODO -->
+              <el-select v-model="registrationForm.doctorId" filterable placeholder="请选择"
+                style="width:100%;" :disabled="boolDepartmentSelectionChange">
+                <el-option
+                  v-for="item in departmentListOptions"
+                  :key="item.doctorId"
+                  :label="item.doctorName"
+                  :value="item.doctorId">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -237,6 +246,10 @@
       }],
       // 远程搜索的医生列表
       boolDepartmentSelectionChange: true,
+      doctorListOptions: [{
+        doctorId: '',
+        doctorName: '',
+      }],
     }
   },
   watch: {
@@ -285,6 +298,15 @@
     // 科室选择改变，医生列表改变，可以选择
     departmentSelectionChange(val) {
       this.boolDepartmentSelectionChange = false
+      // TODO!!
+      fetch().then(response => { // 然后获取科室信息列表
+        console.log('fetchDepartment response: ')
+        console.log(response)
+        this.doctorListOptions = response.data
+      }).catch(error => {
+        console.log('fetchDepartment error: ')
+        console.log(error)
+      })
     },
     // 清空表单
     resetForm() {

@@ -33,6 +33,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <div style="background: #d3dce6;">
+        <el-pagination
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100, 200]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalNumber"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -60,7 +71,11 @@ export default {
           totalCharge: '1',
           valid: '已退号'
         },
-      ]
+      ],
+      // 分页
+      currentPage: 1, // 当前页码
+      pageSize: 50, // 页码大小
+      totalNumber: 0,
     }
   },
   methods: {
@@ -69,7 +84,18 @@ export default {
     },
     filterTag(value, row) {
       return row.valid === value;
-    }
+    },
+    // 分页
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.queryDepartmentListWithPage()
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.queryDepartmentListWithPage()
+    },
   }
 }
 </script>
