@@ -403,28 +403,36 @@ export default {
           this.editDepartmentDialogVisible = false
           // this.departmentForm.category =
           // console.log(this.departmentForm);
+          
+          for (var i = 0; i < this.departmentConstant.length; ++i) {
+            if (this.editDepartmentForm.category == this.departmentConstant[i].constantName)  
+              this.editDepartmentForm.category = this.departmentConstant[i].constantItemId
+          }
 
-          updateDepartmentByPrimaryKey(this.editDepartmentForm).then(response => {
+          var updateList = { 
+                             'category': this.editDepartmentForm.category,
+                             'departmentCode': this.editDepartmentForm.departmentCode,
+                             'departmentName': this.editDepartmentForm.departmentName
+                           }
+ this.$notify({
+        title: '成功',
+        message: updateList,
+        type: 'success'
+      });
+
+          updateDepartmentByPrimaryKey(updateList).then(response => {
             console.log('updateDepartmentByPrimaryKey response: ')
             console.log(response)
-
-            var tmp = Math.ceil(this.totalNumber / this.pageSize)
-            this.currentPage = tmp
+            
             this.$refs['editDepartmentForm'].resetFields()
             this.selectEditValue = ''
             this.queryDepartmentListWithPage()
           }).catch(error => {
-            console.log('addDepartment error: ')
+            console.log('updateDepartmentByPrimaryKey error: ')
             console.log(error)
           })
-
-          this.$notify({
-            title: '成功',
-            message: '后台还未写好',
-            type: 'success'
-          })
         } else {
-          console.log('error submit!!')
+          console.log('error updateDepartmentByPrimaryKey!!')
           return false
         }
       })
