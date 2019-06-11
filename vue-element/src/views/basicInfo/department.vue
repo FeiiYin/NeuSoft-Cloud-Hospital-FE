@@ -58,7 +58,6 @@
         </el-table-column>
       </el-table>
       <div class="block">
-
         <el-pagination
           :current-page="currentPage"
           :page-sizes="[20, 50, 100, 200]"
