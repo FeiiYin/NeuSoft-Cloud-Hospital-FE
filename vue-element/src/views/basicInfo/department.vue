@@ -115,11 +115,14 @@
       width="30%"
     >
       <el-form ref="editDepartmentForm" :model="editDepartmentForm" :rules="rules">
+        <el-form-item label="科室ID" prop="departmentId">
+          <el-input v-model="editDepartmentForm.departmentId" auto-complete="off" :disabled="true"/>
+        </el-form-item>
         <el-form-item label="科室编码" prop="departmentCode">
           <el-input v-model="editDepartmentForm.departmentCode" auto-complete="off" />
         </el-form-item>
         <el-form-item label="科室名称" prop="departmentName">
-          <el-input v-model="editDepartmentForm.departmentName" auto-complete="off" :disabled="true" />
+          <el-input v-model="editDepartmentForm.departmentName" auto-complete="off"  />
         </el-form-item>
         <el-form-item v-model="editDepartmentForm.category" label="科室分类" prop="category">
           <!--新增科室对话框中，选择科室分类-->
@@ -205,6 +208,7 @@ export default {
       // 用于修改科室
       editDepartmentDialogVisible: false,
       editDepartmentForm: { // 科室信息表单
+        departmentId: '',
         departmentCode: '',
         departmentName: '',
         category: ''
@@ -361,11 +365,6 @@ export default {
           this.department_id_list.push(this.multipleSelection[i].departmentId)
         }
         this.department_id_list = { 'department_id_list': this.department_id_list }
-        this.$notify({
-          title: '成功',
-          message: this.department_id_list,
-          type: 'success'
-        })
         /**
            * 按主键删除科室信息的请求
            */
@@ -396,6 +395,7 @@ export default {
       this.editDepartmentForm.departmentCode = row.departmentCode
       this.editDepartmentForm.category = row.category
       this.selectEditValue = row.category
+      this.editDepartmentForm.departmentId = row.departmentId
     },
     submitUpdate(formName) {
       this.$refs[formName].validate((valid) => {
@@ -410,15 +410,11 @@ export default {
           }
 
           var updateList = { 
-                             'category': this.editDepartmentForm.category,
-                             'departmentCode': this.editDepartmentForm.departmentCode,
-                             'departmentName': this.editDepartmentForm.departmentName
-                           }
- this.$notify({
-        title: '成功',
-        message: updateList,
-        type: 'success'
-      });
+            'departmentId': this.editDepartmentForm.departmentId,
+            'category': this.editDepartmentForm.category,
+            'departmentCode': this.editDepartmentForm.departmentCode,
+            'departmentName': this.editDepartmentForm.departmentName
+          }
 
           updateDepartmentByPrimaryKey(updateList).then(response => {
             console.log('updateDepartmentByPrimaryKey response: ')
