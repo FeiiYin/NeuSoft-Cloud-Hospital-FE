@@ -22,7 +22,7 @@ export function fetchPatientInfoByIdentityCardNo(identityCardNo) {
 export function fetchDepartment() {
   console.log('fetchDepartment')
   return request({
-    url: '/registration/department_list',
+    url: '/registration/list_department',
     method: 'get',
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
@@ -35,7 +35,7 @@ export function fetchDepartment() {
 export function fetchCurrentAvailableDoctor() {
   console.log('fetchCurrentAvailableDoctor')
   return request({
-    url: '/registration/doctor_list',
+    url: '/registration/list_doctor',
     method: 'get',
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
@@ -50,7 +50,7 @@ export function register(registration) {
   console.log('register')
   console.log(registration)
   return request({
-    url: '/registration/register',
+    url: '/registration/add_registration',
     method: 'post',
     params: registration,
     baseURL: 'http://localhost:8081/cloud-hospital/',
