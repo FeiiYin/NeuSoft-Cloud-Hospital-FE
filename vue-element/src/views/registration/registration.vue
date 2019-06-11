@@ -155,7 +155,7 @@
             <h4 style="margin-bottom:2px;">挂号科室</h4>
             <!-- TODO -->
             <el-select v-model="registrationForm.departmentId" filterable placeholder="请选择"
-              style="width:100%;">
+              style="width:100%;" @change="departmentSelectionChange">
               <el-option
                 v-for="item in departmentListOptions"
                 :key="item.departmentId"
@@ -167,7 +167,7 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">看诊医生</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.doctorId" />
+              <el-input v-model="registrationForm.doctorId" :disabled="boolDepartmentSelectionChange" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -235,6 +235,8 @@
         departmentId: '',
         departmentName: '',
       }],
+      // 远程搜索的医生列表
+      boolDepartmentSelectionChange: true,
     }
   },
   watch: {
@@ -279,6 +281,10 @@
         console.log('fetchDepartment error: ')
         console.log(error)
       })
+    },
+    // 科室选择改变，医生列表改变，可以选择
+    departmentSelectionChange(val) {
+      this.boolDepartmentSelectionChange = false
     },
     // 清空表单
     resetForm() {
