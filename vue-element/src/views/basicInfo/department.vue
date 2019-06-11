@@ -116,13 +116,13 @@
     >
       <el-form ref="editDepartmentForm" :model="editDepartmentForm" :rules="rules">
         <el-form-item label="科室ID" prop="departmentId">
-          <el-input v-model="editDepartmentForm.departmentId" auto-complete="off" :disabled="true"/>
+          <el-input v-model="editDepartmentForm.departmentId" auto-complete="off" :disabled="true" />
         </el-form-item>
         <el-form-item label="科室编码" prop="departmentCode">
           <el-input v-model="editDepartmentForm.departmentCode" auto-complete="off" />
         </el-form-item>
         <el-form-item label="科室名称" prop="departmentName">
-          <el-input v-model="editDepartmentForm.departmentName" auto-complete="off"  />
+          <el-input v-model="editDepartmentForm.departmentName" auto-complete="off" />
         </el-form-item>
         <el-form-item v-model="editDepartmentForm.category" label="科室分类" prop="category">
           <!--新增科室对话框中，选择科室分类-->
@@ -152,15 +152,15 @@
 </template>
 
 <script>
-import { fetchConstantMap } from '../../api/constItem'
-import {
-  addDepartment,
-  deleteDepartmentByPrimaryKey,
-  fetchDepartmentList,
-  updateDepartmentByPrimaryKey
-} from '../../api/basicInfo/department'
+  import {fetchConstantMap} from '../../api/constItem'
+  import {
+    addDepartment,
+    deleteDepartmentByPrimaryKey,
+    fetchDepartmentList,
+    updateDepartmentByPrimaryKey
+  } from '../../api/basicInfo/department'
 
-export default {
+  export default {
   data() {
     return {
       // 单选框
@@ -403,13 +403,12 @@ export default {
           this.editDepartmentDialogVisible = false
           // this.departmentForm.category =
           // console.log(this.departmentForm);
-          
-          for (var i = 0; i < this.departmentConstant.length; ++i) {
-            if (this.editDepartmentForm.category == this.departmentConstant[i].constantName)  
-              this.editDepartmentForm.category = this.departmentConstant[i].constantItemId
+
+          for (let i = 0; i < this.departmentConstant.length; ++i) {
+            if (this.editDepartmentForm.category == this.departmentConstant[i].constantName) { this.editDepartmentForm.category = this.departmentConstant[i].constantItemId }
           }
 
-          var updateList = { 
+          var updateList = {
             'departmentId': this.editDepartmentForm.departmentId,
             'category': this.editDepartmentForm.category,
             'departmentCode': this.editDepartmentForm.departmentCode,
@@ -419,7 +418,7 @@ export default {
           updateDepartmentByPrimaryKey(updateList).then(response => {
             console.log('updateDepartmentByPrimaryKey response: ')
             console.log(response)
-            
+
             this.$refs['editDepartmentForm'].resetFields()
             this.selectEditValue = ''
             this.queryDepartmentListWithPage()

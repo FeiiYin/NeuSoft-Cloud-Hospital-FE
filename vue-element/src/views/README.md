@@ -2,7 +2,6 @@
 
 ## 目录结构
 
-
 - basicInfo 3. 基础信息维护
   - department.vue  3.1 科室管理
   - account.vue  3.2 用户管理
