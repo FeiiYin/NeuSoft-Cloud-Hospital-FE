@@ -99,7 +99,9 @@
         <el-col :span="6">
           <h4 style="margin-bottom:2px;">挂号日期</h4>
           <el-form-item >
-            <el-input v-model="registrationForm.registrationDate"></el-input>
+            <el-date-picker type="date" placeholder="选择日期" v-model="registrationForm.registrationDate" 
+              style="width: 100%;">
+            </el-date-picker>
           </el-form-item>  
         </el-col>
         <el-col :span="6">
@@ -130,18 +132,18 @@
         <el-col :span="6">
           <h4 style="margin-bottom:2px;">当前收费员Id</h4>
           <el-form-item >
-            <el-input v-model="registrationForm.collectorId"></el-input>
+            <el-input v-model="registrationForm.collectorId" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <h4 style="margin-bottom:2px;">结算类别</h4>
           <el-form-item>
-            <el-select v-model="registrationForm.registrationSource" placeholder="请选择挂号来源"
+            <el-select v-model="registrationForm.settleAccountsCategory" placeholder="请选择结算类别"
               style="width:100%">
-              <el-option label="医院就诊" value="医院就诊"></el-option>
-              <el-option label="网上挂号" value="网上挂号"></el-option>
+              <el-option label="自费" value="自费"></el-option>
+              <el-option label="医保" value="医保"></el-option>
+              <el-option label="新农合" value="新农合"></el-option>
             </el-select>
-            <el-input v-model="registrationForm.settleAccountsCategory"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -205,7 +207,7 @@ export default {
     // 根据身份证号搜索个人信息
     invokeFetchPatientInfoByIdentifyCardNo(identityCardNo) {
       
-      this.query = { 'identifyCardNO': identityCardNo }
+      this.query = { 'identifyCardNo': identityCardNo }
       alert("diaoyong")
       fetchPatientInfoByIdentifyCardNo(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchPatientInfoByIdentifyCardNo response: ')
