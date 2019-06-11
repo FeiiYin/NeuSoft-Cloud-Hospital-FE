@@ -120,6 +120,22 @@
           <el-form-item >
             <el-input v-model="registrationForm.departmentId"></el-input>
           </el-form-item>
+          <!-- TODO -->
+          <el-select
+            v-model="registrationForm.departmentId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入关键词"
+            :remote-method="remoteMethod"
+            :loading="departmentListLoading">
+            <el-option
+              v-for="item in departmentListOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-col>
         <el-col :span="6">
           <h4 style="margin-bottom:2px;">看诊医生</h4>
@@ -171,6 +187,7 @@
 <script>
 import {
   fetchPatientInfoByIdentifyCardNo,
+  fetchDepartment,
 } from '../../api/registrationCharge/registration'
 
 export default {
@@ -201,7 +218,12 @@ export default {
         familyAddress: '',
         collectorId: '',
         totalCharge: ''
-      }
+      },
+      // 远程搜索的科室列表
+      departmentListOptions: [],
+      departmentList: [],
+      departmentListLoading: false,
+
     }
   }, methods: {
     // 根据身份证号搜索个人信息
@@ -212,6 +234,24 @@ export default {
       fetchPatientInfoByIdentifyCardNo(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchPatientInfoByIdentifyCardNo response: ')
         console.log(response)
+
+        if (true) {
+
+        } else {
+
+        }        
+      }).catch(error => {
+        console.log('fetchPatientInfoByIdentifyCardNo error: ')
+        console.log(error)
+      })
+    },
+    invokefetchDepartment (query) {
+      this.query = { 'identifyCardNo': identityCardNo }
+      alert(identityCardNo)
+      fetchPatientInfoByIdentifyCardNo(this.query).then(response => { // 然后获取科室信息列表
+        console.log('fetchPatientInfoByIdentifyCardNo response: ')
+        console.log(response)
+
         if (true) {
 
         } else {
