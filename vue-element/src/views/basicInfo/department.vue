@@ -150,7 +150,7 @@
 
 <script>
 import { fetchConstantMap } from '../../api/constItem'
-import { addDepartment, deleteDepartmentByPrimaryKey, fetchDepartmentList } from '../../api/basicInfo/department'
+import { addDepartment, deleteDepartmentByPrimaryKey, fetchDepartmentList, updateDepartmentByPrimaryKey } from '../../api/basicInfo/department'
 
 export default {
   data() {
@@ -361,7 +361,6 @@ export default {
           message: this.department_id_list,
           type: 'success'
         })
-
         /**
          * 按主键删除科室信息的请求
          */
@@ -399,6 +398,25 @@ export default {
           this.editDepartmentDialogVisible = false
           // this.departmentForm.category =
           // console.log(this.departmentForm);
+
+
+
+          updateDepartmentByPrimaryKey(this.editDepartmentForm).then(response => {
+            console.log('updateDepartmentByPrimaryKey response: ')
+            console.log(response)
+            
+            
+            var tmp = Math.ceil(this.totalNumber / this.pageSize)
+            this.currentPage = tmp
+            this.$refs['editDepartmentForm'].resetFields()
+            this.selectEditValue = ''
+            this.queryDepartmentListWithPage()
+          }).catch(error => {
+            console.log('addDepartment error: ')
+            console.log(error)
+          })
+
+
           this.$notify({
             title: '成功',
             message: '后台还未写好',
