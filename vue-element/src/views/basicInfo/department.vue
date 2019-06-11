@@ -149,10 +149,10 @@
 </template>
 
 <script>
-  import {fetchConstantMap} from '../../api/constItem'
-  import {addDepartment, deleteDepartmentByPrimaryKey, fetchDepartmentList} from '../../api/basicInfo/department'
+import { fetchConstantMap } from '../../api/constItem'
+import { addDepartment, deleteDepartmentByPrimaryKey, fetchDepartmentList } from '../../api/basicInfo/department'
 
-  export default {
+export default {
   data() {
     return {
       // 单选框
@@ -342,7 +342,7 @@
       })
     },
     openConfirmDeleteMessageBox() {
-      if (this.multipleSelection.length == 0 || this.multipleSelection.length == null) {
+      if (this.multipleSelection.length === 0 || this.multipleSelection.length == null) {
         this.$message.error('请选择您要删除的记录。')
         return
       }

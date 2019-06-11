@@ -11,7 +11,8 @@
   - diagnosis.vue  3.5 诊断目录管理
   - chargeItem.vue  3.6 非药品收费项目管理
   - schedule.vue  3.7 医生排班管理
-  
+- registration 4. 门诊挂号收费
+  - registration.vue 4.1 门诊挂号管理
 - doctorWorkstation 5. 门诊医生工作站
   - index.vue 5.0 管理首页
   - medicine.vue 5.6 成药处方

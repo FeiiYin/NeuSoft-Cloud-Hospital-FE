@@ -35,3 +35,6 @@ npm i vue-element-extends
 ### 路由
 
 `src/router`.
+
+### 命名规范
+
