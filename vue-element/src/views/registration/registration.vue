@@ -138,6 +138,23 @@
             <el-form-item>
               <el-input v-model="registrationForm.departmentId" />
             </el-form-item>
+            <!-- TODO -->
+            <el-select
+              v-model="registrationForm.departmentId"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入关键词"
+              :remote-method="remoteMethod"
+              :loading="departmentListLoading"
+            >
+              <el-option
+                v-for="item in departmentListOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">看诊医生</h4>
@@ -190,9 +207,9 @@
 </template>
 
 <script>
-import { fetchPatientInfoByIdentityCardNo } from '../../api/registrationCharge/registration'
+  import {fetchPatientInfoByIdentityCardNo} from '../../api/registrationCharge/registration'
 
-export default {
+  export default {
   data() {
     return {
       // 病历本是否需要
@@ -220,7 +237,12 @@ export default {
         familyAddress: '',
         collectorId: '',
         totalCharge: ''
-      }
+      },
+      // 远程搜索的科室列表
+      departmentListOptions: [],
+      departmentList: [],
+      departmentListLoading: false
+
     }
   },
   watch: {
@@ -238,11 +260,29 @@ export default {
       fetchPatientInfoByIdentityCardNo(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchPatientInfoByIdentityCardNo response: ')
         console.log(response)
-        if (response.message === 'not found') {
-          // 未找到患者信息，不填充
-          console.log('未找到患者信息')
+
+        if (true) {
+
+        } else {
+
         }
-        // todo else {}
+      }).catch(error => {
+        console.log('fetchPatientInfoByIdentityCardNo error: ')
+        console.log(error)
+      })
+    },
+    invokefetchDepartment(query) {
+      this.query = { 'identityCardNo': identityCardNo }
+      alert(identityCardNo)
+      fetchPatientInfoByIdentityCardNo(this.query).then(response => { // 然后获取科室信息列表
+        console.log('fetchPatientInfoByIdentityCardNo response: ')
+        console.log(response)
+
+        if (true) {
+
+        } else {
+
+        }
       }).catch(error => {
         console.log('fetchPatientInfoByIdentityCardNo error: ')
         console.log(error)
