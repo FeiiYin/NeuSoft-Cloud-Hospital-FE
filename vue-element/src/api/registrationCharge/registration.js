@@ -15,3 +15,19 @@ export function fetchPatientInfoByIdentifyCardNo(identifyCardNo) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+/**
+ * 提交注册信息
+ * @param registration 注册表单
+ */
+export function register(registration) {
+  console.log('register')
+  console.log(registration)
+  return request({
+    url: '/registration/register',
+    method: 'post',
+    params: registration,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
