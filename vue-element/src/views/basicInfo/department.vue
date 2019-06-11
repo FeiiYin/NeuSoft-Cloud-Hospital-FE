@@ -104,7 +104,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDepartmentDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitDepartmentForm('departmentForm')">确 定</el-button>
+        <el-button type="primary" @click="submitAdd('departmentForm')">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -142,7 +142,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDepartmentDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitEditDepartmentForm('editDepartmentForm')">确 定</el-button>
+        <el-button type="primary" @click="submitUpdate('editDepartmentForm')">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -279,7 +279,7 @@ export default {
     // 分页
     queryDepartmentListWithPage() {
       this.listLoading = true // 列表开始加载
-      this.query = { 'current_page': this.currentPage, 'page_size': this.pageSize }
+      this.query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
       fetchDepartmentList(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchDepartmentList response: ')
         console.log(response)
@@ -316,7 +316,7 @@ export default {
     handleClose() {
       this.$message('取消新建条目')
     },
-    submitDepartmentForm(formName) {
+    submitAdd(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addDepartmentDialogVisible = false
@@ -392,7 +392,7 @@ export default {
       this.editDepartmentForm.category = row.category
       this.selectEditValue = row.category
     },
-    submitEditDepartmentForm(formName) {
+    submitUpdate(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.editDepartmentDialogVisible = false
@@ -404,8 +404,7 @@ export default {
           updateDepartmentByPrimaryKey(this.editDepartmentForm).then(response => {
             console.log('updateDepartmentByPrimaryKey response: ')
             console.log(response)
-            
-            
+                        
             var tmp = Math.ceil(this.totalNumber / this.pageSize)
             this.currentPage = tmp
             this.$refs['editDepartmentForm'].resetFields()
