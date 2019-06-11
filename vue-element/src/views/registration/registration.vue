@@ -108,7 +108,12 @@
         <el-col :span="6">
           <h4 style="margin-bottom:2px;">挂号来源</h4>
           <el-form-item >
-            <el-input v-model="registrationForm.registrationSource"></el-input>
+            <el-select v-model="registrationForm.registrationSource" placeholder="请选择挂号来源"
+              style="width:100%">
+              <el-option label="医院就诊" value="医院就诊"></el-option>
+              <el-option label="网上挂号" value="网上挂号"></el-option>
+            </el-select>
+
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -133,7 +138,7 @@
         </el-col>
         <el-col :span="6">
           <h4 style="margin-bottom:2px;">结算类别</h4>
-          <el-form-item >
+          <el-form-item>
             <el-input v-model="registrationForm.settleAccountsCategory"></el-input>
           </el-form-item>
         </el-col>
