@@ -208,11 +208,15 @@ export default {
     invokeFetchPatientInfoByIdentifyCardNo(identityCardNo) {
       
       this.query = { 'identifyCardNo': identityCardNo }
-      alert("diaoyong")
+      alert(identityCardNo)
       fetchPatientInfoByIdentifyCardNo(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchPatientInfoByIdentifyCardNo response: ')
         console.log(response)
-        
+        if (true) {
+
+        } else {
+
+        }        
       }).catch(error => {
         console.log('fetchPatientInfoByIdentifyCardNo error: ')
         console.log(error)
@@ -244,7 +248,7 @@ export default {
     // 如果 身份证输入框 发生改变，这个函数就会运行
     'registrationForm.identityCardNo': function () {
       if (this.registrationForm.identityCardNo.length == 18) {
-        this.invokeFetchPatientInfoByIdentifyCardNo();
+        this.invokeFetchPatientInfoByIdentifyCardNo(this.registrationForm.identityCardNo);
       }
     }  
   }
