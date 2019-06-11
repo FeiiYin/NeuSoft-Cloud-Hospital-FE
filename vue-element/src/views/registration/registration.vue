@@ -165,6 +165,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -192,7 +193,7 @@ export default {
         valid: '',
         familyAddress: '',
         collectorId: '',
-        totalCharge: '',
+        totalCharge: ''
       }
     }
   }
