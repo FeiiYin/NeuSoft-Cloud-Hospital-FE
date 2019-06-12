@@ -30,7 +30,7 @@
       <svg-icon style="display:inline-block;margin-right:20px;margin-top:20px;" icon-class="peoples" />
       个人信息
       <hr>
-      <el-form ref="registrationForm" :model="registrationForm">
+      <el-form ref="registrationForm" :model="registrationForm" :rules="rules">
         <el-form-item label="">
           <el-row :gutter="20">
             <el-col :span="12">
@@ -252,6 +252,13 @@
         doctorId: '',
         doctorName: '',
       }],
+      // 表单限制条件
+      rules: {
+        identityCardNo: [
+          { required: true, message: '请输入身份证号', trigger: 'blur' },
+          { min: 18, max: 18, message: '长度应为 18 个字符', trigger: 'blur' }
+        ],
+      }
     }
   },
   watch: {
