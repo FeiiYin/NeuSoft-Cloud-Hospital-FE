@@ -124,13 +124,13 @@ export const constantRoutes = [
         path: 'registrationListSearch',
         component: () => import('@/views/registration/registrationListSearch'),
         name: 'registrationListSearch',
-        meta: { title: '挂号列表搜索', noCache: true }
+        meta: { title: '门诊挂号管理', noCache: true }
       },
       {
         path: 'registrationCharge',
         component: () => import('@/views/registration/registrationCharge'),
         name: 'registrationCharge',
-        meta: { title: '挂号缴费', noCache: true }
+        meta: { title: '收费', noCache: true }
       },
       {
         path: 'dailyCheck',

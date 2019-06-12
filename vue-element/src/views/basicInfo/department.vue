@@ -58,7 +58,6 @@
         </el-table-column>
       </el-table>
       <div class="block">
-
         <el-pagination
           :current-page="currentPage"
           :page-sizes="[20, 50, 100, 200]"
@@ -232,7 +231,6 @@ export default {
       //   message: this.radioSelect,
       //   type: 'success'
       // });
-
     },
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)

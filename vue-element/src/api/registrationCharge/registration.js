@@ -2,15 +2,15 @@ import request from '@/utils/request'
 
 /**
  * 根据身份证号获取患者信息
- * @param identifyCardNo 身份证号
+ * @param identityCardNo 身份证号
  */
-export function fetchPatientInfoByIdentifyCardNo(identifyCardNo) {
-  console.log('fetchPatientInfoByIdentifyCardNo')
-  console.log(identifyCardNo)
+export function fetchPatientInfoByIdentityCardNo(identityCardNo) {
+  console.log('fetchPatientInfoByIdentityCardNo')
+  console.log(identityCardNo)
   return request({
     url: '/registration/patient_info',
     method: 'get',
-    params: identifyCardNo,
+    params: identityCardNo,
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
@@ -22,7 +22,7 @@ export function fetchPatientInfoByIdentifyCardNo(identifyCardNo) {
 export function fetchDepartment() {
   console.log('fetchDepartment')
   return request({
-    url: '/registration/department_list',
+    url: '/registration/list_department',
     method: 'get',
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
@@ -32,11 +32,13 @@ export function fetchDepartment() {
 /**
  * 获取当前可挂号的医生列表
  */
-export function fetchCurrentAvailableDoctor() {
+export function fetchCurrentAvailableDoctor(departmentIdOfDoctor) {
   console.log('fetchCurrentAvailableDoctor')
+  console.log(departmentIdOfDoctor)
   return request({
-    url: '/registration/doctor_list',
+    url: '/registration/list_doctor',
     method: 'get',
+    params: departmentIdOfDoctor,
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
@@ -50,7 +52,7 @@ export function register(registration) {
   console.log('register')
   console.log(registration)
   return request({
-    url: '/registration/register',
+    url: '/registration/add_registration',
     method: 'post',
     params: registration,
     baseURL: 'http://localhost:8081/cloud-hospital/',
