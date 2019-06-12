@@ -32,11 +32,13 @@ export function fetchDepartment() {
 /**
  * 获取当前可挂号的医生列表
  */
-export function fetchCurrentAvailableDoctor() {
+export function fetchCurrentAvailableDoctor(departmentIdOfDoctor) {
   console.log('fetchCurrentAvailableDoctor')
+  console.log(departmentIdOfDoctor)
   return request({
     url: '/registration/list_doctor',
     method: 'get',
+    params: departmentIdOfDoctor,
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })

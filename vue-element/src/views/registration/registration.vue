@@ -31,7 +31,7 @@
       个人信息
       <hr>
       <el-form ref="registrationForm" :model="registrationForm" :rules="rules">
-        <el-form-item label="">
+        <el-form-item label="" required prop="identityCardNo">
           <el-row :gutter="20">
             <el-col :span="12">
               <h4 style="margin-bottom:2px;">身份证号</h4>
@@ -46,7 +46,7 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">姓名</h4>
-            <el-form-item>
+            <el-form-item required prop="patientName">
               <el-input v-model="registrationForm.patientName" />
             </el-form-item>
           </el-col>
@@ -87,16 +87,16 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号类型</h4>
-            <el-form-item>
+            <el-form-item prop="registrationCategory">
               <el-input v-model="registrationForm.registrationCategory" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <!-- 普通或者城镇职工 -->
             <h4 style="margin-bottom:2px;">医疗类别</h4>
-            <el-form-item>
+            <el-form-item prop="medicalCategory">
               <el-select
-                v-model="registrationForm.settleAccountsCategory"
+                v-model="registrationForm.medicalCategory"
                 placeholder="请选择医疗类别"
                 style="width:100%"
               >
@@ -112,7 +112,7 @@
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">结算类别</h4>
-            <el-form-item>
+            <el-form-item >
               <el-select
                 v-model="registrationForm.settleAccountsCategory"
                 placeholder="请选择结算类别"
@@ -128,7 +128,7 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号日期</h4>
-            <el-form-item>
+            <el-form-item prop="registrationDate">
               <el-date-picker
                 v-model="registrationForm.registrationDate"
                 type="date"
@@ -139,7 +139,7 @@
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号来源</h4>
-            <el-form-item>
+            <el-form-item prop="registrationSource">
               <el-select
                 v-model="registrationForm.registrationSource"
                 placeholder="请选择挂号来源"
@@ -152,7 +152,7 @@
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号科室</h4>
-            <el-form-item>
+            <el-form-item prop="departmentId">
               <el-select
                 v-model="registrationForm.departmentId"
                 filterable
@@ -171,7 +171,7 @@
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">看诊医生</h4>
-            <el-form-item>
+            <el-form-item prop="doctorId">
               <!-- TODO -->
               <el-select
                 v-model="registrationForm.doctorId"
@@ -200,7 +200,7 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">应收金额</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.totalCharge" />
+              <el-input v-model="registrationForm.totalCharge" :disabled="true"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -268,6 +268,30 @@
           { required: true, message: '请输入身份证号', trigger: 'blur' },
           { min: 18, max: 18, message: '长度应为 18 个字符', trigger: 'blur' }
         ],
+        patientName: [
+          { required: true, message: '请输入用户姓名', trigger: 'blur' },
+        ],
+        registrationCategory: [
+          { required: true, message: '请输入挂号类型', trigger: 'blur' },
+        ],
+        medicalCategory: [
+          { required: true, message: '请输入医疗类别', trigger: 'blur' },
+        ],
+        settleAccountsCategory: [
+          { required: true, message: '请输入结算类别', trigger: 'blur' },
+        ],
+        registrationDate: [
+          { required: true, message: '请输入挂号日期', trigger: 'blur' },
+        ],
+        registrationSource: [
+          { required: true, message: '请输入挂号来源', trigger: 'blur' },
+        ],
+        departmentId: [
+          { required: true, message: '请输入挂号科室', trigger: 'blur' },
+        ],
+        doctorId: [
+          { required: true, message: '请输入看诊医生', trigger: 'blur' },
+        ],
       }
     }
   },
@@ -317,7 +341,6 @@
     // 科室选择改变，医生列表改变，可以选择
     departmentSelectionChange(departmentIdOfDoctor) {
       this.boolDepartmentSelectionChange = false
-      // TODO!!
       this.query = {'departmentId': departmentIdOfDoctor}
       fetchCurrentAvailableDoctor(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchCurrentAvailableDoctor response: ')
@@ -330,38 +353,46 @@
     },
     // 提交挂号表单
     submitRegisterForm() {
-      var query = {
-        'registrationId': this.registrationForm.registrationId,
-        'patientName': this.registrationForm.patientName,
-        'gender': this.registrationForm.gender,
-        'age': this.registrationForm.age,
-        'birthday': this.registrationForm.birthday,
-        'registrationCategory': this.registrationCategory.registrationCategory,
-        'medicalCategory': this.registrationForm.medicalCategory,
-        'identityCardNo': this.registrationForm.identityCardNo,
-        'registrationStatus': this.registrationForm.registrationStatus,
-        'visitDate': this.registrationForm.visitDate,
-        'registrationDate': this.registrationForm.registrationDate,
-        'departmentId': this.registrationForm.departmentId,
-        'doctorId': this.registrationForm.doctorId,
-        'registrationSource': this.registrationForm.registrationSource,
-        'settleAccountsCategory': this.registrationForm.settleAccountsCategory,
-        'isVisited': this.registrationForm.isVisited,
-        'familyAddress': this.registrationForm.familyAddress,
-        'collectorId': this.registrationForm.collectorId
-      }
-      register(query).then(response => {
-        console.log('register response: ')
-        console.log(response)
-        this.$notify({
-          title: '成功',
-          message: '提交挂号表单成功',
-          type: 'success'
-        })
-      }).catch(error => {
-        console.log('register error: ')
-        console.log(error)
-      })
+      this.$refs['registrationForm'].validate((valid) => {
+        if (valid) {
+          console.log('register valid passed ')
+          var query = {
+            'registrationId': this.registrationForm.registrationId,
+            'patientName': this.registrationForm.patientName,
+            'gender': this.registrationForm.gender,
+            'age': this.registrationForm.age,
+            'birthday': this.registrationForm.birthday,
+            'registrationCategory': this.registrationForm.registrationCategory,
+            'medicalCategory': this.registrationForm.medicalCategory,
+            'identityCardNo': this.registrationForm.identityCardNo,
+            'registrationStatus': this.registrationForm.registrationStatus,
+            'visitDate': this.registrationForm.visitDate,
+            'registrationDate': this.registrationForm.registrationDate,
+            'departmentId': this.registrationForm.departmentId,
+            'doctorId': this.registrationForm.doctorId,
+            'registrationSource': this.registrationForm.registrationSource,
+            'settleAccountsCategory': this.registrationForm.settleAccountsCategory,
+            'isVisited': this.registrationForm.isVisited,
+            'familyAddress': this.registrationForm.familyAddress,
+            'collectorId': this.registrationForm.collectorId
+          }
+          register(query).then(response => {
+            console.log('register response: ')
+            console.log(response)
+            this.$notify({
+              title: '成功',
+              message: '提交挂号表单成功',
+              type: 'success'
+            })
+          }).catch(error => {
+            console.log('register error: ')
+            console.log(error)
+          })
+        } else {
+          console.log('error register!!')
+          return
+        }
+      })      
     },
     // 清空表单
     resetForm() {
@@ -381,7 +412,7 @@
       this.registrationForm.registrationSource = ''
       this.registrationForm.settleAccountsCategory = ''
       this.registrationForm.familyAddress = ''
-      this.registrationForm.collectorId = ''
+      // this.registrationForm.collectorId = ''
       this.registrationForm.totalCharge = ''
     }
   }

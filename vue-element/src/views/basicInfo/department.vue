@@ -231,7 +231,6 @@
       //   message: this.radioSelect,
       //   type: 'success'
       // });
-
     },
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)
