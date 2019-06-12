@@ -85,6 +85,12 @@ export const constantRoutes = [
         meta: { title: '科室管理', noCache: true }
       },
       {
+        path: 'account',
+        component: () => import('@/views/basicInfo/account'),
+        name: 'account',
+        meta: { title: '用户管理', noCache: true }
+      },
+      {
         path: 'diagnosis',
         component: () => import('@/views/basicInfo/diagnosis'),
         name: 'diagnosis',
