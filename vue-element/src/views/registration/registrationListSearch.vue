@@ -102,7 +102,23 @@ export default {
       this.queryRegistrationListWithPage()
     },
     queryRegistrationListWithPage() {
-      fetchRegistrationList()
+      var query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
+      fetchRegistrationList()(query).then(response => { // 然后获取科室信息列表
+        console.log('fetchPatientInfoByIdentityCardNo response: ')
+        console.log(response)
+        if (response.message === 'not found') {
+          return
+        } else {
+          this.registrationForm.patientName = response.data.patientName
+          this.registrationForm.gender = response.data.gender
+          this.registrationForm.age = response.data.age
+          this.registrationForm.birthday = response.data.birthDate
+          this.registrationForm.familyAddress = response.data.familyAddress
+        }
+      }).catch(error => {
+        console.log('fetchPatientInfoByIdentityCardNo error: ')
+        console.log(error)
+      })
     },
   }
 }

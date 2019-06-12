@@ -329,7 +329,7 @@
           this.registrationForm.patientName = response.data.patientName
           this.registrationForm.gender = response.data.gender
           this.registrationForm.age = response.data.age
-          this.registrationForm.birthday = response.data.birthDate
+          this.registrationForm.birthday = new Date(response.data.birthDate.substring(0, 10))
           this.registrationForm.familyAddress = response.data.familyAddress
         }
       }).catch(error => {
@@ -388,7 +388,7 @@
             'gender': this.registrationForm.gender,
             'age': this.registrationForm.age,
             // format
-            'birthday': this.registrationForm.birthday.substring(0, 10),
+            'birthday': this.registrationForm.birthday.Format("yyyy-MM-dd"),
             'registrationCategory': this.registrationForm.registrationCategory,
             'medicalCategory': this.registrationForm.medicalCategory,
             'identityCardNo': this.registrationForm.identityCardNo,
