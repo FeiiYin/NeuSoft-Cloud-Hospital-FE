@@ -15,16 +15,13 @@
           />
         </el-col>
         <el-col :span="7">
-          <el-button type="primary" icon="document" @click="true">
+          <el-button style="float:right">
+            预约
+          </el-button>
+          <el-button type="primary" icon="document" style="float:right;margin-right:20px">
             <svg-icon icon-class="documentation" />
             挂号
-          </el-button>
-          <el-button @click="true">
-            预约选择
-          </el-button>
-          <el-button icon="document" @click="true">
-            补收挂号费
-          </el-button>
+          </el-button>          
         </el-col>
       </el-row>
       <svg-icon style="display:inline-block;margin-right:20px;margin-top:20px;" icon-class="peoples" />
@@ -65,7 +62,7 @@
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">年龄</h4>
-            <el-form-item>
+            <el-form-item prop="age">
               <el-input v-model="registrationForm.age" />
             </el-form-item>
           </el-col>
@@ -88,7 +85,16 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号类型</h4>
             <el-form-item prop="registrationCategory">
-              <el-input v-model="registrationForm.registrationCategory" />
+              <el-select
+                v-model="registrationForm.registrationCategory"
+                filterable
+                placeholder="请选择"
+                style="width:100%;"
+              >
+                <el-option label="普通挂号" value="普通挂号" />
+                <el-option label="急诊挂号" value="急诊挂号" />
+                <el-option label="专家挂号" value="专家挂号" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -181,7 +187,7 @@
                 :disabled="boolDepartmentSelectionChange"
               >
                 <el-option
-                  v-for="item in departmentListOptions"
+                  v-for="item in doctorListOptions"
                   :key="item.doctorId"
                   :label="item.doctorName"
                   :value="item.doctorId"
@@ -292,6 +298,9 @@
         doctorId: [
           { required: true, message: '请输入看诊医生', trigger: 'blur' },
         ],
+        age: [
+          { required: true, message: '请输入年龄', trigger: 'blur' },
+        ],
       }
     }
   },
@@ -356,18 +365,37 @@
       this.$refs['registrationForm'].validate((valid) => {
         if (valid) {
           console.log('register valid passed ')
+          // date 格式化
+          Date.prototype.Format = function (fmt) { 
+              let o = {
+                  "M+": this.getMonth() + 1, //月份
+                  "d+": this.getDate(), //日
+                  "h+": this.getHours(), //小时
+                  "m+": this.getMinutes(), //分
+                  "s+": this.getSeconds(), //秒
+                  "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                  "S": this.getMilliseconds() //毫秒
+              };
+              if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+              for (let k in o)
+                  if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+              return fmt;
+          };
+
           var query = {
             'registrationId': this.registrationForm.registrationId,
             'patientName': this.registrationForm.patientName,
             'gender': this.registrationForm.gender,
             'age': this.registrationForm.age,
-            'birthday': this.registrationForm.birthday,
+            // format
+            'birthday': this.registrationForm.birthday.substring(0, 10),
             'registrationCategory': this.registrationForm.registrationCategory,
             'medicalCategory': this.registrationForm.medicalCategory,
             'identityCardNo': this.registrationForm.identityCardNo,
             'registrationStatus': this.registrationForm.registrationStatus,
-            'visitDate': this.registrationForm.visitDate,
-            'registrationDate': this.registrationForm.registrationDate,
+            // 'visitDate': this.registrationForm.visitDate,
+            // 1998-07-29 
+            'registrationDate': this.registrationForm.registrationDate.Format("yyyy-MM-dd"),
             'departmentId': this.registrationForm.departmentId,
             'doctorId': this.registrationForm.doctorId,
             'registrationSource': this.registrationForm.registrationSource,
@@ -413,8 +441,8 @@
       this.registrationForm.settleAccountsCategory = ''
       this.registrationForm.familyAddress = ''
       // this.registrationForm.collectorId = ''
-      this.registrationForm.totalCharge = ''
-    }
+      // this.registrationForm.totalCharge = ''
+    },
   }
 }
 </script>
