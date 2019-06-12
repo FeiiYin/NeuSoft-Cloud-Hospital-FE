@@ -153,29 +153,39 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号科室</h4>
             <el-form-item>
-              <el-select v-model="registrationForm.departmentId" filterable placeholder="请选择"
-                style="width:100%;" @change="departmentSelectionChange">
+              <el-select
+                v-model="registrationForm.departmentId"
+                filterable
+                placeholder="请选择"
+                style="width:100%;"
+                @change="departmentSelectionChange"
+              >
                 <el-option
                   v-for="item in departmentListOptions"
                   :key="item.departmentId"
                   :label="item.departmentName"
-                  :value="item.departmentId">
-                </el-option>
+                  :value="item.departmentId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">看诊医生</h4>
-            <el-form-item>  
+            <el-form-item>
               <!-- TODO -->
-              <el-select v-model="registrationForm.doctorId" filterable placeholder="请选择"
-                style="width:100%;" :disabled="boolDepartmentSelectionChange">
+              <el-select
+                v-model="registrationForm.doctorId"
+                filterable
+                placeholder="请选择"
+                style="width:100%;"
+                :disabled="boolDepartmentSelectionChange"
+              >
                 <el-option
                   v-for="item in departmentListOptions"
                   :key="item.doctorId"
                   :label="item.doctorName"
-                  :value="item.doctorId">
-                </el-option>
+                  :value="item.doctorId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -206,9 +216,9 @@
 
 <script>
   import {
-    fetchPatientInfoByIdentityCardNo,
-    fetchDepartment,
     fetchCurrentAvailableDoctor,
+    fetchDepartment,
+    fetchPatientInfoByIdentityCardNo,
     register
   } from '../../api/registrationCharge/registration'
 
@@ -244,14 +254,14 @@
       // 远程搜索的科室列表
       departmentListOptions: [{
         departmentId: '',
-        departmentName: '',
+        departmentName: ''
       }],
       // 远程搜索的医生列表
       boolDepartmentSelectionChange: true,
       doctorListOptions: [{
         doctorId: '',
-        doctorName: '',
-      }],
+        doctorName: ''
+      }]
     }
   },
   watch: {
@@ -263,7 +273,7 @@
     }
   },
   created() {
-    this.invokefetchDepartment()
+    this.invokeFetchDepartment()
   },
   methods: {
     // 根据身份证号搜索个人信息
@@ -273,7 +283,7 @@
       fetchPatientInfoByIdentityCardNo(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchPatientInfoByIdentityCardNo response: ')
         console.log(response)
-        if (response.message === "not found") {
+        if (response.message === 'not found') {
           return
         } else {
           this.registrationForm.patientName = response.data.patientName
@@ -287,7 +297,7 @@
         console.log(error)
       })
     },
-    invokefetchDepartment() {
+    invokeFetchDepartment() {
       fetchDepartment().then(response => { // 然后获取科室信息列表
         console.log('fetchDepartment response: ')
         console.log(response)
@@ -298,10 +308,10 @@
       })
     },
     // 科室选择改变，医生列表改变，可以选择
-    departmentSelectionChange(val) {
+    departmentSelectionChange(departmentIdOfDoctor) {
       this.boolDepartmentSelectionChange = false
       // TODO!!
-      this.query = { 'departmentId': val }
+      this.query = {'departmentId': departmentIdOfDoctor}
       fetchCurrentAvailableDoctor(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchCurrentAvailableDoctor response: ')
         console.log(response)
@@ -312,7 +322,7 @@
       })
     },
     // 提交挂号表单
-    submitRegisterForm () {
+    submitRegisterForm() {
       var query = {
         'registrationId': this.registrationForm.registrationId,
         'patientName': this.registrationForm.patientName,
@@ -323,7 +333,7 @@
         'medicalCategory': this.registrationForm.medicalCategory,
         'identityCardNo': this.registrationForm.identityCardNo,
         'registrationStatus': this.registrationForm.registrationStatus,
-        'visitDate': this.registrationForm.visitDate, 
+        'visitDate': this.registrationForm.visitDate,
         'registrationDate': this.registrationForm.registrationDate,
         'departmentId': this.registrationForm.departmentId,
         'doctorId': this.registrationForm.doctorId,
@@ -340,7 +350,7 @@
           title: '成功',
           message: '提交挂号表单成功',
           type: 'success'
-        });
+        })
       }).catch(error => {
         console.log('register error: ')
         console.log(error)
