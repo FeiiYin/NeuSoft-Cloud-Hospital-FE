@@ -89,7 +89,7 @@
         :visible.sync="addUserDataDialogVisible"
         width="30%"
       >
-        <el-form ref="addUserForm" :model="addUserForm" :rules="rules">
+        <el-form ref="addUserForm" :model="addUserForm" :rules="rules" label-position="top">
           <el-form-item label="登录名" prop="userName">
             <el-input v-model="addUserForm.username" auto-complete="off" />
           </el-form-item>
@@ -154,12 +154,12 @@
         :visible.sync="editUserDataDialogVisible"
         width="30%"
       >
-        <el-form ref="editUserForm" :model="editUserForm" :rules="rules">
+        <el-form ref="editUserForm" :model="editUserForm" :rules="rules" label-position="top">
           <el-form-item label="登录名" prop="userName">
-            <el-input v-model="editUserForm.userName" auto-complete="off" :disabled="true" />
+            <el-input v-model="editUserForm.userName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input v-model="editUserForm.passWord" auto-complete="off" />
+            <el-input v-model="editUserForm.passWord" auto-complete="off" show-password />
           </el-form-item>
           <el-form-item label="真实姓名" prop="realName">
             <el-input v-model="editUserForm.realName" auto-complete="off" />
@@ -238,7 +238,7 @@ export default {
       totalNumber: 1,
       checkList: '',
       listLoading: false, // 用户列表加载状态
-      ifWorkRadio: '1', // 单选器
+      ifWorkRadio: '', // 单选器
       // 修改
       selectEditValue1: '', // 选择人员类别
       selectEditValue2: '', // 选择用户所在科室
