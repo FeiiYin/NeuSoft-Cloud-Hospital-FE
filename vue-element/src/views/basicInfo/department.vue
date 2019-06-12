@@ -300,7 +300,7 @@ export default {
         const departmentConstantLen = this.departmentConstant.length
         for (let i = 0; i < departmentTableLen; ++i) {
           for (let j = 0; j < departmentConstantLen; ++j) {
-            if (this.departmentConstant[j].constantItemId == this.departmentTableData[i].category) {
+            if (this.departmentConstant[j].constantItemId === this.departmentTableData[i].category) {
               this.departmentTableData[i].category = this.departmentConstant[j].constantName
               break
             }
