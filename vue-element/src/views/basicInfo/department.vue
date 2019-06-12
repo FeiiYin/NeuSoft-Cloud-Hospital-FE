@@ -152,15 +152,15 @@
 </template>
 
 <script>
-  import {fetchConstantMap} from '../../api/constItem'
-  import {
-    addDepartment,
-    deleteDepartmentByPrimaryKey,
-    fetchDepartmentList,
-    updateDepartmentByPrimaryKey
-  } from '../../api/basicInfo/department'
+import { fetchConstantMap } from '../../api/constItem'
+import {
+  addDepartment,
+  deleteDepartmentByPrimaryKey,
+  fetchDepartmentList,
+  updateDepartmentByPrimaryKey
+} from '../../api/basicInfo/department'
 
-  export default {
+export default {
   data() {
     return {
       // 单选框
@@ -300,7 +300,7 @@
         const departmentConstantLen = this.departmentConstant.length
         for (let i = 0; i < departmentTableLen; ++i) {
           for (let j = 0; j < departmentConstantLen; ++j) {
-            if (this.departmentConstant[j].constantItemId === this.departmentTableData[i].category) {
+            if (this.departmentConstant[j].constantItemId == this.departmentTableData[i].category) {
               this.departmentTableData[i].category = this.departmentConstant[j].constantName
               break
             }
