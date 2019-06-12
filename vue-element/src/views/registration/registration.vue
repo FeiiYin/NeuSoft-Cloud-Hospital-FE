@@ -407,14 +407,24 @@
           register(query).then(response => {
             console.log('register response: ')
             console.log(response)
+            
             this.$notify({
               title: '成功',
-              message: '提交挂号表单成功',
+              message: '挂号成功',
               type: 'success'
+            })
+            this.resetForm()
+            const { fullPath } = this.$route
+            this.$router.replace({
+              path: '/redirect' + "/registration/registrationListSearch"
             })
           }).catch(error => {
             console.log('register error: ')
             console.log(error)
+            this.$notify.error({
+              title: '错误',
+              message: '挂号失败！'
+            }); 
           })
         } else {
           console.log('error register!!')

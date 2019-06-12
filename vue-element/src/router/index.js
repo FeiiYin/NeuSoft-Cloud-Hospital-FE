@@ -124,7 +124,7 @@ export const constantRoutes = [
         path: 'registrationCharge',
         component: () => import('@/views/registration/registrationCharge'),
         name: 'registrationCharge',
-        meta: { title: '挂号缴费', noCache: true }
+        meta: { title: '收费', noCache: true }
       },
       {
         path: 'dailyCheck',
