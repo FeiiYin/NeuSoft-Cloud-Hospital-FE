@@ -15,7 +15,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="6">
-        <el-button @click="true">取消</el-button>
+        <el-button @click="toggleSelection()">取消</el-button>
         <el-button @click="addUserDataDialogVisible = true">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>
@@ -26,7 +26,7 @@
         v-loading="listLoading"
         :data="userTableData"
         border
-        @selection-change="true"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="35px" />
         <el-table-column
@@ -63,10 +63,10 @@
           label="编辑"
           width="100px"
         >
-          <template>
+          <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="editUserDataDialogVisible = true"
+              @click="editUserDataFormFunction(scope.$index, scope.row)"
             >
               <i class="el-icon-edit" />
             </el-button>
@@ -138,9 +138,9 @@
               </el-select>
             </template>
           </el-form-item>
-          <el-form-item label="是否参与排班" prop="ifWork">
-            <el-radio v-model="ifWorkRadio" label="1">是</el-radio>
-            <el-radio v-model="ifWorkRadio" label="2">否</el-radio>
+          <el-form-item label="是否参与排班" prop="ifWork_Add">
+            <el-radio v-model="ifWorkRadio_Add" label="1">是</el-radio>
+            <el-radio v-model="ifWorkRadio_Add" label="2">否</el-radio>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -211,7 +211,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editUserDataDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitUpdate('editDepartmentForm')">确 定</el-button>
+          <el-button type="primary" @click="submitUpdate('editDepartmentForm')">确 定 修 改</el-button>
         </span>
       </el-dialog>
     </div>
@@ -239,6 +239,7 @@ export default {
       checkList: '',
       listLoading: false, // 用户列表加载状态
       ifWorkRadio: '', // 单选器
+      ifWorkRadio_Add: '',
       // 修改
       selectEditValue1: '', // 选择人员类别
       selectEditValue2: '', // 选择用户所在科室
@@ -251,7 +252,7 @@ export default {
         userDepartmentName: '',
         userType: '',
         jobTitle: '',
-        ifWork: '',
+        ifWork_Add: '',
         edit: ''
       },
       editUserDataDialogVisible: false, // 修改用户表单可见
@@ -344,7 +345,13 @@ export default {
       },
       // 用户表格数据
       userTableData: [{
-
+        userName: 'cxk',
+        passWord: '12345',
+        realName: 'cxk',
+        userDepartmentName: '外科',
+        userType: '医生',
+        jobTitle: '主任',
+        ifWork: '否'
       },
       {
 
@@ -355,7 +362,40 @@ export default {
       {
 
       }
-      ]
+      ],
+      multipleSelection: []
+    }
+  },
+  methods: {
+    editUserDataFormFunction(index, row) {
+      this.editUserDataDialogVisible = true
+      this.editUserForm.userName = row.userName
+      this.editUserForm.passWord = row.passWord
+      this.editUserForm.realName = row.realName
+      this.selectEditValue1 = row.userDepartmentName
+      this.selectEditValue2 = row.userType
+      this.selectEditValue3 = row.jobTitle
+      if (row.ifWork === '是') {
+        this.ifWorkRadio = '1'
+      } else {
+        this.ifWorkRadio = '2'
+      }
+    },
+    forceChange(val) {
+      this.$set(this.departmentForm, 'category', val)
+      this.$set(this.editDepartmentForm, 'category', val)
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     }
   }
 }
