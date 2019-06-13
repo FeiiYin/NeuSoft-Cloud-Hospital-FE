@@ -54,10 +54,10 @@
         新增
       </el-button>
     </aside>
-    <el-table :data="chargeForm" style="width: 100%" 
+    <el-table :data="chargeFormTableList" style="width: 100%" 
       @selection-change="handleSelectionChange" v-loading="chargeFormTableLoading">
       <el-table-column type="selection" width="55">
-    </el-table-column>
+      </el-table-column>
       <el-table-column  prop="chargeItemId" label="消费项目" sortable>
       </el-table-column>
       <el-table-column  prop="chargeItemId" label="规格" >
@@ -133,22 +133,42 @@
     <!--新增条目的对话框-->
     <el-dialog title="新增项目" :visible.sync="addChargeFormVisible" width="30%">
       <el-form ref="editDepartmentForm" :model="addChargeForm" :rules="rules">
-        <el-form-item label="项目名称" prop="departmentId">
+        <el-form-item label="科室名称" prop="departmentId">
           <!--新增科室对话框中，选择科室分类-->
           <template>
-            <!-- <el-select
+            <el-select
+              v-model="addChargeForm.departmentId"
+              filterable
+              placeholder="请选择"
+              @change="forceChange"
+              width="100%"
+              >
+              <el-option
+                v-for="item in departmentList"
+                :key="item.departmentId"
+                :label="item.departmentName"
+                :value="item.departmentId"
+              />
+            </el-select> 
+          </template>       
+        </el-form-item>
+        <el-form-item label="项目名称" prop="name">
+          <template>
+            <el-select
               v-model="addChargeForm.name"
               filterable
               placeholder="请选择"
-              @change="forceChange" >
+              width="100%"
+              :disabled="addChargeFormDisableBool"
+              >
               <el-option
-                v-for="item in departmentConstant"
-                :key="item.constantItemId"
-                :label="item.constantName"
-                :value="item.constantItemId"
+                v-for="item in chargeItemList"
+                :key="item.departmentId"
+                :label="item.departmentName"
+                :value="item.departmentId"
               />
-            </el-select> -->
-          </template>          
+            </el-select> 
+          </template>       
         </el-form-item>
         <el-form-item label="数量" prop="number">
           <el-input v-model="addChargeForm.number" auto-complete="off" />
@@ -166,8 +186,16 @@
 
 import {
   selectRegistrationByPrimaryKey,
-  selectChargeForm,
 } from '../../api/registrationCharge/registration'
+
+import {
+  selectChargeForm,
+  selectChargeItemByDepartmentId,
+} from '../../api/registrationCharge/chargeForm'
+
+import {
+  fetchDepartmentList,
+} from '../../api/basicInfo/department'
 
 export default {
   data() {
@@ -209,7 +237,8 @@ export default {
         doctorId: '',
         collectorId: '',
         notGivenNums: '',
-      },  
+      },
+      chargeFormTableList: [],
       multipleSelectionChargeFormTable: [],
       chargeFormTableLoading: false,    
       // 总共金额
@@ -250,9 +279,14 @@ export default {
       }],
       // 新增条目
       addChargeForm: {
+        departmentId: '',
         name: '',
         number: '',
       },
+      addChargeFormDisableBool: true,
+      // 选择器科室常量
+      departmentList: [],
+      chargeItemList: [],
       // 规范
       // 提交验证
       rules: {
@@ -266,6 +300,9 @@ export default {
       pageSize: 50,
       totalNumber: 0,
     }
+  },
+  created() {
+    this.getDepartmentList()
   },
   methods: {
     // 根据病历号 registrationId 返回整条registration记录
@@ -302,8 +339,8 @@ export default {
       selectChargeForm(query).then(response => {
         console.log('selectChargeForm response: ')
         console.log(response)
-        this.registrationList = response.data.list
-        this.totalNumber = response.data.total        
+        this.chargeFormTableList = response.data.list
+        this.totalNumber = response.data.total     
         this.chargeFormTableLoading = false
       }).catch(error => {
         console.log('selectChargeForm error: ')
@@ -365,7 +402,35 @@ export default {
     // 表的多级选择
     handleSelectionChange(val) {
       this.multipleSelectionChargeFormTable = val
-    }
+    },
+    getDepartmentList() {
+      var query = { 'currentPage': 1, 'pageSize': 400 }
+      fetchDepartmentList(query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentList = response.data.list
+      }).catch(error => {
+        console.log('fetchDepartmentList error: ')
+        console.log(error)
+      })
+    },
+    // 新增顺序控制
+    forceChange() {
+      this.addChargeFormDisableBool = false
+      this.getItemList()
+    },
+    getItemList() {
+      var query = { 'departmentId': this.addChargeForm.departmentId }
+      selectChargeItemByDepartmentId(query).then(response => {
+        console.log('selectChargeItemByDepartmentId response: ')
+        console.log(response)
+        this.chargeItemList = response.data.list
+      }).catch(error => {
+        console.log('selectChargeItemByDepartmentId error: ')
+        console.log(error)
+      })
+    },
+    
   }
 }
 </script>

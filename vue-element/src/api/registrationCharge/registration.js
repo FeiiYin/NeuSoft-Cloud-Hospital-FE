@@ -75,19 +75,3 @@ export function selectRegistrationByPrimaryKey(registrationId) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
-
-/**
- * 按挂号编号获取受费条目
- * @param query 病历号，页面
- */
-export function selectChargeForm(query) {
-  console.log('selectChargeForm')
-  console.log(query)
-  return request({
-    url: '/registration/charge_form',
-    method: 'get',
-    params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
-    contentType: 'application/x-wwww-form-urlencoded'
-  })
-}
