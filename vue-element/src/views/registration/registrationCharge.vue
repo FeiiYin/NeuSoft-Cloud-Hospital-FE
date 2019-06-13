@@ -23,8 +23,8 @@
             <el-form-item label="姓名">
               <el-input v-model="registrationForm.patientName" :disabled="true" />
             </el-form-item>
-            <el-form-item label="结算类别">
-              <el-input v-model="registrationForm.settleAccountsCategory" :disabled="true" />
+            <el-form-item label="挂号类别">
+              <el-input v-model="registrationForm.registrationCategory" :disabled="true" />
             </el-form-item>
           </div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light">
@@ -47,7 +47,7 @@
       </el-form>
     </div>
     <aside style="height:50px;">
-      <el-button type="info" style="float:right">
+      <el-button type="info" style="float:right" @click="invokeDeleteChargeItemInForm">
         删除
       </el-button>
       <el-button type="primary" style="float:right;margin-right:20px;" @click="addChargeFormVisible = true">
@@ -58,19 +58,19 @@
       @selection-change="handleSelectionChange" v-loading="chargeFormTableLoading">
       <el-table-column type="selection" width="55">
       </el-table-column>
-      <el-table-column  prop="chargeItemId" label="消费项目" sortable>
+      <el-table-column  prop="reserve3" label="名称" sortable>
       </el-table-column>
-      <el-table-column  prop="chargeItemId" label="规格" >
+      <el-table-column  prop="reserve1" label="规格" >
       </el-table-column>
-      <el-table-column  prop="chargeItemId" label="单价" >
+      <el-table-column  prop="reserve2" label="单价" >
       </el-table-column>
-      <el-table-column  prop="chargeItemId" label="数量" >
+      <el-table-column  prop="itemCount" label="数量" >
       </el-table-column>
-      <el-table-column  prop="chargeItemId" label="单位" >
+      <el-table-column  prop="reserve1" label="单位" >
       </el-table-column>
-      <el-table-column  prop="chargeItemId" label="金额" >
+      <el-table-column  prop="totalMoney" label="金额" >
       </el-table-column>
-      <el-table-column  prop="chargeItemId" label="执行科室">
+      <el-table-column  prop="departmentName" label="执行科室">
       </el-table-column>
     </el-table>
     <!-- 分页 -->
@@ -87,15 +87,17 @@
     </div>
 
     <aside style="height:60px;">
-      <span>总共金额： </span>
-      <el-input v-model="total_money" :disabled="true" style="width:20%" />
+      <span>总计金额： 
+        <svg-icon icon-class="money" />
+      </span>
+      <el-input v-model="totalListMoney" :disabled="true" style="width:20%" />
 
       <el-button type="info" style="float:right">
         <i class="el-icon-printer" />
         打印发票
       </el-button>
       <el-button type="primary" style="float:right;margin-right:20px;"
-        @click="dialogFormVisible=true">
+        @click="openChargeFormDialog()">
         <svg-icon icon-class="money" />
         交费
       </el-button>
@@ -126,13 +128,13 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="charge()">确 定</el-button>
+        <el-button type="primary" @click="invokeChargeSubmit()">确 定</el-button>
       </div>
     </el-dialog>
 
     <!--新增条目的对话框-->
     <el-dialog title="新增项目" :visible.sync="addChargeFormVisible" width="30%">
-      <el-form ref="editDepartmentForm" :model="addChargeForm" :rules="rules">
+      <el-form ref="addChargeForm" :model="addChargeForm" :rules="rules">
         <el-form-item label="科室名称" prop="departmentId">
           <!--新增科室对话框中，选择科室分类-->
           <template>
@@ -163,9 +165,9 @@
               >
               <el-option
                 v-for="item in chargeItemList"
-                :key="item.departmentId"
-                :label="item.departmentName"
-                :value="item.departmentId"
+                :key="item.chargeItemId"
+                :label="item.nameZh"
+                :value="item.chargeItemId"
               />
             </el-select> 
           </template>       
@@ -176,14 +178,13 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addChargeFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitUpdate('editDepartmentForm')">确 定</el-button>
+        <el-button type="primary" @click="invokeAddChargeItem('addChargeForm')">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-
 import {
   selectRegistrationByPrimaryKey,
 } from '../../api/registrationCharge/registration'
@@ -191,6 +192,9 @@ import {
 import {
   selectChargeForm,
   selectChargeItemByDepartmentId,
+  addChargeItemToForm,
+  deleteChargeItemInForm,
+  payBill,
 } from '../../api/registrationCharge/chargeForm'
 
 import {
@@ -242,12 +246,12 @@ export default {
       multipleSelectionChargeFormTable: [],
       chargeFormTableLoading: false,    
       // 总共金额
-      total_money: '600.00',
+      totalListMoney: '0.00',
       // 充值金额
       charge_form: {
-        should_charge: '',
-        actual_charge: '',
-        actual_exchange: ''
+        should_charge: 0,
+        actual_charge: 0,
+        actual_exchange: 0
       },
       // 选择支付方式
       options: [{
@@ -284,15 +288,21 @@ export default {
         number: '',
       },
       addChargeFormDisableBool: true,
+      collectorId: 1001,
       // 选择器科室常量
       departmentList: [],
       chargeItemList: [],
       // 规范
       // 提交验证
       rules: {
-        departmentCode: [
-          { required: true, message: '请输入科室编码', trigger: 'blur' },
-          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        departmentId: [
+          { required: true, message: '请选择', trigger: 'blur' },
+        ],
+        name: [
+          { required: true, message: '请选择', trigger: 'blur' },
+        ],
+        number: [
+          { required: true, message: '请输入', trigger: 'blur' },
         ]
       },
       // 分页
@@ -303,6 +313,15 @@ export default {
   },
   created() {
     this.getDepartmentList()
+  },
+  watch: {
+    'charge_form.actual_charge': function() {
+      if (this.charge_form.actual_charge > this.charge_form.should_charge) {
+        this.charge_form.actual_exchange = this.charge_form.actual_charge - this.charge_form.should_charge
+      } else {
+        this.charge_form.actual_exchange = 0
+      }
+    }
   },
   methods: {
     // 根据病历号 registrationId 返回整条registration记录
@@ -320,6 +339,8 @@ export default {
             type: 'success'
           });
           this.registrationForm = response.data
+          this.registrationForm.departmentId = response.data.reserve1
+          this.registrationForm.doctorId = response.data.reserve2
           this.invokeFetchChargeItemListWithRegistrationId()
         }
       }).catch(error => {
@@ -327,21 +348,33 @@ export default {
         console.log(error)
       })
     },
-    // 根据 病历号 获取当前所有对应条目
-    // TODO
+    // 根据 病历号 获取当前所有对应条目 所有未交费条目
     invokeFetchChargeItemListWithRegistrationId() {
       this.chargeFormTableLoading = true;
       var query = {
         'currentPage': this.currentPage, 
         'pageSize': this.pageSize,
         'registrationId' : this.registrationForm.registrationId, 
-      }
+        'chargeFormCategory': 0 // 未完成支付
+      }      
       selectChargeForm(query).then(response => {
         console.log('selectChargeForm response: ')
         console.log(response)
+        this.totalListMoney = 0
         this.chargeFormTableList = response.data.list
-        this.totalNumber = response.data.total     
-        this.chargeFormTableLoading = false
+        for (var i = 0; i < this.chargeFormTableList.length; ++i) {
+          this.chargeFormTableList[i].totalMoney = this.chargeFormTableList[i].itemCount * this.chargeFormTableList[i].reserve2
+          this.totalListMoney += this.chargeFormTableList[i].totalMoney
+          // this.chargeFormTableList[i].chargeItemId = this.chargeFormTableList[i].reserve3
+          for (var j = 0; j < this.departmentList.length; ++j) {
+            if (this.departmentList[j].departmentId == this.chargeFormTableList[i].departmentId)
+              this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName
+          }          
+        }
+        this.totalNumber = response.data.total
+        this.charge_form.actual_charge = 0
+        this.charge_form.actual_exchange = 0        
+        this.chargeFormTableLoading = false        
       }).catch(error => {
         console.log('selectChargeForm error: ')
         console.log(error)
@@ -349,23 +382,27 @@ export default {
     },
     // 临时添加一个条目
     invokeAddChargeItem(formName) {
+      if (this.registrationForm.registrationId == '' || this.registrationForm.registrationId == null) {
+        this.$message.error('未输入病历号，错误！');
+        return
+      }
       this.$refs[formName].validate((valid) => {
-
         if (valid) {
-          this.addDepartmentDialogVisible = false
-          // this.departmentForm.category =
-          // console.log(this.departmentForm);
-          addDepartment(this.departmentForm).then(response => {
-            console.log('addDepartment response: ')
+          var query = {
+            'chargeItemId': this.addChargeForm.name,
+            'registrationId': this.registrationForm.registrationId,
+            'itemCount': this.addChargeForm.number,
+            'collectorId': this.collectorId,
+          }
+          this.addChargeFormVisible = false
+          addChargeItemToForm(query).then(response => {
+            console.log('addChargeItemToForm response: ')
             console.log(response)
-            this.totalNumber += 1
-            var tmp = Math.ceil(this.totalNumber / this.pageSize)
-            this.currentPage = tmp
-            this.$refs['departmentForm'].resetFields()
-            this.selectValue = ''
-            this.queryDepartmentListWithPage()
+            this.currentPage = 1
+            this.$refs['addChargeForm'].resetFields()
+            this.invokeFetchRegistrationRecord()
           }).catch(error => {
-            console.log('addDepartment error: ')
+            console.log('addChargeItemToForm error: ')
             console.log(error)
           })
         } else {
@@ -374,20 +411,66 @@ export default {
         }
       })
     },
+    // 临时删除一个项目
+    invokeDeleteChargeItemInForm() {
+      if (this.multipleSelectionChargeFormTable.length == 0) {
+        this.$message.error('当前未选中条目，错误！');
+        return
+      }
+      var tempChargeFormIdList = []
+      for (var i = 0; i < this.multipleSelectionChargeFormTable.length; ++i) {
+        tempChargeFormIdList.push(this.multipleSelectionChargeFormTable[i].chargeFormId)
+      }
+      var query = {
+        'chargeItemIdList': tempChargeFormIdList
+      }
+      deleteChargeItemInForm(query).then(response => {
+        this.currentPage = 1
+        this.invokeFetchChargeItemListWithRegistrationId()
+      }).catch(error => {
+        console.log('deleteChargeItemInForm error: ')
+        console.log(error)
+      })
+    },
+    // 付费
+    openChargeFormDialog() {
+      this.dialogFormVisible = true
+      this.charge_form.should_charge = this.totalListMoney
+    },
+    invokeChargeSubmit() {
+      if (this.charge_form.should_charge == 0) {
+        this.$message.error('付款金额为 0 ，错误！');
+        return
+      }
+      if (this.charge_form.actual_charge < this.charge_form.should_charge) {
+        this.$message.error('实际付款小于应当付款 ，错误！');
+        return
+      }
+      this.dialogFormVisible = false
+      var tempChargeItemIdList = []
+      for (var i = 0; i < this.chargeFormTableList.length; ++i) {
+        tempChargeItemIdList.push(this.chargeFormTableList[i].chargeFormId)
+      }
+      var query = {
+        'chargeItemIdList': tempChargeItemIdList,
+      }
+      payBill(query).then(response => {
+        this.$message({
+          message: '缴费成功！',
+          type: 'success'
+        });
+        this.invokeFetchChargeItemListWithRegistrationId()
+      }).catch(error => {
+        console.log('deleteChargeItemInForm error: ')
+        console.log(error)
+      })
+    },
     formatter(row, column) {
       return row.address
     },
     filterTag(value, row) {
       return row.tag === value
-    },
-    charge() {
-      this.dialogFormVisible = false
-      this.$notify({
-        title: '成功',
-        message: '支付成功',
-        type: 'success'
-      })
-    },
+    },    
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -424,7 +507,7 @@ export default {
       selectChargeItemByDepartmentId(query).then(response => {
         console.log('selectChargeItemByDepartmentId response: ')
         console.log(response)
-        this.chargeItemList = response.data.list
+        this.chargeItemList = response.data
       }).catch(error => {
         console.log('selectChargeItemByDepartmentId error: ')
         console.log(error)

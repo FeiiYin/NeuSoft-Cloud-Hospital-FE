@@ -31,13 +31,13 @@
                 <span>到</span>                        
             </el-col>
             <el-col :span="9" style="padding:5px;">
-                <el-date-picker type="date" placeholder="选择日期" v-model="startDate" style="width: 100%;"></el-date-picker>
+                <el-date-picker type="date" placeholder="选择日期" v-model="endDate" style="width: 100%;"></el-date-picker>
             </el-col>
             <!-- <el-col :span="4.5" style="padding:5px;">
                 <el-time-picker type="fixed-time" placeholder="选择时间" v-model="startTime" style="width: 100%;"></el-time-picker>
             </el-col> -->
             <el-col :span="3" style="padding-left:30px;padding-top:5px;">
-                <el-button type="primary" v-on:click="true" style="float:right;">
+                <el-button type="primary" style="float:right;" @click="invokeFetchChargeItemListWithRegistrationId">
                     <svg-icon icon-class="component" />
                     确认
                 </el-button>
@@ -45,23 +45,31 @@
             </el-row>
           </el-header>
           <el-main style="margin-top:60px;">
-            <el-table :data="chargeForm" style="width: 100%" 
-              @selection-change="handleSelectionChange" v-loading="chargeFormTableLoading">
-              <el-table-column type="selection" width="55">
-              </el-table-column>
+            <el-table :data="chargeFormTableList" style="width: 100%" v-loading="chargeFormTableLoading">
               <el-table-column  prop="chargeItemId" label="消费项目" sortable>
               </el-table-column>
-              <el-table-column  prop="chargeItemId" label="规格" >
+              <el-table-column  prop="reserve1" label="规格" >
               </el-table-column>
-              <el-table-column  prop="chargeItemId" label="单价" >
+              <el-table-column  prop="reserve2" label="单价" >
               </el-table-column>
-              <el-table-column  prop="chargeItemId" label="数量" >
+              <el-table-column  prop="itemCount" label="数量" >
               </el-table-column>
-              <el-table-column  prop="chargeItemId" label="单位" >
+              <el-table-column  prop="reserve1" label="单位" >
               </el-table-column>
-              <el-table-column  prop="chargeItemId" label="金额" >
+              <el-table-column  prop="totalMoney" label="金额" >
               </el-table-column>
-              <el-table-column  prop="chargeItemId" label="执行科室">
+              <el-table-column  prop="departmentName" label="执行科室">
+              </el-table-column>
+              <el-table-column prop="valid" label="状态" fixed
+                :filters="[{ text: '已缴费', value: '已缴费' }, { text: '未缴费', value: '未缴费' }]"
+                :filter-method="filterTag"
+                filter-placement="bottom-end">
+                <template slot-scope="scope">
+                  <el-tag
+                    :type="scope.row.valid === '未缴费' ? 'primary' : 'success'"
+                    close-transition>{{scope.row.valid}}
+                  </el-tag>
+                </template>
               </el-table-column>
             </el-table>
             <!-- 分页 -->
@@ -84,88 +92,125 @@
 </template>
 
 <script>
-import 'element-ui/lib/theme-chalk/base.css';
-// collapse 展开折叠
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
-import Vue from 'vue'
-import ThemePicker from '@/components/ThemePicker'
+import {
+  selectChargeForm,
+} from '../../api/registrationCharge/chargeForm'
+
+import {
+  fetchDepartmentList,
+} from '../../api/basicInfo/department'
 
 export default {
-  components: { ThemePicker },
   data() {
     return {
       registrationId: '',
-      // 病历号查询消费项目列表
-      chargeForm: {
-        chargeFormId: '',
-        registrationId: '',
-        chargeItemId: '',
-        itemCount: '',
-        unchargedNums: '',
-        madeTime: '',
-        valid: '',
-        departmentId: '',
-        doctorId: '',
-        collectorId: '',
-        notGivenNums: '',
-      },  
-      multipleSelectionChargeFormTable: [],
+      chargeFormTableList: [],
       chargeFormTableLoading: false,
+      departmentList: [],
       // 当前人员的起始日期与结束日期
       startDate: '',
-      startTime: '',
       endDate: '',
-      endTime: '',
       // 分页
       currentPage: 1,
       pageSize: 50,
       totalNumber: 0,
     }
   },
+  created() {
+    this.getDepartmentList()
+  },
   methods: {
     // 根据 病历号 获取当前所有对应条目
-    // TODO
     invokeFetchChargeItemListWithRegistrationId() {
-      this.chargeFormTableLoading = true;
-      var query = {
-        'currentPage': this.currentPage, 
-        'pageSize': this.pageSize,
-        'registrationId' : this.registrationForm.registrationId, 
-        'startDate': this.startDate,
-        'endDate': this.endDate,
+      if (this.registrationId == '') {
+        this.$message.error('未输入病历号，错误！')
+        return
       }
+      if (this.endDate < this.startDate) {
+        this.$message.error('结束日期应当大于开始日期，错误！')
+        return
+      }
+      this.chargeFormTableLoading = true;
+      Date.prototype.Format = function (fmt) { 
+        let o = {
+          "M+": this.getMonth() + 1, //月份
+          "d+": this.getDate(), //日
+          "h+": this.getHours(), //小时
+          "m+": this.getMinutes(), //分
+          "s+": this.getSeconds(), //秒
+          "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+          "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (let k in o)
+          if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+      };
+      var query
+      if (this.startDate == '' || this.endDate == '') {
+        query = {
+          'currentPage': this.currentPage, 
+          'pageSize': this.pageSize,
+          'registrationId' : this.registrationId, 
+          'chargeFormCategory': 2
+        }
+      } else {
+        query = {
+          'currentPage': this.currentPage, 
+          'pageSize': this.pageSize,
+          'registrationId' : this.registrationId, 
+          'startDate': this.startDate.Format("yyyy-MM-dd"),
+          'endDate': this.endDate.Format("yyyy-MM-dd"),
+          'chargeFormCategory': 2 // 全部支付
+        }
+      }      
       selectChargeForm(query).then(response => {
-        console.log('selectChargeForm response: ')
-        console.log(response)
-        this.registrationList = response.data.list
-        this.totalNumber = response.data.total     
-        this.chargeFormTableLoading = false
+        this.chargeFormTableList = response.data.list
+        for (var i = 0; i < this.chargeFormTableList.length; ++i) {
+          this.chargeFormTableList[i].totalMoney = this.chargeFormTableList[i].itemCount * this.chargeFormTableList[i].reserve2
+          this.chargeFormTableList[i].chargeItemId = this.chargeFormTableList[i].reserve3
+          if (this.chargeFormTableList[i].unchargedNums == 0) {
+            this.chargeFormTableList[i].valid = '已缴费'
+          } else {
+            this.chargeFormTableList[i].valid = '未缴费'
+          }
+          for (var j = 0; j < this.departmentList.length; ++j) {
+            if (this.departmentList[j].departmentId == this.chargeFormTableList[i].departmentId)
+              this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName
+          }
+        }
+        this.totalNumber = response.data.total
+        this.chargeFormTableLoading = false        
       }).catch(error => {
         console.log('selectChargeForm error: ')
         console.log(error)
       })
     },
-    openModelPanel() {
-        this.model_panel_show = ! this.model_panel_show;
-    },
-    setCurrent(row) {
-        this.$refs.singleTable.setCurrentRow(row);
+    getDepartmentList() {
+      var query = { 'currentPage': 1, 'pageSize': 400 }
+      fetchDepartmentList(query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentList = response.data.list
+      }).catch(error => {
+        console.log('fetchDepartmentList error: ')
+        console.log(error)
+      })
     },
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.pageSize = val
-      // this.invokeFetchChargeItemListWithRegistrationId()
+      this.invokeFetchChargeItemListWithRegistrationId()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.currentPage = val
-      // this.invokeFetchChargeItemListWithRegistrationId()
+      this.invokeFetchChargeItemListWithRegistrationId()
     },
-    // 表的多级选择
-    handleSelectionChange(val) {
-      this.multipleSelectionChargeFormTable = val
-    }
+    filterTag(value, row) {
+      return row.valid === value;
+    },
   }
 }
 </script>
