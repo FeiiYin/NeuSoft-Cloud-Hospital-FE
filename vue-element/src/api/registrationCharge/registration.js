@@ -59,3 +59,35 @@ export function register(registration) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+/**
+ * 按挂号编号获取挂号信息
+ * @param registrationId 注册表单
+ */
+export function selectRegistrationByPrimaryKey(registrationId) {
+  console.log('selectRegistrationByPrimaryKey')
+  console.log(registrationId)
+  return request({
+    url: '/registration/select_registration',
+    method: 'get',
+    params: registrationId,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 按挂号编号获取受费条目
+ * @param query 病历号，页面
+ */
+export function selectChargeForm(query) {
+  console.log('selectChargeForm')
+  console.log(query)
+  return request({
+    url: '/registration/charge_form',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}

@@ -136,7 +136,7 @@
         <el-form-item label="项目名称" prop="departmentId">
           <!--新增科室对话框中，选择科室分类-->
           <template>
-            <el-select
+            <!-- <el-select
               v-model="addChargeForm.name"
               filterable
               placeholder="请选择"
@@ -147,7 +147,7 @@
                 :label="item.constantName"
                 :value="item.constantItemId"
               />
-            </el-select>
+            </el-select> -->
           </template>          
         </el-form-item>
         <el-form-item label="数量" prop="number">
@@ -163,6 +163,12 @@
 </template>
 
 <script>
+
+import {
+  selectRegistrationByPrimaryKey,
+  selectChargeForm,
+} from '../../api/registrationCharge/registration'
+
 export default {
   data() {
     return {
@@ -204,6 +210,7 @@ export default {
         collectorId: '',
         notGivenNums: '',
       },  
+      multipleSelectionChargeFormTable: [],
       chargeFormTableLoading: false,    
       // 总共金额
       total_money: '600.00',
@@ -246,32 +253,40 @@ export default {
         name: '',
         number: '',
       },
+      // 规范
+      // 提交验证
+      rules: {
+        departmentCode: [
+          { required: true, message: '请输入科室编码', trigger: 'blur' },
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        ]
+      },
       // 分页
       currentPage: 1,
       pageSize: 50,
-      totalNumber: '',
+      totalNumber: 0,
     }
   },
   methods: {
     // 根据病历号 registrationId 返回整条registration记录
     invokeFetchRegistrationRecord() {
       var query = { 'registrationId': this.registrationForm.registrationId }
-      // TODO
-      fetch(query).then(response => { // 然后获取科室信息列表
-        console.log('fetch response: ')
+      selectRegistrationByPrimaryKey(query).then(response => {
+        console.log('selectRegistrationByPrimaryKey response: ')
         console.log(response)
         if (response.message === 'not found') {
-          this.$message.error('未找到该条记录');
+          this.$message.error('未找到该条记录')
           return
         } else {
-          this.registrationForm = response.data
           this.$message({
             message: '获取成功',
             type: 'success'
           });
+          this.registrationForm = response.data
+          this.invokeFetchChargeItemListWithRegistrationId()
         }
       }).catch(error => {
-        console.log('fetch error: ')
+        console.log('selectRegistrationByPrimaryKey error: ')
         console.log(error)
       })
     },
@@ -279,23 +294,19 @@ export default {
     // TODO
     invokeFetchChargeItemListWithRegistrationId() {
       this.chargeFormTableLoading = true;
-      var query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
-      console.log(query)
-      fetchRegistrationList(query).then(response => { // 然后获取科室信息列表
-        console.log('fetchRegistrationList response: ')
+      var query = {
+        'currentPage': this.currentPage, 
+        'pageSize': this.pageSize,
+        'registrationId' : this.registrationForm.registrationId, 
+      }
+      selectChargeForm(query).then(response => {
+        console.log('selectChargeForm response: ')
         console.log(response)
         this.registrationList = response.data.list
-        this.totalNumber = response.data.total
-        for (var i = 0; i < this.registrationList.length; ++i) {
-          this.registrationList[i].registrationDate = this.registrationList[i].registrationDate.substring(0, 10)
-          this.registrationList[i].valid = this.registrationList[i].valid == 1 ? "正常" : "已退号"
-          this.registrationList[i].departmentId = response.data.list[i].reserve1
-          this.registrationList[i].doctorId = response.data.list[i].reserve2
-          this.registrationList[i].medicalRecordId = response.data.list[i].registrationId
-        }
+        this.totalNumber = response.data.total        
         this.chargeFormTableLoading = false
       }).catch(error => {
-        console.log('fetchRegistrationList error: ')
+        console.log('selectChargeForm error: ')
         console.log(error)
       })
     },
@@ -340,6 +351,21 @@ export default {
         type: 'success'
       })
     },
+    // 分页
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      // this.invokeFetchChargeItemListWithRegistrationId()
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      // this.invokeFetchChargeItemListWithRegistrationId()
+    },
+    // 表的多级选择
+    handleSelectionChange(val) {
+      this.multipleSelectionChargeFormTable = val
+    }
   }
 }
 </script>
