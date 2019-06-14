@@ -3,6 +3,7 @@ import request from '@/utils/request'
 /**
  * 按挂号编号获取受费条目
  * @param query currentPage, pageSize, registrationId, startDate, endDate
+ * chargeFormCategory 收费项目类别（0: 未完成支付； 1: 已完成支付; 2: 所有收费项目）
  */
 export function selectChargeForm(query) {
   console.log('selectChargeForm')
@@ -65,6 +66,24 @@ export function deleteChargeItemInForm(query) {
   console.log(query)
   return request({
     url: '/charge_form/delete_charge_item_in_form',
+    method: 'delete',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 按收费项目编号列表 删除多个收费项目
+ *
+ * @param chargeItemIdList 收费项目编号
+ * @return
+ */
+export function payBill(query) {
+  console.log('payBill')
+  console.log(query)
+  return request({
+    url: '/charge_form/pay_bill',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
