@@ -255,7 +255,7 @@ export default {
         chargeItemPinYin: ''
       }],
       // 提交验证
-      rulus: {
+      rules: {
         chargeItemCode: [
           { required: true, message: '请输入编号', trigger: 'blur' },
           { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
