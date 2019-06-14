@@ -20,7 +20,7 @@
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>
     </el-row>
-    <div class="grid-content bg-purple-light">
+    <div>
       <el-table
         ref="multipleTable"
         v-loading="listLoading"
@@ -28,7 +28,10 @@
         border
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="35px" />
+        <el-table-column
+          type="selection"
+          width="34px"
+        />
         <el-table-column
           prop="userName"
           label="登录名"
@@ -48,7 +51,6 @@
         <el-table-column
           prop="userType"
           label="用户类别"
-          width="150px"
         />
         <el-table-column
           prop="jobTitle"
@@ -56,12 +58,11 @@
         />
         <el-table-column
           prop="ifWork"
-          label="是否参与排班(仅医生)"
+          label="是否参与排班(医生)"
         />
         <el-table-column
           prop="edit"
           label="编辑"
-          width="100px"
         >
           <template slot-scope="scope">
             <el-button
@@ -73,7 +74,7 @@
           </template>
         </el-table-column>
       </el-table>
-
+      <!--分页-->
       <div class="block">
         <el-pagination
           :current-page="current_Page"
@@ -211,7 +212,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editUserDataDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitUpdate('editDepartmentForm')">确 定 修 改</el-button>
+          <el-button type="primary" @click="submitUpdate('editUserForm')">确 定 修 改</el-button>
         </span>
       </el-dialog>
     </div>
@@ -252,8 +253,7 @@ export default {
         userDepartmentName: '',
         userType: '',
         jobTitle: '',
-        ifWork_Add: '',
-        edit: ''
+        ifWork: ''
       },
       editUserDataDialogVisible: false, // 修改用户表单可见
 
@@ -269,8 +269,7 @@ export default {
         userDepartmentName: '',
         userType: '',
         jobTitle: '',
-        ifWork: '',
-        edit: ''
+        ifWork_Add: ''
       },
       addUserDataDialogVisible: false, // 新增用户表单可见
       //  用户所在科室下拉框
@@ -349,8 +348,8 @@ export default {
         passWord: '12345',
         realName: 'cxk',
         userDepartmentName: '外科',
-        userType: '医生',
-        jobTitle: '主任',
+        userType: '门诊医生',
+        jobTitle: '主任医师',
         ifWork: '否'
       },
       {

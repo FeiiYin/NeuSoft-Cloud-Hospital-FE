@@ -19,7 +19,10 @@
         border
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="35px" />
+        <el-table-column
+          type="selection"
+          width="34px"
+        />
         <el-table-column
           prop="registrationCategoryId"
           label="号别编码"
@@ -43,7 +46,6 @@
         <el-table-column
           prop="edit"
           label="编辑"
-          width="100px"
         >
           <template slot-scope="scope">
             <el-button
@@ -110,7 +112,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editRegistrationCategoryDataDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitAdd('userForm')">确 定 修 改</el-button>
+          <el-button type="primary" @click="submitAdd('editRegistrationCategoryForm')">确 定 修 改</el-button>
         </span>
       </el-dialog>
     </div>

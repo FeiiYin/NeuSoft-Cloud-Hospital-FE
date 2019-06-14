@@ -97,10 +97,16 @@ export const constantRoutes = [
         meta: { title: '诊断目录管理', noCache: true }
       },
       {
-        path: 'registrationCategory',
-        component: () => import('@/views/basicInfo/registrationCategory'),
-        name: 'registrationCategory',
+        path: 'registration_category',
+        component: () => import('@/views/basicInfo/registration_category'),
+        name: 'registration_category',
         meta: { title: '挂号级别管理', noCache: true }
+      },
+      {
+        path: 'charge_item',
+        component: () => import('@/views/basicInfo/charge_item'),
+        name: 'charge_item',
+        meta: { title: '非药品收费项目管理', noCache: true }
       },
       {
         path: 'schedule',
