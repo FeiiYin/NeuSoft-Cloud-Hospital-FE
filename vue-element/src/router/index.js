@@ -178,7 +178,7 @@ export const constantRoutes = [
       {
         path: 'medicalRecord',
         component: () => import('@/views/medicalRecord/medicalRecord'),
-        name: 'medicalRecord',
+        name: 'outpatientMedicalRecord',
         meta: { title: '门诊病历信息', noCache: true }
       },
       {

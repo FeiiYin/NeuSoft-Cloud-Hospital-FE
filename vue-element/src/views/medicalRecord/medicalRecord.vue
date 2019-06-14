@@ -2,18 +2,37 @@
   <div class="app-container">
     <el-container>
       <transition name="el-zoom-in-left">
-        <el-aside width="500px" v-show="model_panel_show">
-          <aside style="background:#E0E0E0">
-            病历模板
-            <el-button type="primary" plain style="float:right">新建</el-button>
-          </aside>
-          <el-tree
-            :data="data"
-            :props="defaultProps"
-            accordion
-            @node-click="handleNodeClick">
-          </el-tree>
-        </el-aside>
+        <div width="width:500px;padding:0;background:#eef1f6" v-show="model_panel_show">
+          <el-collapse v-model="CollapseAccordionActiveName" accordion>
+            <el-collapse-item title="一致性 Consistency" name="1">
+              <div>
+                <aside style="background:#E0E0E0">
+                  病历模板
+                  <el-button type="primary" plain style="float:right">新建</el-button>
+                </aside>
+                <el-tree
+                  :data="data"
+                  :props="defaultProps"
+                  accordion
+                  @node-click="handleNodeClick">
+                </el-tree>
+              </div>
+              
+            </el-collapse-item>
+            <el-collapse-item title="反馈 Feedback" name="2">
+              <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+              
+            </el-collapse-item>
+            <el-collapse-item title="效率 Efficiency" name="3">
+              <div>简化流程：设计简洁直观的操作流程；</div>
+              
+            </el-collapse-item>
+            <el-collapse-item title="可控 Controllability" name="4">
+              <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
+              
+            </el-collapse-item>
+          </el-collapse>
+        </div>
       </transition>
       <el-main>
         <aside>
@@ -193,6 +212,7 @@ export default {
       // 提交表单
       medicalRecordForm: {
         registrationId: 1, // 挂号单编号
+        doctorId: 1, // 医生id，应当从 登录用户获取
         mainInfo: '', // 主诉
         currentDisease: '', // 现病史
         pastDisease: '', // 既往史
@@ -240,6 +260,8 @@ export default {
       diseaseFormDisableBool: true,
       diseaseCategoryList: [],
       diseaseList: [],
+      // 左侧手风琴激活状态
+      CollapseAccordionActiveName: 1,
       // 模板的树形目录      
       data: [
         {
@@ -298,7 +320,7 @@ export default {
             this.medicalRecordForm.disease.push({
               'diseaseId': this.diseaseEditableTableData[i].disease.diseaseId,
               'mainDisease': 0,
-              'suspect': this.diseaseEditableTableData[i].suspect,
+              'suspect': this.diseaseEditableTableData[i].suspect == true ? 1 : 0,
               'incidenceDate': this.diseaseEditableTableData[i].incidenceDate
             })
           }          
@@ -379,6 +401,7 @@ export default {
       if (this.diseaseForm.disease.diseaseId == '' || this.diseaseForm.disease.diseaseId == null)
         return
       this.diseaseForm.suspect = true
+      this.diseaseForm.incidenceDate = new Date()
       for (var i = 0; i < this.diseaseList.length; ++i) {
         if (this.diseaseList[i].diseaseId == this.diseaseForm.disease.diseaseId) {
           this.diseaseForm.disease = this.diseaseList[i]
