@@ -164,10 +164,22 @@ export const constantRoutes = [
     },
     children: [
       {
+        path: 'patientListSearch',
+        component: () => import('@/views/medicalRecord/patientListSearch'),
+        name: 'patientListSearch',
+        meta: { title: '患者查询', noCache: true }
+      },
+      {
+        path: 'medicalRecord',
+        component: () => import('@/views/medicalRecord/medicalRecord'),
+        name: 'medicalRecord',
+        meta: { title: '门诊病历信息', noCache: true }
+      },
+      {
         path: 'index',
         component: () => import('@/views/medicalRecord/index'),
         name: 'medicalIndex',
-        meta: { title: '病历管理', noCache: true }
+        meta: { title: '两个折叠', noCache: true }
       },
       {
         path: 'medicine',
