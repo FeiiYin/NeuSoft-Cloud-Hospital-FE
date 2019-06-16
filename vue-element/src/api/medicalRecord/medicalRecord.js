@@ -73,3 +73,67 @@ export function saveMedicalRecord(medicalRecordJson) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+/**
+ * 保存门诊病历模板
+ *
+ * @param medicalRecordsId 病历编号（可为空）
+ * @param mainInfo         主诉
+ * @param currentDisease   现病史
+ * @param pastDisease      既往史
+ * @param physicalExam     体格检查
+ * @param auxiliaryExam    辅助检查
+ * @param opinion          处理意见
+ * @param saveState        保存方式（全院可见 科室可见 或 医生本人可见）
+ * @param doctorId         医生编号
+ * @return 操作结果
+ */
+export function saveMedicalRecordAsTemplate(query) {
+  console.log('saveMedicalRecordAsTemplate: ')
+  console.log(query)
+  return request({
+    url: '/doctor_work/save_record_template',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 获取病历模板列表
+ *
+ * @param templateScope 查找的病历模板范围（全院模板2 科室模板3 医生模板4）
+ * @param doctorId      医生编号
+ * @return 指定范围的病历模板列表
+ */
+export function selectMedicalRecordsTemplateList(query) {
+  console.log('selectMedicalRecordsTemplateList: ')
+  console.log(query)
+  return request({
+    url: '/doctor_work/select_record_template',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 诊断结束
+ * 结束看诊之后，针对该患者不能再进行任何检查、检验的申请以及药品的开立、收费等
+ *
+ * @param registrationId 挂号编号
+ * @return 操作结果
+ */
+export function endRegistration(query) {
+  console.log('endRegistration: ')
+  console.log(query)
+  return request({
+    url: '/doctor_work/end_registration',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}

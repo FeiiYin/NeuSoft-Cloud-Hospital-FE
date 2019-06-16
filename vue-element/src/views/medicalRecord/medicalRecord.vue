@@ -3,21 +3,21 @@
     <el-container>
       <transition name="el-zoom-in-left">
         <div width="width:500px;padding:0;background:#eef1f6" v-show="model_panel_show">
-          <el-collapse v-model="CollapseAccordionActiveName" accordion>
-            <el-collapse-item title="一致性 Consistency" name="1">
+          <el-collapse v-model="CollapseAccordionActiveName" accordion style="width:500px;">
+            <el-collapse-item title="病历模板" name="1">
               <div>
-                <aside style="background:#E0E0E0">
+                <el-aside style="background:#eef1f6;width:500px">
                   病历模板
-                  <el-button type="primary" plain style="float:right">新建</el-button>
-                </aside>
+                  <el-button type="primary" plain style="float:right">删除</el-button>
+                  <el-button type="primary" plain style="float:right;margin-right:20px">保存当前</el-button>
+                </el-aside>
                 <el-tree
-                  :data="data"
+                  :data="medicalRecordTemplateTreeData"
                   :props="defaultProps"
                   accordion
                   @node-click="handleNodeClick">
                 </el-tree>
-              </div>
-              
+              </div>              
             </el-collapse-item>
             <el-collapse-item title="反馈 Feedback" name="2">
               <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
@@ -107,23 +107,23 @@
       <!--模板的对话框-->
       <el-dialog title="模板预览" :visible.sync="modelDialogVisible" width="30%">
         <el-form ref="modelForm" :model="modelForm">
-          <el-form-item label="主诉" prop="name">
-            <el-input v-model="modelForm.name"></el-input>
+          <el-form-item label="主诉" prop="mainInfo">
+            <el-input v-model="modelForm.mainInfo" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="现病史" prop="name">
-            <el-input v-model="modelForm.name"></el-input>
+          <el-form-item label="现病史" prop="currentDisease">
+            <el-input v-model="modelForm.currentDisease" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="既往史" prop="name">
-            <el-input v-model="modelForm.name" type="textarea" :rows="2"></el-input>
+          <el-form-item label="既往史" prop="pastDisease">
+            <el-input v-model="modelForm.pastDisease" type="textarea" :rows="2" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="个人史" prop="name">
-            <el-input v-model="modelForm.name" type="textarea" :rows="2"></el-input>
+          <el-form-item label="体格检查" prop="physicalExam">
+            <el-input v-model="modelForm.physicalExam" type="textarea" :rows="2" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="体格检查" prop="name">
-            <el-input v-model="modelForm.name" type="textarea" :rows="2"></el-input>
+          <el-form-item label="辅助检查" prop="auxiliaryExam">
+            <el-input v-model="modelForm.auxiliaryExam" type="textarea" :rows="2" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="辅助检查" prop="name">
-            <el-input v-model="modelForm.name" type="textarea" :rows="2"></el-input>
+          <el-form-item label="处理意见" prop="opinion">
+            <el-input v-model="modelForm.opinion" :disabled="true"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -201,18 +201,22 @@ import {
 
 import {
   saveMedicalRecord,
+  selectMedicalRecordsTemplateList,
+  saveMedicalRecordAsTemplate,
 } from '../../api/medicalRecord/medicalRecord'
 
 export default {
   components: { ThemePicker },
   data() {
     return {
+      // 当前医生Id
+      doctorId: 1,
       // 模板左侧是否显示
       model_panel_show: false,
       // 提交表单
       medicalRecordForm: {
         registrationId: 1, // 挂号单编号
-        doctorId: 1, // 医生id，应当从 登录用户获取
+        doctorId: '', // 医生id，应当从 登录用户获取
         mainInfo: '', // 主诉
         currentDisease: '', // 现病史
         pastDisease: '', // 既往史
@@ -263,32 +267,20 @@ export default {
       // 左侧手风琴激活状态
       CollapseAccordionActiveName: 1,
       // 模板的树形目录      
-      data: [
+      medicalRecordTemplateTreeData: [
         {
-          label: '全员',
+          label: '全院',
           children: []
-        }, 
-        {
+        }, {
           label: '科室',
           children: []
-        }, 
-        {
+        }, {
           label: '个人',
-          children: [
-            {
-              label: '病历模板',
-              children: []
-            }, {
-              label: '综合模板',
-              children: [
-                {
-                  label: '内科模板'
-                }
-              ]
-            }
-          ]
+          children: []
         }
       ],
+      medicalRecordTemplateTreeDirectory: 0,
+      medicalRecordTemplateData: [],
       // 树形列表的类名
       defaultProps: {
         children: 'children',
@@ -303,6 +295,7 @@ export default {
   },
   created() {
     this.invokeFetchDiseaseCategory()
+    this.invokeSelectMedicalRecordsTemplateList()
   },
   methods: {
     openModelPanel() {
@@ -314,6 +307,7 @@ export default {
         if (valid) {
           // console.log(this.medicalRecordForm)
           this.medicalRecordForm.saveState = choose
+          this.medicalRecordForm.doctorId = this.doctorId
           // console.log(this.diseaseEditableTableData)
           this.medicalRecordForm.disease = []
           for (var i = 0; i < this.diseaseEditableTableData.length; ++i) {
@@ -323,7 +317,8 @@ export default {
               'suspect': this.diseaseEditableTableData[i].suspect == true ? 1 : 0,
               'incidenceDate': this.diseaseEditableTableData[i].incidenceDate
             })
-          }          
+          }
+          console.log(this.medicalRecordForm)
           saveMedicalRecord({'medicalRecordJson':this.medicalRecordForm}).then(response => {
             if (choose == 1) {
               this.$message({
@@ -359,13 +354,63 @@ export default {
     },
     // 树形目录检测
     handleNodeClick(data) {
-      if (data.isLeaf) {
-        console.log(this.modelDialogVisible)
-        this.modelDialogVisible = true
-        console.log(this.modelDialogVisible)
-      } else {
-        console.log('jioasdjf')
+      console.log(data)
+      if (data.label == '全院') {
+        this.medicalRecordTemplateTreeDirectory = 0
+        return
       }
+      if (data.label == '科室') {
+        this.medicalRecordTemplateTreeDirectory = 1
+        return
+      }
+      if (data.label == '个人') {
+        this.medicalRecordTemplateTreeDirectory = 2
+        return
+      }
+      var now = this.medicalRecordTemplateTreeDirectory
+      for (var i = 0; i < this.medicalRecordTemplateData[now].length; ++i) {
+        if (this.medicalRecordTemplateData[now][i].templateName == data.label) {
+          this.modelDialogVisible = true
+          this.modelForm = this.medicalRecordTemplateData[now][i]
+          break
+        }
+      }
+    },
+    // 获取疾病模板
+    invokeSelectMedicalRecordsTemplateList() {
+      var query = {
+        'templateScope': 2,
+        'doctorId': this.doctorId,
+      }
+      // 必须嵌套写，否则是异步调用，可能数组的push顺序不一样，会有很大的问题
+      // 全院
+      selectMedicalRecordsTemplateList(query).then(response => {
+        // console.log(response)
+        this.medicalRecordTemplateData.push(response.data)
+        for (var i = 0; i < response.data.length; ++i) {
+          this.medicalRecordTemplateTreeData[0].children.push({'label': response.data[i].templateName})
+        }
+        // 科室
+        query.templateScope = 3
+        selectMedicalRecordsTemplateList(query).then(response => {
+          // console.log(response)
+          this.medicalRecordTemplateData.push(response.data)
+          for (var i = 0; i < response.data.length; ++i) {
+            this.medicalRecordTemplateTreeData[1].children.push({'label': response.data[i].templateName})
+          }
+          // 个人
+          query.templateScope = 4
+          selectMedicalRecordsTemplateList(query).then(response => {
+            // console.log(response)
+            this.medicalRecordTemplateData.push(response.data)
+            for (var i = 0; i < response.data.length; ++i) {
+              this.medicalRecordTemplateTreeData[2].children.push({'label': response.data[i].templateName})
+            }            
+          })
+        })
+      })
+      
+      
     },
     // 疾病列表和种类的获取
     invokeFetchDiseaseCategory() {
