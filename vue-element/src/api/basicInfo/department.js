@@ -3,7 +3,7 @@ import request from '@/utils/request'
 /**
  * 获取科室列表
  * @param query 当前页码，页面大小，选择的科室类别等
- * @returns {*}
+ * @returns 分页的科室列表
  */
 export function fetchDepartmentList(query) {
   console.log('fetchDepartmentList: ')

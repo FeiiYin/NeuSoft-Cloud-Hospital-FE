@@ -68,7 +68,7 @@
               size="mini"
               @click="editChargeItemDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit"></i>
+              <i class="el-icon-edit"/>
             </el-button>
           </template>
         </el-table-column>

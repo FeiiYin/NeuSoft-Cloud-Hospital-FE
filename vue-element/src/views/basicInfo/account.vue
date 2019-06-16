@@ -5,10 +5,10 @@
     <el-row style="margin-bottom: 20px">
       <el-col :span="18">
         <el-radio-group v-model="radioSelect" size="medium">
-          <el-radio-button label="全体人员" />
-          <el-radio-button label="挂号收费员" />
+          <el-radio-button label="所有用户"/>
           <el-radio-button label="门诊医生" />
           <el-radio-button label="医技医生" />
+          <el-radio-button label="挂号收费员"/>
           <el-radio-button label="药房操作员" />
           <el-radio-button label="财务管理员" />
           <el-radio-button label="医院管理员" />
@@ -34,11 +34,7 @@
         />
         <el-table-column
           prop="userName"
-          label="登录名"
-        />
-        <el-table-column
-          prop="passWord"
-          label="密码"
+          label="用户名"
         />
         <el-table-column
           prop="realName"
@@ -46,15 +42,15 @@
         />
         <el-table-column
           prop="userDepartmentName"
-          label="用户所在科室"
+          label="科室"
         />
         <el-table-column
           prop="userType"
-          label="用户类别"
+          label="类别"
         />
         <el-table-column
           prop="jobTitle"
-          label="职称信息(仅医生)"
+          label="医生职称"
         />
         <el-table-column
           prop="ifWork"
@@ -91,7 +87,7 @@
         width="30%"
       >
         <el-form ref="addUserForm" :model="addUserForm" :rules="rules" label-position="top">
-          <el-form-item label="登录名" prop="userName">
+          <el-form-item label="用户名" prop="userName">
             <el-input v-model="addUserForm.username" auto-complete="off" />
           </el-form-item>
           <el-form-item label="密码" prop="passWord">
@@ -100,7 +96,7 @@
           <el-form-item label="真实姓名" prop="realName">
             <el-input v-model="addUserForm.realName" auto-complete="off" />
           </el-form-item>
-          <el-form-item v-model="addUserForm.userDepartmentName" label="用户所在科室" prop="userDepartmentName">
+          <el-form-item v-model="addUserForm.userDepartmentName" label="科室" prop="userDepartmentName">
             <!--新增用户对话框中，选择用户所在科室-->
             <template>
               <el-select v-model="selectValue1" filterable placeholder="请选择" @change="true">
@@ -113,7 +109,7 @@
               </el-select>
             </template>
           </el-form-item>
-          <el-form-item label="用户类别" prop="userType">
+          <el-form-item label="类别" prop="userType">
             <!--新增用户对话框中，选择用户分类-->
             <template>
               <el-select v-model="selectValue2" filterable placeholder="请选择" @change="true">
@@ -126,7 +122,7 @@
               </el-select>
             </template>
           </el-form-item>
-          <el-form-item label="职称信息(仅医生)" prop="jobTitle">
+          <el-form-item label="医生职称" prop="jobTitle">
             <!--新增用户对话框中，选择职称信息-->
             <template>
               <el-select v-model="selectValue3" filterable placeholder="请选择" @change="true">
@@ -156,7 +152,7 @@
         width="30%"
       >
         <el-form ref="editUserForm" :model="editUserForm" :rules="rules" label-position="top">
-          <el-form-item label="登录名" prop="userName">
+          <el-form-item label="用户名" prop="userName">
             <el-input v-model="editUserForm.userName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="密码" prop="password">
@@ -165,7 +161,7 @@
           <el-form-item label="真实姓名" prop="realName">
             <el-input v-model="editUserForm.realName" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="用户所在科室" prop="userDepartment">
+          <el-form-item label="科室" prop="userDepartment">
             <!--修改用户对话框中，选择科室分类-->
             <template>
               <el-select v-model="selectEditValue1" filterable placeholder="请选择" @change="true">
@@ -179,7 +175,7 @@
             </template>
           </el-form-item>
           <!--修改用户对话框中，选择用户类别-->
-          <el-form-item v-model="editUserForm.userType" label="用户类别" prop="userType">
+          <el-form-item v-model="editUserForm.userType" label="类别" prop="userType">
             <template>
               <el-select v-model="selectEditValue2" filterable placeholder="请选择" @change="true">
                 <el-option
@@ -192,7 +188,7 @@
             </template>
           </el-form-item>
           <!--修改用户对话框中，选择职称信息(仅医生)-->
-          <el-form-item v-model="editUserForm.jobTitle" label="职称信息(仅医生)" prop="userTitle">
+          <el-form-item v-model="editUserForm.jobTitle" label="医生职称" prop="userTitle">
             <template>
               <el-select v-model="selectEditValue3" filterable placeholder="请选择" @change="true">
                 <el-option
@@ -224,8 +220,8 @@
 export default {
   data() {
     return {
-      //  单选框
-      radioSelect: '全体人员',
+      // 单选框
+      radioSelect: '所有用户',
       // 多选框
       clinical_user1_checked: true, // 挂号收费员多选框
       clinical_user2_checked: true, // 门诊医生
@@ -352,15 +348,9 @@ export default {
         jobTitle: '主任医师',
         ifWork: '否'
       },
-      {
-
-      },
-      {
-
-      },
-      {
-
-      }
+        {},
+        {},
+        {}
       ],
       multipleSelection: []
     }
@@ -398,5 +388,4 @@ export default {
     }
   }
 }
-
 </script>

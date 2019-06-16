@@ -21,7 +21,7 @@
           <el-button type="primary" icon="document" style="float:right;margin-right:20px">
             <svg-icon icon-class="documentation" />
             挂号
-          </el-button>          
+          </el-button>
         </el-col>
       </el-row>
       <svg-icon style="display:inline-block;margin-right:20px;margin-top:20px;" icon-class="peoples" />
@@ -118,7 +118,7 @@
           </el-col>
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">结算类别</h4>
-            <el-form-item >
+            <el-form-item>
               <el-select
                 v-model="registrationForm.settleAccountsCategory"
                 placeholder="请选择结算类别"
@@ -266,7 +266,7 @@
       boolDepartmentSelectionChange: true,
       doctorListOptions: [{
         doctorId: '',
-        doctorName: '',
+        doctorName: ''
       }],
       // 表单限制条件
       rules: {
@@ -275,32 +275,32 @@
           { min: 18, max: 18, message: '长度应为 18 个字符', trigger: 'blur' }
         ],
         patientName: [
-          { required: true, message: '请输入用户姓名', trigger: 'blur' },
+          {required: true, message: '请输入用户姓名', trigger: 'blur'}
         ],
         registrationCategory: [
-          { required: true, message: '请输入挂号类型', trigger: 'blur' },
+          {required: true, message: '请输入挂号类型', trigger: 'blur'}
         ],
         medicalCategory: [
-          { required: true, message: '请输入医疗类别', trigger: 'blur' },
+          {required: true, message: '请输入医疗类别', trigger: 'blur'}
         ],
         settleAccountsCategory: [
-          { required: true, message: '请输入结算类别', trigger: 'blur' },
+          {required: true, message: '请输入结算类别', trigger: 'blur'}
         ],
         registrationDate: [
-          { required: true, message: '请输入挂号日期', trigger: 'blur' },
+          {required: true, message: '请输入挂号日期', trigger: 'blur'}
         ],
         registrationSource: [
-          { required: true, message: '请输入挂号来源', trigger: 'blur' },
+          {required: true, message: '请输入挂号来源', trigger: 'blur'}
         ],
         departmentId: [
-          { required: true, message: '请输入挂号科室', trigger: 'blur' },
+          {required: true, message: '请输入挂号科室', trigger: 'blur'}
         ],
         doctorId: [
-          { required: true, message: '请输入看诊医生', trigger: 'blur' },
+          {required: true, message: '请输入看诊医生', trigger: 'blur'}
         ],
         age: [
-          { required: true, message: '请输入年龄', trigger: 'blur' },
-        ],
+          {required: true, message: '请输入年龄', trigger: 'blur'}
+        ]
       }
     }
   },
@@ -366,21 +366,22 @@
         if (valid) {
           console.log('register valid passed ')
           // date 格式化
-          Date.prototype.Format = function (fmt) { 
-              let o = {
-                  "M+": this.getMonth() + 1, //月份
-                  "d+": this.getDate(), //日
-                  "h+": this.getHours(), //小时
-                  "m+": this.getMinutes(), //分
-                  "s+": this.getSeconds(), //秒
-                  "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                  "S": this.getMilliseconds() //毫秒
-              };
-              if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-              for (let k in o)
-                  if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-              return fmt;
-          };
+          Date.prototype.Format = function (fmt) {
+            const o = {
+              'M+': this.getMonth() + 1, // 月份
+              'd+': this.getDate(), // 日
+              'h+': this.getHours(), // 小时
+              'm+': this.getMinutes(), // 分
+              's+': this.getSeconds(), // 秒
+              'q+': Math.floor((this.getMonth() + 3) / 3), // 季度
+              'S': this.getMilliseconds() // 毫秒
+            }
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
+            for (const k in o) {
+              if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+            }
+            return fmt
+          }
 
           var query = {
             'registrationId': this.registrationForm.registrationId,
@@ -388,14 +389,14 @@
             'gender': this.registrationForm.gender,
             'age': this.registrationForm.age,
             // format
-            'birthday': this.registrationForm.birthday.Format("yyyy-MM-dd"),
+            'birthday': this.registrationForm.birthday.Format('yyyy-MM-dd'),
             'registrationCategory': this.registrationForm.registrationCategory,
             'medicalCategory': this.registrationForm.medicalCategory,
             'identityCardNo': this.registrationForm.identityCardNo,
             'registrationStatus': this.registrationForm.registrationStatus,
             // 'visitDate': this.registrationForm.visitDate,
-            // 1998-07-29 
-            'registrationDate': this.registrationForm.registrationDate.Format("yyyy-MM-dd"),
+            // 1998-07-29
+            'registrationDate': this.registrationForm.registrationDate.Format('yyyy-MM-dd'),
             'departmentId': this.registrationForm.departmentId,
             'doctorId': this.registrationForm.doctorId,
             'registrationSource': this.registrationForm.registrationSource,
@@ -407,7 +408,7 @@
           register(query).then(response => {
             console.log('register response: ')
             console.log(response)
-            
+
             this.$notify({
               title: '成功',
               message: '挂号成功',
@@ -416,7 +417,7 @@
             this.resetForm()
             const { fullPath } = this.$route
             this.$router.replace({
-              path: '/redirect' + "/registration/registrationListSearch"
+              path: '/redirect' + '/registration/registrationListSearch'
             })
           }).catch(error => {
             console.log('register error: ')
@@ -424,13 +425,13 @@
             this.$notify.error({
               title: '错误',
               message: '挂号失败！'
-            }); 
+            })
           })
         } else {
           console.log('error register!!')
           return
         }
-      })      
+      })
     },
     // 清空表单
     resetForm() {
@@ -452,7 +453,7 @@
       this.registrationForm.familyAddress = ''
       // this.registrationForm.collectorId = ''
       // this.registrationForm.totalCharge = ''
-    },
+    }
   }
 }
 </script>
