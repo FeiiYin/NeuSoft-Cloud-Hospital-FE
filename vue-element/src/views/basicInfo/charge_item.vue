@@ -78,7 +78,7 @@
         <el-pagination
           :current-page="current_Page"
           :page-sizes="[20, 50, 100]"
-          :page-size="page_size"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalNumber"
         />
@@ -198,7 +198,7 @@ export default {
       listLoading: false, // 收费项目列表加载状态
       // 分页
       current_Page: 1,
-      page_size: 50,
+      pageSize: 50,
       totalNumber: 1,
       addChargeItemDataDialogVisible: false, // 新增收费项目表单可见
       // 新增收费项目

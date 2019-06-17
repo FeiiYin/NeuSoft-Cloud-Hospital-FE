@@ -6,7 +6,7 @@
 
     <el-row style="margin-bottom: 20px">
       <el-col :span="6">
-        <el-button @click="toggleSelection()">取消</el-button>
+        <el-button @click="toggleSelection()">取消所选</el-button>
         <el-button @click="addRegistrationCategoryDataDialogVisible = true">新增</el-button>
         <el-button @click="true">删除</el-button>
       </el-col>
@@ -32,16 +32,16 @@
           label="号别名称"
         />
         <el-table-column
-          prop="ifDefault"
+          prop="isDefault"
           label="是否默认"
         />
         <el-table-column
-          prop="sequence"
+          prop="sequenceNo"
           label="顺序号"
         />
         <el-table-column
           label="挂号费(元)"
-          prop="fee"
+          prop="registrationFee"
         />
         <el-table-column
           prop="edit"
@@ -70,14 +70,14 @@
           <el-form-item label="号别名称" prop="registrationCategoryName">
             <el-input v-model="addRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="是否默认" prop="ifDefault_Add">
-            <el-radio v-model="ifDefaultRadio_Add" label="1">是</el-radio>
-            <el-radio v-model="ifDefaultRadio_Add" label="2">否</el-radio>
+          <el-form-item label="是否默认" prop="isDefault_Add">
+            <el-radio v-model="isDefaultRadio_Add" label="1">是</el-radio>
+            <el-radio v-model="isDefaultRadio_Add" label="2">否</el-radio>
           </el-form-item>
-          <el-form-item label="顺序号" prop="sequence">
-            <el-input v-model="addRegistrationCategoryForm.sequence" auto-complete="off" />
+          <el-form-item label="顺序号" prop="sequenceNo">
+            <el-input v-model="addRegistrationCategoryForm.sequenceNo" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="挂号费" prop="fee">
+          <el-form-item label="挂号费" prop="registrationFee">
             <el-input v-model="addRegistrationCategoryForm.fee" auto-complete="off" />
           </el-form-item>
         </el-form>
@@ -99,14 +99,14 @@
           <el-form-item label="号别名称" prop="registrationCategoryName">
             <el-input v-model="editRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="是否默认" prop="ifDefault">
-            <el-radio v-model="ifDefaultRadio" label="1">是</el-radio>
-            <el-radio v-model="ifDefaultRadio" label="2">否</el-radio>
+          <el-form-item label="是否默认" prop="isDefault">
+            <el-radio v-model="isDefaultRadio" label="1">是</el-radio>
+            <el-radio v-model="isDefaultRadio" label="2">否</el-radio>
           </el-form-item>
-          <el-form-item label="顺序号" prop="sequence">
-            <el-input v-model="editRegistrationCategoryForm.sequence" auto-complete="off" />
+          <el-form-item label="顺序号" prop="sequenceNo">
+            <el-input v-model="editRegistrationCategoryForm.sequenceNo" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="挂号费" prop="fee">
+          <el-form-item label="挂号费" prop="registrationFee">
             <el-input v-model="editRegistrationCategoryForm.fee" auto-complete="off" />
           </el-form-item>
         </el-form>
@@ -120,27 +120,37 @@
 </template>
 
 <script>
+import {
+  selectRegistration_categoryList,
+  addRegistration_category,
+  updateRegistration_categoryByPrimaryKey,
+  deleteRegistration_categoryByPrimaryKey
+} from '../../api/basicInfo/registration_category'
+import registration from "../registration/registration";
+
 export default {
   data() {
     return {
+      currentPage: 1,
+      pageSize: 20,
       // 新增挂号类别表单
       addRegistrationCategoryForm: {
         registrationCategoryId: '',
         registrationCategoryName: '',
-        sequence: '',
-        ifDefault_Add: '',
+        sequenceNo: '',
+        isDefault_Add: '',
         fee: ''
       },
       addRegistrationCategoryDataDialogVisible: false, // 新增挂号级别表单可见
-      ifDefaultRadio: '', // 单选器
-      ifDefaultRadio_Add: '',
+      isDefaultRadio: '', // 单选器
+      isDefaultRadio_Add: '',
       listLoading: false, // 挂号级别列表加载状态
       // 修改挂号类别可见
       editRegistrationCategoryForm: {
         registrationCategoryId: '',
         registrationCategoryName: '',
-        ifDefault: '',
-        sequence: '',
+        isDefault: '',
+        sequenceNo: '',
         fee: ''
       },
       editRegistrationCategoryDataDialogVisible: false, // 修改挂号级别表单可见
@@ -153,7 +163,7 @@ export default {
           { required: true, message: '请输入号别名称', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
-        sequence: [
+        sequenceNo: [
           { required: true, message: '请输入顺序号', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
@@ -166,38 +176,43 @@ export default {
       registrationTableData: [{
         registrationCategoryId: '1',
         registrationCategoryName: '普通号',
-        ifDefault: '是',
-        sequence: '001',
+        isDefault: '是',
+        sequenceNo: '001',
         fee: '10'
       },
       {
         registrationCategoryId: '2',
         registrationCategoryName: '专家号',
-        ifDefault: '是',
-        sequence: '002',
+        isDefault: '否',
+        sequenceNo: '002',
         fee: '20'
       },
       {
         registrationCategoryId: '3',
         registrationCategoryName: '急诊号',
-        ifDefault: '是',
-        sequence: '003',
+        isDefault: '否',
+        sequenceNo: '003',
         fee: '25'
       }],
       multipleSelection: []
     }
   },
+
+  created() {
+    this.getRegistration_category()
+  },
+
   methods: {
     editRegistrationCategoryFormFunction(index, row) {
       this.editRegistrationCategoryDataDialogVisible = true
       this.editRegistrationCategoryForm.registrationCategoryId = row.registrationCategoryId
       this.editRegistrationCategoryForm.registrationCategoryName = row.registrationCategoryName
-      this.editRegistrationCategoryForm.sequence = row.sequence
+      this.editRegistrationCategoryForm.sequenceNo = row.sequenceNo
       this.editRegistrationCategoryForm.fee = row.fee
-      if (row.ifDefault === '是') {
-        this.ifDefaultRadio = '1'
+      if (row.isDefault === '是') {
+        this.isDefaultRadio = '1'
       } else {
-        this.ifDefaultRadio = '2'
+        this.isDefaultRadio = '2'
       }
     },
     toggleSelection(rows) {
@@ -211,6 +226,23 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    getRegistration_category() {
+      this.listLoading = true
+      var query = {
+        'currentPage': this.currentPage,
+        'pageSize': this.pageSize
+      }
+      selectRegistration_categoryList(query).then(
+        response => {
+          console.log('selectRegistrationCategory response: ')
+          console.log(response)
+          this.listLoading = false
+        }
+      ).catch(error => {
+        console.log('selectResponseCategory error:')
+        console.log(error)
+      })
     }
   }
 }

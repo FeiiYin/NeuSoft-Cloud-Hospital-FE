@@ -4,7 +4,7 @@
 
     <el-row style="margin-bottom: 20px">
       <el-col :span="18">
-        <el-radio-group v-model="radioSelect" size="medium">
+        <el-radio-group v-model="radioSelect" size="medium" @change="invokeChangeRadioSelect">
           <el-radio-button label="所有用户" />
           <el-radio-button label="门诊医生" />
           <el-radio-button label="医技医生" />
@@ -77,9 +77,9 @@
       <!--分页-->
       <div class="block">
         <el-pagination
-          :current-page="current_Page"
+          :current-page="currentPage"
           :page-sizes="[20, 50, 100, 200]"
-          :page-size="page_size"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalNumber"
         />
@@ -220,7 +220,6 @@
 </template>
 
 <script>
-import { fetchConstantAccountMap } from '../../api/constItem'
 import {
   selectAccountList,
   selectDoctorList
@@ -229,6 +228,7 @@ import {
 export default {
   data() {
     return {
+
       // 单选框
       radioSelect: '所有用户',
       // 多选框
@@ -239,8 +239,9 @@ export default {
       clinical_user5_checked: true, // 财务管理员
       clinical_user6_checked: true, // 医院管理员
       // 分页
-      current_Page: 1,
-      page_size: 50,
+      currentPage: 1,
+      pageSize: 50,
+      accountScope: ['00', '01', '10', '11', '12', '13'],
       totalNumber: 1,
       checkList: '',
       listLoading: false, // 用户列表加载状态
@@ -281,28 +282,28 @@ export default {
       userDepartment: [{}],
       // 用户分类下拉框
       userTyper: [{
-        constantItemId: '01',
-        constantName: '挂号收费员'
-      },
-      {
-        constantItemId: '02',
+        constantItemId: '00',
         constantName: '门诊医生'
       },
       {
-        constantItemId: '03',
+        constantItemId: '01',
         constantName: '医技医生'
       },
       {
-        constantItemId: '04',
+        constantItemId: '10',
+        constantName: '医院管理员'
+      },
+      {
+        constantItemId: '11',
         constantName: '药房操作员'
       },
       {
-        constantItemId: '05',
+        constantItemId: '12',
         constantName: '财务管理员'
       },
       {
-        constantItemId: '06',
-        constantName: '医院管理员'
+        constantItemId: '13',
+        constantName: '挂号收费员'
       }
       ],
       //  用户职称下拉框
@@ -356,11 +357,7 @@ export default {
         userType: '门诊医生',
         jobTitle: '主任医师',
         ifWork: '否'
-      },
-      {},
-      {},
-      {}
-      ],
+      }],
       userConstant: [{
         constantItemId: '',
         constantTypeId: '',
@@ -373,10 +370,49 @@ export default {
   },
 
   created() {
-    this.selectAccountList()
+    this.invokeSelectAccount()
   },
 
   methods: {
+    invokeChangeRadioSelect(val) {
+      // console.log(val)
+      this.accountScope = []
+      if (val === '所有用户') {
+        this.accountScope.push('00', '01', '10', '11', '12', '13')
+      } else if (val === '门诊医生') {
+        this.accountScope.push('00')
+      } else if (val === '医技医生') {
+        this.accountScope.push('01')
+      } else if (val === '医院管理员') {
+        this.accountScope.push('10')
+      } else if (val === '药房操作员') {
+        this.accountScope.push('11')
+      } else if (val === '财务管理员') {
+        this.accountScope.push('12')
+      } else if (val === '挂号收费员') {
+        this.accountScope.push('13')
+      }
+      this.invokeSelectAccount()
+    },
+    invokeSelectAccount() {
+      this.listLoading = true
+      var query = {
+        'currentPage': this.currentPage,
+        'pageSize': this.pageSize,
+        'accountScope': this.accountScope
+      }
+      selectAccountList(query).then(response => { // 然后获取科室信息列表
+        console.log('selectAccountList response: ')
+        console.log(response)
+        // 把 00，01 写成单独文字；单独函数
+        this.userTableData = response.data.list
+
+        this.listLoading = false
+      }).catch(error => {
+        console.log('selectAccountList error: ')
+        console.log(error)
+      })
+    },
     editUserDataFormFunction(index, row) {
       this.editUserDataDialogVisible = true
       this.editUserForm.userName = row.userName
@@ -406,31 +442,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-    },
-    selectAccountList() {
-      this.query = { 'constant_type_code': 'AccountCategory' }
-      fetchConstantAccountMap(this.query).then(response => { // 获取用户信息常量表，用于将用户类别转为 文字
-        console.log('fetchConstantAccountMap response: ')
-        console.log(response)
-        this.totalNumber = response.data.total
-        this.userTableData = response.data.list
-
-        const userTableLen = this.userTableData.length
-        const userConstantLen = this.userConstant.length
-        for (let i = 0; i < userTableLen; ++i) {
-          for (let j = 0; j < userConstantLen; ++j) {
-            if (this.userConstant[j].constantItemId == this.userTableData[i].category) {
-              this.userTableData[i].category = this.userConstant[j].constantName
-              break
-            }
-          }
-        }
-        this.listLoading = false // 列表加载完成
-      }
-      ).catch(error => {
-        console.log('fetchAccountList error: ')
-        console.log(error)
-      })
     }
   }
 }
