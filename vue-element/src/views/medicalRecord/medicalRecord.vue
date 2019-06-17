@@ -19,19 +19,18 @@
               </div>
             </el-collapse-item>
             <el-collapse-item title="历史病历" name="2">
-              <div> 控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；
-                <el-button type="primary" @click="invokeSelectPatientHistoryMedicalRecords"></el-button>
-                <!-- <el-table :data="">
-                  <el-table-column label=""></el-table-column>
-                </el-table> -->
+              <div>
+                <el-button type="primary" plain size="mini" style="float:right" @click="invokeSelectPatientHistoryMedicalRecords">
+                   <i class="el-icon-refresh" />
+                </el-button>
+                <el-table :data="patientHistoryTable">
+                  <el-table-column label="历史病历"></el-table-column>
+                  <el-table-column label="开病医生"></el-table-column>
+                </el-table>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="效率 Efficiency" name="3">
+            <el-collapse-item title="常用诊断" name="3">
               <div>简化流程：设计简洁直观的操作流程；</div>
-
-            </el-collapse-item>
-            <el-collapse-item title="可控 Controllability" name="4">
-              <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
 
             </el-collapse-item>
           </el-collapse>
@@ -331,7 +330,9 @@ Vue.component('ElxEditableColumn', EditableColumn)
         }, {
           value: '4',
           label: '个人模板'
-        }]
+      }],
+      // 历史病历部分
+      patientHistoryTable: [],
     }
   },
   created() {
