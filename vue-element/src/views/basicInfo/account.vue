@@ -5,10 +5,10 @@
     <el-row style="margin-bottom: 20px">
       <el-col :span="18">
         <el-radio-group v-model="radioSelect" size="medium">
-          <el-radio-button label="所有用户"/>
+          <el-radio-button label="所有用户" />
           <el-radio-button label="门诊医生" />
           <el-radio-button label="医技医生" />
-          <el-radio-button label="挂号收费员"/>
+          <el-radio-button label="挂号收费员" />
           <el-radio-button label="药房操作员" />
           <el-radio-button label="财务管理员" />
           <el-radio-button label="医院管理员" />
@@ -220,6 +220,11 @@
 </template>
 
 <script>
+import { fetchConstantAccountMap } from '../../api/constItem'
+import {
+  selectAccountList,
+  selectDoctorList
+} from '../../api/basicInfo/account'
 
 export default {
   data() {
@@ -356,9 +361,21 @@ export default {
       {},
       {}
       ],
+      userConstant: [{
+        constantItemId: '',
+        constantTypeId: '',
+        constantCode: '',
+        constantName: '',
+        valid: null
+      }],
       multipleSelection: []
     }
   },
+
+  created() {
+    this.selectAccountList()
+  },
+
   methods: {
     editUserDataFormFunction(index, row) {
       this.editUserDataDialogVisible = true
@@ -389,6 +406,31 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    selectAccountList() {
+      this.query = { 'constant_type_code': 'AccountCategory' }
+      fetchConstantAccountMap(this.query).then(response => { // 获取用户信息常量表，用于将用户类别转为 文字
+        console.log('fetchConstantAccountMap response: ')
+        console.log(response)
+        this.totalNumber = response.data.total
+        this.userTableData = response.data.list
+
+        const userTableLen = this.userTableData.length
+        const userConstantLen = this.userConstant.length
+        for (let i = 0; i < userTableLen; ++i) {
+          for (let j = 0; j < userConstantLen; ++j) {
+            if (this.userConstant[j].constantItemId == this.userTableData[i].category) {
+              this.userTableData[i].category = this.userConstant[j].constantName
+              break
+            }
+          }
+        }
+        this.listLoading = false // 列表加载完成
+      }
+      ).catch(error => {
+        console.log('fetchAccountList error: ')
+        console.log(error)
+      })
     }
   }
 }

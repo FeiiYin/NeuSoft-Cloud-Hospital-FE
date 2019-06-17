@@ -12,7 +12,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="6">
-        <el-button @click="toggleSelection()">取消</el-button>
+        <el-button @click="toggleSelection()">取消所选</el-button>
         <el-button @click="addDepartmentDialogVisible = true">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>
@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import { fetchConstantMap } from '../../api/constItem'
+import { fetchConstantDepartmentMap } from '../../api/constItem'
 import {
   addDepartment,
   deleteDepartmentByPrimaryKey,
@@ -238,8 +238,8 @@ export default {
     },
     getDepartmentList() {
       this.query = { 'constant_type_code': 'DeptCategory' }
-      fetchConstantMap(this.query).then(response => { // 首先获取科室信息常量表，用于将科室类别的常数表示替换为文字
-        console.log('fetchConstantMap response: ')
+      fetchConstantDepartmentMap(this.query).then(response => { // 首先获取科室信息常量表，用于将科室类别的常数表示替换为文字
+        console.log('fetchConstantDepartmentMap response: ')
         console.log(response)
         this.departmentConstant = response.data
 
@@ -270,7 +270,7 @@ export default {
         })
       }
       ).catch(error => {
-        console.log('fetchConstantMap error: ')
+        console.log('fetchConstantDepartmentMap error: ')
         console.log(error)
       })
     },

@@ -84,7 +84,7 @@ export function saveMedicalRecord(medicalRecordJson) {
  * @param physicalExam     体格检查
  * @param auxiliaryExam    辅助检查
  * @param opinion          处理意见
- * @param saveState        保存方式（全院可见 科室可见 或 医生本人可见）
+ * @param saveState        保存方式（全院可见2 科室可见3 或 医生本人可见4）
  * @param doctorId         医生编号
  * @return 操作结果
  */
@@ -131,6 +131,24 @@ export function endRegistration(query) {
   console.log(query)
   return request({
     url: '/doctor_work/end_registration',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 获取患者的历史病历列表
+ *
+ * @param registrationId 患者的挂号单编号
+ * @return 患者的包括此次就诊在内的所有历史病历（包含诊断信息），json 字符串
+ */
+export function selectPatientHistoryMedicalRecords(query) {
+  console.log('selectPatientHistoryMedicalRecords: ')
+  console.log(query)
+  return request({
+    url: '/doctor_work/history_record',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
