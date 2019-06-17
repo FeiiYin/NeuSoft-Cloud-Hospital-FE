@@ -52,7 +52,7 @@
               size="mini"
               @click="editRegistrationCategoryFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit" />
+              <i class="el-icon-edit"></i>
             </el-button>
           </template>
         </el-table-column>
@@ -64,10 +64,10 @@
         width="30%"
       >
         <el-form ref="addRegistrationCategoryForm" :model="addRegistrationCategoryForm" :rules="rules" label-position="top">
-          <el-form-item label="号别编码" prop="registrationId">
+          <el-form-item label="号别编码" prop="registrationCategoryId">
             <el-input v-model="addRegistrationCategoryForm.registrationCategoryId" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="号别名称" prop="registrationName">
+          <el-form-item label="号别名称" prop="registrationCategoryName">
             <el-input v-model="addRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="是否默认" prop="ifDefault_Add">
@@ -93,10 +93,10 @@
         width="30%"
       >
         <el-form ref="editRegistrationCategoryForm" :model="editRegistrationCategoryForm" :rules="rules" label-position="top">
-          <el-form-item label="号别编码" prop="registrationId">
+          <el-form-item label="号别编码" prop="registrationCategoryId">
             <el-input v-model="editRegistrationCategoryForm.registrationCategoryId" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="号别名称" prop="registrationName">
+          <el-form-item label="号别名称" prop="registrationCategoryName">
             <el-input v-model="editRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="是否默认" prop="ifDefault">
@@ -124,25 +124,25 @@ export default {
   data() {
     return {
       // 新增挂号类别表单
-      addRegistrationCategoryForm: [{
+      addRegistrationCategoryForm: {
         registrationCategoryId: '',
         registrationCategoryName: '',
         sequence: '',
         ifDefault_Add: '',
         fee: ''
-      }],
+      },
       addRegistrationCategoryDataDialogVisible: false, // 新增挂号级别表单可见
       ifDefaultRadio: '', // 单选器
       ifDefaultRadio_Add: '',
       listLoading: false, // 挂号级别列表加载状态
       // 修改挂号类别可见
-      editRegistrationCategoryForm: [{
+      editRegistrationCategoryForm: {
         registrationCategoryId: '',
         registrationCategoryName: '',
         ifDefault: '',
         sequence: '',
         fee: ''
-      }],
+      },
       editRegistrationCategoryDataDialogVisible: false, // 修改挂号级别表单可见
       rules: {
         registrationCategoryId: [

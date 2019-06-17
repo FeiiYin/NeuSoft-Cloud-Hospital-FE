@@ -37,6 +37,10 @@
           label="用户名"
         />
         <el-table-column
+          prop="passWord"
+          label="密码"
+        />
+        <el-table-column
           prop="realName"
           label="真实姓名"
         />
@@ -65,7 +69,7 @@
               size="mini"
               @click="editUserDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit" />
+              <i class="el-icon-edit"></i>
             </el-button>
           </template>
         </el-table-column>
@@ -91,7 +95,7 @@
             <el-input v-model="addUserForm.username" auto-complete="off" />
           </el-form-item>
           <el-form-item label="密码" prop="passWord">
-            <el-input v-model="addUserForm.password" auto-complete="off" show-password />
+            <el-input v-model="addUserForm.passWord" auto-complete="off" show-password />
           </el-form-item>
           <el-form-item label="真实姓名" prop="realName">
             <el-input v-model="addUserForm.realName" auto-complete="off" />
@@ -155,14 +159,14 @@
           <el-form-item label="用户名" prop="userName">
             <el-input v-model="editUserForm.userName" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="密码" prop="password">
+          <el-form-item label="密码" prop="passWord">
             <el-input v-model="editUserForm.passWord" auto-complete="off" show-password />
           </el-form-item>
           <el-form-item label="真实姓名" prop="realName">
             <el-input v-model="editUserForm.realName" auto-complete="off" />
           </el-form-item>
+          <!--修改用户对话框中，选择科室分类-->
           <el-form-item label="科室" prop="userDepartment">
-            <!--修改用户对话框中，选择科室分类-->
             <template>
               <el-select v-model="selectEditValue1" filterable placeholder="请选择" @change="true">
                 <el-option
@@ -348,9 +352,9 @@ export default {
         jobTitle: '主任医师',
         ifWork: '否'
       },
-        {},
-        {},
-        {}
+      {},
+      {},
+      {}
       ],
       multipleSelection: []
     }

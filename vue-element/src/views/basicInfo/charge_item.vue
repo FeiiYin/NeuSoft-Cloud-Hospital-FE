@@ -162,6 +162,13 @@
         <el-form-item label="收费科室编号" prop="chargeItemDepartmentId">
           <el-input v-model="editChargeItemForm.chargeItemDepartmentId" auto-complete="off" />
         </el-form-item>
+        <el-form-item label="项目类型" prop="chargeItemChargeType">
+          <el-radio-group v-model="ChargeTypeRadio">
+            <el-radio label="3">1</el-radio>
+            <el-radio label="6">2</el-radio>
+            <el-radio label="9">3</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="创建时间" prop="chargeItemCreationTime">
           <div class="block">
             <el-date-picker
@@ -173,12 +180,8 @@
             />
           </div>
         </el-form-item>
-        <el-form-item label="项目类型" prop="chargeItemChargeType">
-          <el-radio-group v-model="ChargeTypeRadio">
-            <el-radio label="3">1</el-radio>
-            <el-radio label="6">2</el-radio>
-            <el-radio label="9">3</el-radio>
-          </el-radio-group>
+        <el-form-item label="收费项目拼音" prop="chargeItemPinYin">
+          <el-input v-model="editChargeItemForm.chargeItemPinYin" auto-complete="off" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -258,6 +261,10 @@ export default {
       rules: {
         chargeItemCode: [
           { required: true, message: '请输入编号', trigger: 'blur' },
+          { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
+        ],
+        chargeItemName: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
           { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
         ],
         chargeItemSpecification: [
