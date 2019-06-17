@@ -37,14 +37,17 @@
           label="用户名"
         />
         <el-table-column
+          v-if="radioSelect !== '所有用户'"
           prop="passWord"
           label="密码"
         />
         <el-table-column
+          v-if="radioSelect !== '所有用户'"
           prop="realName"
           label="真实姓名"
         />
         <el-table-column
+          v-if="radioSelect !== '所有用户'"
           prop="userDepartmentName"
           label="科室"
         />
@@ -53,10 +56,12 @@
           label="类别"
         />
         <el-table-column
+          v-if="radioSelect !== '所有用户'"
           prop="jobTitle"
           label="医生职称"
         />
         <el-table-column
+          v-if="radioSelect !== '所有用户'"
           prop="ifWork"
           label="是否参与排班(医生)"
         />
@@ -69,7 +74,7 @@
               size="mini"
               @click="editUserDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit"></i>
+              <i class="el-icon-edit" />
             </el-button>
           </template>
         </el-table-column>
@@ -221,8 +226,7 @@
 
 <script>
 import {
-  selectAccountList,
-  selectDoctorList
+  selectAccountList
 } from '../../api/basicInfo/account'
 
 export default {
