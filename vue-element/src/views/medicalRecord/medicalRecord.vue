@@ -8,7 +8,7 @@
               <div>
                 <el-aside style="background:#eef1f6;width:500px">
                   病历模板
-                  <el-button type="primary" plain style="float:right;" @click="saveCurrentIntoTemplate">保存当前</el-button>
+                  <el-button type="primary" plain style="float:right;" @click="invokeSaveCurrentIntoTemplate">保存当前</el-button>
                 </el-aside>
                 <el-tree
                   :data="medicalRecordTemplateTreeData"
@@ -18,9 +18,12 @@
                 />
               </div>
             </el-collapse-item>
-            <el-collapse-item title="反馈 Feedback" name="2">
-              <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-
+            <el-collapse-item title="历史病历" name="2">
+              <div> 控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；
+                <!-- <el-table :data="">
+                  <el-table-column label=""></el-table-column>
+                </el-table> -->
+              </div>
             </el-collapse-item>
             <el-collapse-item title="效率 Efficiency" name="3">
               <div>简化流程：设计简洁直观的操作流程；</div>
@@ -106,7 +109,10 @@
 
       <!--模板的对话框-->
       <el-dialog title="模板预览" :visible.sync="modelDialogVisible" width="30%">
-        <el-form ref="modelForm" :model="modelForm">
+        <el-form ref="modelForm" :model="modelForm" :rules="templateRules">
+          <el-form-item label="模板名称" prop="templateName">
+            <el-input v-model="modelForm.templateName" :disabled="modelDialogEditable"/>
+          </el-form-item>
           <el-form-item label="主诉" prop="mainInfo">
             <el-input v-model="modelForm.mainInfo" :disabled="modelDialogEditable"/>
           </el-form-item>
@@ -125,10 +131,21 @@
           <el-form-item label="处理意见" prop="opinion">
             <el-input v-model="modelForm.opinion" :disabled="modelDialogEditable"/>
           </el-form-item>
+          <el-form-item label="模板类别" prop="saveState">
+            <el-select v-model="modelForm.saveState" placeholder="请选择" :disabled="modelDialogEditable">
+              <el-option
+                v-for="item in templateCategory"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="modelDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="useTemplate()">应用模板</el-button>
+          <el-button v-show="modelDialogEditable" type="primary" @click="useTemplate()">应用模板</el-button>
+          <el-button v-show="!modelDialogEditable" type="primary" @click="saveCurrentIntoTemplate()">保存模板</el-button>
         </span>
       </el-dialog>
 
@@ -198,10 +215,11 @@
   import {
     saveMedicalRecord,
     saveMedicalRecordAsTemplate,
-    selectMedicalRecordsTemplateList
+    selectMedicalRecordsTemplateList,
+    selectPatientHistoryMedicalRecords
   } from '../../api/medicalRecord/medicalRecord'
 
-  Vue.use(Editable)
+Vue.use(Editable)
 Vue.use(EditableColumn)
 Vue.component('ElxEditable', Editable)
 Vue.component('ElxEditableColumn', EditableColumn)
@@ -212,6 +230,7 @@ Vue.component('ElxEditableColumn', EditableColumn)
     return {
       // 当前医生Id
       doctorId: 1,
+      registrationId: 1,
       // 模板左侧是否显示
       model_panel_show: false,
       // 提交表单
@@ -235,6 +254,14 @@ Vue.component('ElxEditableColumn', EditableColumn)
         mainInfo: [
           {required: true, message: '请输入', trigger: 'blur'}
         ]
+      },
+      templateRules: {
+        templateName: [
+          {required: true, message: '请输入', trigger: 'blur'}
+        ],
+        saveState: [
+          {required: true, message: '请选择', trigger: 'blur'}
+        ],
       },
       // 疾病 列表
       diseaseEditableTableData: [],
@@ -291,13 +318,25 @@ Vue.component('ElxEditableColumn', EditableColumn)
       modelDialogVisible: false,
       modelDialogEditable: false,
       modelForm: {
-        name: ''
-      }
+        name: '',
+        saveState: ''
+      },
+      templateCategory: [{
+          value: '2',
+          label: '全院模板'
+        }, {
+          value: '3',
+          label: '科室模板'
+        }, {
+          value: '4',
+          label: '个人模板'
+        }]
     }
   },
   created() {
     this.invokeFetchDiseaseCategory()
     this.invokeSelectMedicalRecordsTemplateList()
+    this.invokeSelectPatientHistoryMedicalRecords()
   },
   methods: {
     openModelPanel() {
@@ -370,8 +409,11 @@ Vue.component('ElxEditableColumn', EditableColumn)
         return
       }
       var now = this.medicalRecordTemplateTreeDirectory
+      // console.log(this.medicalRecordTemplateTreeDirectory)
+      // console.log(data.label)
       for (var i = 0; i < this.medicalRecordTemplateData[now].length; ++i) {
-        if (this.medicalRecordTemplateData[now][i].templateName === data.label) {
+        // console.log(this.medicalRecordTemplateData[now][i].templateName)
+        if (this.medicalRecordTemplateData[now][i].templateName == data.label) {
           this.modelDialogVisible = true
           this.modelDialogEditable = true
           this.modelForm = this.medicalRecordTemplateData[now][i]
@@ -381,10 +423,22 @@ Vue.component('ElxEditableColumn', EditableColumn)
     },
     // 获取疾病模板
     invokeSelectMedicalRecordsTemplateList() {
+      this.medicalRecordTemplateTreeData = [
+        {
+          label: '全院',
+          children: []
+        }, {
+          label: '科室',
+          children: []
+        }, {
+          label: '个人',
+          children: []
+        }]
       var query = {
         'templateScope': 2,
         'doctorId': this.doctorId
       }
+      this.medicalRecordTemplateData = []
       // 必须嵌套写，否则是异步调用，可能数组的push顺序不一样，会有很大的问题
       // 全院
       selectMedicalRecordsTemplateList(query).then(response => {
@@ -404,7 +458,7 @@ Vue.component('ElxEditableColumn', EditableColumn)
           // 个人
           query.templateScope = 4
           selectMedicalRecordsTemplateList(query).then(response => {
-            // console.log(response)
+            console.log(response)
             this.medicalRecordTemplateData.push(response.data)
             for (var i = 0; i < response.data.length; ++i) {
               this.medicalRecordTemplateTreeData[2].children.push({'label': response.data[i].templateName})
@@ -426,10 +480,31 @@ Vue.component('ElxEditableColumn', EditableColumn)
       this.modelDialogVisible = false
     },
     // 将当前的病历存储为模板
+    invokeSaveCurrentIntoTemplate() {
+      this.modelDialogVisible = true
+      this.modelDialogEditable = false
+      this.modelForm.doctorId = this.doctorId
+      this.modelForm.mainInfo = this.medicalRecordForm.mainInfo
+      this.modelForm.currentDisease = this.medicalRecordForm.currentDisease
+      this.modelForm.pastDisease = this.medicalRecordForm.pastDisease
+      this.modelForm.physicalExam = this.medicalRecordForm.physicalExam
+      this.modelForm.auxiliaryExam = this.medicalRecordForm.auxiliaryExam
+      this.modelForm.opinion = this.medicalRecordForm.opinion
+      this.modelForm.saveState = ''
+      this.modelForm.templateName = ''
+      this.modelForm.medicalRecordsId = ''
+      // saveMedicalRecordAsTemplate()
+    },
     saveCurrentIntoTemplate() {
-      console.log('TODO!')
-
-      saveMedicalRecordAsTemplate
+      var query = this.modelForm
+      // console.log(query)
+      this.modelDialogVisible = false
+      saveMedicalRecordAsTemplate(query).then(response => {
+        this.invokeSelectMedicalRecordsTemplateList()
+      }).catch(error => {
+        console.log('saveMedicalRecordAsTemplate error: ')
+        console.log(error)
+      })
     },
     // 疾病列表和种类的获取
     invokeFetchDiseaseCategory() {
@@ -452,6 +527,19 @@ Vue.component('ElxEditableColumn', EditableColumn)
         this.diseaseList = response.data.list
       }).catch(error => {
         console.log('fetchDiseaseList error: ')
+        console.log(error)
+      })
+    },
+    // 获取历史病历
+    invokeSelectPatientHistoryMedicalRecords() {
+      var query = {
+        'registrationId': this.registrationId,
+      }
+      selectPatientHistoryMedicalRecords(query).then(response => {
+        console.log('selectPatientHistoryMedicalRecords')
+        console.log(response)
+      }).catch(error => {
+        console.log('selectPatientHistoryMedicalRecords error: ')
         console.log(error)
       })
     },
