@@ -84,7 +84,7 @@ export function saveMedicalRecord(medicalRecordJson) {
  * @param physicalExam     体格检查
  * @param auxiliaryExam    辅助检查
  * @param opinion          处理意见
- * @param saveState        保存方式（全院可见 科室可见 或 医生本人可见）
+ * @param saveState        保存方式（全院可见2 科室可见3 或 医生本人可见4）
  * @param doctorId         医生编号
  * @return 操作结果
  */
