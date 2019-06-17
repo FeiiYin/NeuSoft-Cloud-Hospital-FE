@@ -8,8 +8,7 @@
               <div>
                 <el-aside style="background:#eef1f6;width:500px">
                   病历模板
-                  <el-button type="primary" plain style="float:right">删除</el-button>
-                  <el-button type="primary" plain style="float:right;margin-right:20px">保存当前</el-button>
+                  <el-button type="primary" plain style="float:right;">保存当前</el-button>
                 </el-aside>
                 <el-tree
                   :data="medicalRecordTemplateTreeData"
@@ -127,8 +126,8 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="addChargeFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="invokeAddChargeItem('addChargeForm')">确 定</el-button>
+          <el-button @click="modelDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="useTemplate()">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -409,8 +408,11 @@ export default {
           })
         })
       })
-      
-      
+    },
+    // 将当前打开的模板追加到当前的病历上
+    useTemplate() {
+      console.log('TODO')
+      // this.medicalRecordForm = 
     },
     // 疾病列表和种类的获取
     invokeFetchDiseaseCategory() {

@@ -137,3 +137,21 @@ export function endRegistration(query) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+/**
+ * 获取患者的历史病历列表
+ *
+ * @param registrationId 患者的挂号单编号
+ * @return 患者的包括此次就诊在内的所有历史病历（包含诊断信息），json 字符串
+ */
+export function selectPatientHistoryMedicalRecords(query) {
+  console.log('selectPatientHistoryMedicalRecords: ')
+  console.log(query)
+  return request({
+    url: '/doctor_work/history_record',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
