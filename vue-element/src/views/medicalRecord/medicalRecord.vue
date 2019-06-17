@@ -20,6 +20,7 @@
             </el-collapse-item>
             <el-collapse-item title="历史病历" name="2">
               <div> 控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；
+                <el-button type="primary" @click="invokeSelectPatientHistoryMedicalRecords"></el-button>
                 <!-- <el-table :data="">
                   <el-table-column label=""></el-table-column>
                 </el-table> -->
