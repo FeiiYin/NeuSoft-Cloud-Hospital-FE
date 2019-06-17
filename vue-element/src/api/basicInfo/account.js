@@ -23,3 +23,21 @@ export function selectDoctorList(query) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+// /**
+//  * 添加用户信息
+//  * @param newAccount 新增的用户信息
+//  */
+// export function addAccount(newAccount) {
+//   console.log('addAccount: ')
+//   console.log(newAccount)
+//   return request(
+//     {
+//       url: '/department/add',
+//       method: 'post',
+//       params: newAccount,
+//       baseURL: 'http://localhost:8081/cloud-hospital/',
+//       contentType: 'application/x-wwww-form-urlencoded'
+//     }
+//   )
+// }
