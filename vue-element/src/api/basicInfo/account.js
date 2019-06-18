@@ -36,6 +36,23 @@ export function selectDoctorList(query) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+/**
+ * 增加用户信息
+ * @param query 增加用户信息
+ */
+export function addAccount(newAccount) {
+  console.log('addAccount: ')
+  console.log(newAccount)
+  return request(
+    {
+      url: '/account/add_account',
+      method: 'post',
+      params: newAccount,
+      baseURL: 'http://localhost:8081/cloud-hospital/',
+      contentType: 'application/x-wwww-form-urlencoded'
+    }
+  )
+}
 
 /**
  * 修改用户信息
@@ -54,3 +71,4 @@ export function updateAccountByPrimaryKey(query) {
     }
   )
 }
+
