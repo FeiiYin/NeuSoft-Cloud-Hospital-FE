@@ -145,8 +145,8 @@ prop="jobTitle">
             </template>
           </el-form-item>
           <el-form-item
-v-if = "radioSelect === '门诊医生'  || radioSelect === '医技医生'|| radioSelect === '所有用户'"
-                                    label="是否参与排班"
+v-if = "radioSelect === '门诊医生' || radioSelect === '医技医生'|| radioSelect === '所有用户'"
+label="是否参与排班"
 prop="doctorScheduling">
             <el-radio v-model="doctorSchedulingRadio_Add" label="1">是</el-radio>
             <el-radio v-model="doctorSchedulingRadio_Add" label="2">否</el-radio>
@@ -238,8 +238,12 @@ v-if = "radioSelect === '门诊医生' || radioSelect === '医技医生'|| radio
 
 <script>
 import {
-  selectAccountList
+  selectAccountList,
+  updateAccountByPrimaryKey
 } from '../../api/basicInfo/account'
+import {
+  fetchDepartmentList
+} from '../../api/basicInfo/department'
 
 export default {
   data() {
@@ -445,10 +449,19 @@ export default {
           }
           this.accountTableData.push(respondJson)
         }
-        this.listLoading = false
       }).catch(error => {
         console.log('selectAccountList error: ')
         console.log(error)
+      })
+      this.departmentQuery = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
+      fetchDepartmentList(this.departmentQuery).then(response => { // 获取科室常量信息表
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.totalNumber = response.data.total
+        this.accountDepartment = response.data.list
+        const departmentTableDataLen = this.accountDepartment.length
+        const departmertConstantLen = this.
+        this.listLoading = false
       })
     },
     editAccountDataFormFunction(index, row) {
@@ -489,7 +502,6 @@ export default {
           for (let i = 0; i < this.accountConstant.length; ++i) {
             if (this.editAccountForm.category === this.accountConstant[i].constantName) { this.editAccountForm.category = this.accountConstant[i].constantItemId }
           }
-
           var updateList = {
             'userName': this.editAccountForm.userName,
             'userPassword': this.editAccountForm.userPassword,
@@ -500,23 +512,25 @@ export default {
             'doctorScheduling': this.editAccountForm.doctorScheduling
           }
 
-          updateDepartmentByPrimaryKey(updateList).then(response => {
-            console.log('updateDepartmentByPrimaryKey response: ')
+          updateAccountByPrimaryKey(updateList).then(response => {
+            console.log('updateAccountByPrimaryKey response: ')
             console.log(response)
 
             this.$refs['editAccountForm'].resetFields()
-            this.selectEditValue = ''
-            this.queryDepartmentListWithPage()
+            this.selectEditValue1 = ''
+            this.selectEditValue2 = ''
+            this.selectEditValue3 = ''
+            this.invokeSelectAccount()
           }).catch(error => {
-            console.log('updateDepartmentByPrimaryKey error: ')
+            console.log('updateAccountByPrimaryKey error: ')
             console.log(error)
           })
         } else {
-          console.log('error updateDepartmentByPrimaryKey!!')
+          console.log('error updateAccountByPrimaryKey!!')
           return false
         }
       })
-    },
+    }
   }
 }
 </script>
