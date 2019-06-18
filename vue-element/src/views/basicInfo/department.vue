@@ -403,7 +403,7 @@ export default {
           // console.log(this.departmentForm);
 
           for (let i = 0; i < this.departmentConstant.length; ++i) {
-            if (this.editDepartmentForm.category == this.departmentConstant[i].constantName) { this.editDepartmentForm.category = this.departmentConstant[i].constantItemId }
+            if (this.editDepartmentForm.category === this.departmentConstant[i].constantName) { this.editDepartmentForm.category = this.departmentConstant[i].constantItemId }
           }
 
           var updateList = {

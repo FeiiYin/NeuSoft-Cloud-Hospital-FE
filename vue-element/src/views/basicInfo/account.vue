@@ -16,7 +16,7 @@
       </el-col>
       <el-col :span="6">
         <el-button @click="toggleSelection()">取消</el-button>
-        <el-button @click="addUserDataDialogVisible = true">新增</el-button>
+        <el-button @click="addAccountDataDialogVisible = true">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>
     </el-row>
@@ -24,7 +24,7 @@
       <el-table
         ref="multipleTable"
         v-loading="listLoading"
-        :data="userTableData"
+        :data="accountTableData"
         border
         @selection-change="handleSelectionChange"
       >
@@ -37,32 +37,29 @@
           label="用户名"
         />
         <el-table-column
-          v-if="radioSelect !== '所有用户'"
-          prop="passWord"
+          prop="userPassword"
           label="密码"
         />
         <el-table-column
-          v-if="radioSelect !== '所有用户'"
           prop="realName"
           label="真实姓名"
         />
         <el-table-column
-          v-if="radioSelect !== '所有用户'"
-          prop="userDepartmentName"
+          prop="departmentName"
           label="科室"
         />
         <el-table-column
-          prop="userType"
+          prop="accountType"
           label="类别"
         />
         <el-table-column
-          v-if="radioSelect !== '所有用户'"
+          v-if = "radioSelect === '门诊医生'  || radioSelect === '医技医生'|| radioSelect === '所有用户'"
           prop="jobTitle"
           label="医生职称"
         />
         <el-table-column
-          v-if="radioSelect !== '所有用户'"
-          prop="ifWork"
+          v-if = "radioSelect === '门诊医生'  || radioSelect === '医技医生'|| radioSelect === '所有用户'"
+          prop="doctorScheduling"
           label="是否参与排班(医生)"
         />
         <el-table-column
@@ -72,7 +69,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="editUserDataFormFunction(scope.$index, scope.row)"
+              @click="editAccountDataFormFunction(scope.$index, scope.row)"
             >
               <i class="el-icon-edit" />
             </el-button>
@@ -92,25 +89,25 @@
       <!--新增用户信息对话框-->
       <el-dialog
         title="新增用户"
-        :visible.sync="addUserDataDialogVisible"
+        :visible.sync="addAccountDataDialogVisible"
         width="30%"
       >
-        <el-form ref="addUserForm" :model="addUserForm" :rules="rules" label-position="top">
+        <el-form ref="addAccountForm" :model="addAccountForm" :rules="rules" label-position="top">
           <el-form-item label="用户名" prop="userName">
-            <el-input v-model="addUserForm.username" auto-complete="off" />
+            <el-input v-model="addAccountForm.username" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="密码" prop="passWord">
-            <el-input v-model="addUserForm.passWord" auto-complete="off" show-password />
+          <el-form-item label="密码" prop="userPassword">
+            <el-input v-model="addAccountForm.userPassword" auto-complete="off" show-password />
           </el-form-item>
           <el-form-item label="真实姓名" prop="realName">
-            <el-input v-model="addUserForm.realName" auto-complete="off" />
+            <el-input v-model="addAccountForm.realName" auto-complete="off" />
           </el-form-item>
-          <el-form-item v-model="addUserForm.userDepartmentName" label="科室" prop="userDepartmentName">
+          <el-form-item v-model="addAccountForm.departmentName" label="科室" prop="departmentName">
             <!--新增用户对话框中，选择用户所在科室-->
             <template>
               <el-select v-model="selectValue1" filterable placeholder="请选择" @change="true">
                 <el-option
-                  v-for="item in userDepartment"
+                  v-for="item in accountDepartment"
                   :key="item.constantItemId"
                   :label="item.constantName"
                   :value="item.constantItemId"
@@ -118,12 +115,12 @@
               </el-select>
             </template>
           </el-form-item>
-          <el-form-item label="类别" prop="userType">
+          <el-form-item label="类别" prop="accountType">
             <!--新增用户对话框中，选择用户分类-->
             <template>
               <el-select v-model="selectValue2" filterable placeholder="请选择" @change="true">
                 <el-option
-                  v-for="item in userTyper"
+                  v-for="item in accountTyper"
                   :key="item.constantItemId"
                   :label="item.constantName"
                   :value="item.constantItemId"
@@ -131,12 +128,15 @@
               </el-select>
             </template>
           </el-form-item>
-          <el-form-item label="医生职称" prop="jobTitle">
+          <el-form-item
+v-if = "radioSelect === '门诊医生'  || radioSelect === '医技医生'|| radioSelect === '所有用户'"
+label="医生职称"
+prop="jobTitle">
             <!--新增用户对话框中，选择职称信息-->
             <template>
               <el-select v-model="selectValue3" filterable placeholder="请选择" @change="true">
                 <el-option
-                  v-for="item in userJob"
+                  v-for="item in accountJob"
                   :key="item.constantItemId"
                   :label="item.constantName"
                   :value="item.constantItemId"
@@ -144,38 +144,41 @@
               </el-select>
             </template>
           </el-form-item>
-          <el-form-item label="是否参与排班" prop="ifWork_Add">
-            <el-radio v-model="ifWorkRadio_Add" label="1">是</el-radio>
-            <el-radio v-model="ifWorkRadio_Add" label="2">否</el-radio>
+          <el-form-item
+v-if = "radioSelect === '门诊医生'  || radioSelect === '医技医生'|| radioSelect === '所有用户'"
+                                    label="是否参与排班"
+prop="doctorScheduling">
+            <el-radio v-model="doctorSchedulingRadio_Add" label="1">是</el-radio>
+            <el-radio v-model="doctorSchedulingRadio_Add" label="2">否</el-radio>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="addUserDataDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitAdd('userForm')">确 定</el-button>
+          <el-button @click="addAccountDataDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitAdd('accountForm')">确 定</el-button>
         </span>
       </el-dialog>
       <!--修改用户信息对话框-->
       <el-dialog
         title="修改用户信息"
-        :visible.sync="editUserDataDialogVisible"
+        :visible.sync="editAccountDataDialogVisible"
         width="30%"
       >
-        <el-form ref="editUserForm" :model="editUserForm" :rules="rules" label-position="top">
+        <el-form ref="editAccountForm" :model="editAccountForm" :rules="rules" label-position="top">
           <el-form-item label="用户名" prop="userName">
-            <el-input v-model="editUserForm.userName" auto-complete="off" />
+            <el-input v-model="editAccountForm.userName" auto-complete="off" />
           </el-form-item>
-          <el-form-item label="密码" prop="passWord">
-            <el-input v-model="editUserForm.passWord" auto-complete="off" show-password />
+          <el-form-item label="密码" prop="userPassword">
+            <el-input v-model="editAccountForm.userPassword" auto-complete="off" show-password />
           </el-form-item>
           <el-form-item label="真实姓名" prop="realName">
-            <el-input v-model="editUserForm.realName" auto-complete="off" />
+            <el-input v-model="editAccountForm.realName" auto-complete="off" />
           </el-form-item>
           <!--修改用户对话框中，选择科室分类-->
-          <el-form-item label="科室" prop="userDepartment">
+          <el-form-item label="科室" prop="accountDepartment">
             <template>
               <el-select v-model="selectEditValue1" filterable placeholder="请选择" @change="true">
                 <el-option
-                  v-for="item in userDepartment"
+                  v-for="item in accountDepartment"
                   :key="item.constantItemId"
                   :label="item.constantName"
                   :value="item.constantItemId"
@@ -184,11 +187,11 @@
             </template>
           </el-form-item>
           <!--修改用户对话框中，选择用户类别-->
-          <el-form-item v-model="editUserForm.userType" label="类别" prop="userType">
+          <el-form-item v-model="editAccountForm.accountType" label="类别" prop="accountType">
             <template>
               <el-select v-model="selectEditValue2" filterable placeholder="请选择" @change="true">
                 <el-option
-                  v-for="item in userTyper"
+                  v-for="item in accountTyper"
                   :key="item.constantItemId"
                   :label="item.constantName"
                   :value="item.constantItemId"
@@ -197,11 +200,16 @@
             </template>
           </el-form-item>
           <!--修改用户对话框中，选择职称信息(仅医生)-->
-          <el-form-item v-model="editUserForm.jobTitle" label="医生职称" prop="userTitle">
+          <el-form-item
+v-model="editAccountForm.jobTitle"
+label="医生职称"
+prop="accountTitle"
+v-if = "radioSelect === '门诊医生' || radioSelect === '医技医生'|| radioSelect === '所有用户'"
+          >
             <template>
               <el-select v-model="selectEditValue3" filterable placeholder="请选择" @change="true">
                 <el-option
-                  v-for="item in userJob"
+                  v-for="item in accountJob"
                   :key="item.constantItemId"
                   :label="item.constantName"
                   :value="item.constantItemId"
@@ -210,14 +218,18 @@
             </template>
           </el-form-item>
           <!--修改用户对话框中，是否参与排版选择器-->
-          <el-form-item label="是否参与排班" prop="ifWork">
-            <el-radio v-model="ifWorkRadio" label="1">是</el-radio>
-            <el-radio v-model="ifWorkRadio" label="2">否</el-radio>
+          <el-form-item
+label="是否参与排班"
+prop="doctorScheduling"
+v-if = "radioSelect === '门诊医生' || radioSelect === '医技医生'|| radioSelect === '所有用户'"
+          >
+            <el-radio v-model="doctorSchedulingRadio" label="1">是</el-radio>
+            <el-radio v-model="doctorSchedulingRadio" label="2">否</el-radio>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="editUserDataDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitUpdate('editUserForm')">确 定 修 改</el-button>
+          <el-button @click="editAccountDataDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitUpdate('editAccountForm')">确 定 修 改</el-button>
         </span>
       </el-dialog>
     </div>
@@ -236,12 +248,12 @@ export default {
       // 单选框
       radioSelect: '所有用户',
       // 多选框
-      clinical_user1_checked: true, // 挂号收费员多选框
-      clinical_user2_checked: true, // 门诊医生
-      clinical_user3_checked: true, // 医技医生
-      clinical_user4_checked: true, // 药房操作员
-      clinical_user5_checked: true, // 财务管理员
-      clinical_user6_checked: true, // 医院管理员
+      clinical_account1_checked: true, // 挂号收费员多选框
+      clinical_account2_checked: true, // 门诊医生
+      clinical_account3_checked: true, // 医技医生
+      clinical_account4_checked: true, // 药房操作员
+      clinical_account5_checked: true, // 财务管理员
+      clinical_account6_checked: true, // 医院管理员
       // 分页
       currentPage: 1,
       pageSize: 50,
@@ -249,43 +261,43 @@ export default {
       totalNumber: 1,
       checkList: '',
       listLoading: false, // 用户列表加载状态
-      ifWorkRadio: '', // 单选器
-      ifWorkRadio_Add: '',
+      doctorSchedulingRadio: '', // 单选器
+      doctorSchedulingRadio_Add: '',
       // 修改
       selectEditValue1: '', // 选择人员类别
       selectEditValue2: '', // 选择用户所在科室
       selectEditValue3: '', // 选择医生职称
       // 修改用户信息表单
-      editUserForm: {
+      editAccountForm: {
         userName: '',
-        passWord: '',
+        userPassword: '',
         realName: '',
-        userDepartmentName: '',
-        userType: '',
+        departmentName: '',
+        accountType: '',
         jobTitle: '',
-        ifWork: ''
+        doctorScheduling: ''
       },
-      editUserDataDialogVisible: false, // 修改用户表单可见
+      editAccountDataDialogVisible: false, // 修改用户表单可见
 
       // 新增
       selectValue1: '', // 选择人员类别
       selectValue2: '', // 选择用户所在科室
       selectValue3: '', // 选择医生职称
       // 新增用户表单
-      addUserForm: {
+      addAccountForm: {
         userName: '',
-        passWord: '',
+        userPassword: '',
         realName: '',
-        userDepartmentName: '',
-        userType: '',
+        departmentName: '',
+        accountType: '',
         jobTitle: '',
-        ifWork_Add: ''
+        doctorScheduling: ''
       },
-      addUserDataDialogVisible: false, // 新增用户表单可见
+      addAccountDataDialogVisible: false, // 新增用户表单可见
       //  用户所在科室下拉框
-      userDepartment: [{}],
+      accountDepartment: [{}],
       // 用户分类下拉框
-      userTyper: [{
+      accountTyper: [{
         constantItemId: '00',
         constantName: '门诊医生'
       },
@@ -311,7 +323,7 @@ export default {
       }
       ],
       //  用户职称下拉框
-      userJob: [{
+      accountJob: [{
         constantItemId: '01',
         constantName: '主任医师'
       },
@@ -334,7 +346,7 @@ export default {
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
-        passWord: [
+        userPassword: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
         ],
@@ -342,10 +354,10 @@ export default {
           { required: true, message: '真实姓名', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
-        userDepartmentName: [
+        departmentName: [
           { required: true, message: '请选择', trigger: 'blur' }
         ],
-        userType: [
+        accountType: [
           { required: true, message: '请选择', trigger: 'blur' }
         ],
         jobTitle: [
@@ -353,16 +365,16 @@ export default {
         ]
       },
       // 用户表格数据
-      userTableData: [{
+      accountTableData: [{
         userName: 'cxk',
-        passWord: '12345',
+        userPassword: '12345',
         realName: 'cxk',
-        userDepartmentName: '外科',
-        userType: '门诊医生',
+        departmentName: '外科',
+        accountType: '门诊医生',
         jobTitle: '主任医师',
-        ifWork: '否'
+        doctorScheduling: '否'
       }],
-      userConstant: [{
+      accountConstant: [{
         constantItemId: '',
         constantTypeId: '',
         constantCode: '',
@@ -376,7 +388,6 @@ export default {
   created() {
     this.invokeSelectAccount()
   },
-
   methods: {
     invokeChangeRadioSelect(val) {
       // console.log(val)
@@ -406,34 +417,57 @@ export default {
         'accountScope': this.accountScope
       }
       selectAccountList(query).then(response => { // 然后获取科室信息列表
+        this.accountTableData = []
         console.log('selectAccountList response: ')
         console.log(response)
-        // 把 00，01 写成单独文字；单独函数
-        this.userTableData = response.data.list
-
+        const responseJsonList = response.data.list
+        const len = response.data.list.length
+        let respondJson
+        for (let i = 0; i < len; ++i) {
+          respondJson = JSON.parse(responseJsonList[i])
+          if (respondJson['accountType'] === '00') {
+            respondJson['accountType'] = '门诊医生'
+          } else if (respondJson['accountType'] === '01') {
+            respondJson['accountType'] = '医技医生'
+          } else if (respondJson['accountType'] === '10') {
+            respondJson['accountType'] = '医院管理员'
+          } else if (respondJson['accountType'] === '11') {
+            respondJson['accountType'] = '药房操作员'
+          } else if (respondJson['accountType'] === '12') {
+            respondJson['accountType'] = '财务管理员'
+          } else if (respondJson['accountType'] === '13') {
+            respondJson['accountType'] = '挂号收费员'
+          }
+          if (respondJson['doctorScheduling'] === 1) {
+            respondJson['doctorScheduling'] = '是'
+          } else if (respondJson['doctorScheduling'] === 0) {
+            respondJson['doctorScheduling'] = '否'
+          }
+          this.accountTableData.push(respondJson)
+        }
         this.listLoading = false
       }).catch(error => {
         console.log('selectAccountList error: ')
         console.log(error)
       })
     },
-    editUserDataFormFunction(index, row) {
-      this.editUserDataDialogVisible = true
-      this.editUserForm.userName = row.userName
-      this.editUserForm.passWord = row.passWord
-      this.editUserForm.realName = row.realName
-      this.selectEditValue1 = row.userDepartmentName
-      this.selectEditValue2 = row.userType
+    editAccountDataFormFunction(index, row) {
+      this.editAccountDataDialogVisible = true
+      this.editAccountForm.userName = row.userName
+      this.editAccountForm.userPassword = row.userPassword
+      this.editAccountForm.realName = row.realName
+      this.selectEditValue1 = row.departmentName
+      this.selectEditValue2 = row.accountType
       this.selectEditValue3 = row.jobTitle
-      if (row.ifWork === '是') {
-        this.ifWorkRadio = '1'
+      if (row.doctorScheduling === '是') {
+        this.doctorSchedulingRadio = '1'
       } else {
-        this.ifWorkRadio = '2'
+        this.doctorSchedulingRadio = '2'
       }
     },
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)
-      this.$set(this.editDepartmentForm, 'category', val)
+      this.$set(this.editAccountForm, 'category', val)
     },
     toggleSelection(rows) {
       if (rows) {
@@ -446,7 +480,43 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-    }
+    },
+    submitUpdate(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.editAccountDataDialogVisible = false
+
+          for (let i = 0; i < this.accountConstant.length; ++i) {
+            if (this.editAccountForm.category === this.accountConstant[i].constantName) { this.editAccountForm.category = this.accountConstant[i].constantItemId }
+          }
+
+          var updateList = {
+            'userName': this.editAccountForm.userName,
+            'userPassword': this.editAccountForm.userPassword,
+            'realName': this.editAccountForm.realName,
+            'departmentName': this.editAccountForm.departmentName,
+            'accountType': this.editAccountForm.accountType,
+            'jobTitle': this.editAccountForm.jobTitle,
+            'doctorScheduling': this.editAccountForm.doctorScheduling
+          }
+
+          updateDepartmentByPrimaryKey(updateList).then(response => {
+            console.log('updateDepartmentByPrimaryKey response: ')
+            console.log(response)
+
+            this.$refs['editAccountForm'].resetFields()
+            this.selectEditValue = ''
+            this.queryDepartmentListWithPage()
+          }).catch(error => {
+            console.log('updateDepartmentByPrimaryKey error: ')
+            console.log(error)
+          })
+        } else {
+          console.log('error updateDepartmentByPrimaryKey!!')
+          return false
+        }
+      })
+    },
   }
 }
 </script>
