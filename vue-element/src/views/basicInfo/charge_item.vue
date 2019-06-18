@@ -68,7 +68,7 @@
               size="mini"
               @click="editChargeItemDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit"/>
+              <i class="el-icon-edit" />
             </el-button>
           </template>
         </el-table-column>
@@ -78,7 +78,7 @@
         <el-pagination
           :current-page="current_Page"
           :page-sizes="[20, 50, 100]"
-          :page-size="page_size"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalNumber"
         />
@@ -133,7 +133,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addChargeItemDataDialogVisible = false">取 消</el-button>
+        <el-button @click="clearAddChargeItemDataDialog">取 消</el-button>
         <el-button type="primary" @click="submitAdd('userForm')">确 定</el-button>
       </span>
     </el-dialog>
@@ -162,6 +162,13 @@
         <el-form-item label="收费科室编号" prop="chargeItemDepartmentId">
           <el-input v-model="editChargeItemForm.chargeItemDepartmentId" auto-complete="off" />
         </el-form-item>
+        <el-form-item label="项目类型" prop="chargeItemChargeType">
+          <el-radio-group v-model="ChargeTypeRadio">
+            <el-radio label="3">1</el-radio>
+            <el-radio label="6">2</el-radio>
+            <el-radio label="9">3</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="创建时间" prop="chargeItemCreationTime">
           <div class="block">
             <el-date-picker
@@ -173,12 +180,8 @@
             />
           </div>
         </el-form-item>
-        <el-form-item label="项目类型" prop="chargeItemChargeType">
-          <el-radio-group v-model="ChargeTypeRadio">
-            <el-radio label="3">1</el-radio>
-            <el-radio label="6">2</el-radio>
-            <el-radio label="9">3</el-radio>
-          </el-radio-group>
+        <el-form-item label="收费项目拼音" prop="chargeItemPinYin">
+          <el-input v-model="editChargeItemForm.chargeItemPinYin" auto-complete="off" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -195,7 +198,7 @@ export default {
       listLoading: false, // 收费项目列表加载状态
       // 分页
       current_Page: 1,
-      page_size: 50,
+      pageSize: 50,
       totalNumber: 1,
       addChargeItemDataDialogVisible: false, // 新增收费项目表单可见
       // 新增收费项目
@@ -258,6 +261,10 @@ export default {
       rules: {
         chargeItemCode: [
           { required: true, message: '请输入编号', trigger: 'blur' },
+          { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
+        ],
+        chargeItemName: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
           { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
         ],
         chargeItemSpecification: [
@@ -351,6 +358,10 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    clearAddChargeItemDataDialog() {
+      this.addChargeItemDataDialogVisible = false
+      this.$refs['addChargeItemForm'].resetFields()
     }
   }
 }

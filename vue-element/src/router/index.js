@@ -109,6 +109,12 @@ export const constantRoutes = [
         meta: { title: '非药品收费项目管理', noCache: true }
       },
       {
+        path: 'settlement_category',
+        component: () => import('@/views/basicInfo/settlement_category'),
+        name: 'settlement_category',
+        meta: { title: '结算类别管理', noCache: true }
+      },
+      {
         path: 'schedule',
         component: () => import('@/views/basicInfo/schedule'),
         name: 'schedule',

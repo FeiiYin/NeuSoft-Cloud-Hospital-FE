@@ -161,7 +161,7 @@ export default {
       this.listLoading = true // 列表正在加载
       this.query = {
         'current_page': this.currentPage,
-        'page_size': this.pageSize,
+        'pageSize': this.pageSize,
         'disease_category': this.searchDiseaseCategoryId
       }
       fetchDiseaseList(this.query).then(response => {
