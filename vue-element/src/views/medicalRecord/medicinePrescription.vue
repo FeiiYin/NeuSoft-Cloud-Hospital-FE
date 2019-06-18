@@ -469,15 +469,21 @@
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
+          this.prescriptionItemEditableTableData[i].skinTest = ''
+          this.prescriptionItemEditableTableData[i].skinTestResult = ''
+        }
         var query = {
           'prescriptionJson': {
             'prescriptionId': -1, // 新增时填-1
             'prescriptionName': this.prescriptionName,
             'registrationId': this.registrationId,
-            'save_state': 1, // 保存状态（暂存 0；正式提交 1；模板 2）
+            'saveState': 1, // 保存状态（暂存 0；正式提交 1；模板 2）
             'medicine': this.prescriptionItemEditableTableData
           }
+          
         }
+        console.log(query)
         savePrescription(query).then(response => {
           console.log('savePrescription response: ')
           console.log(response)

@@ -33,7 +33,8 @@
               :disabled="true"
               style="width:350px;margin-left:20px;"
               prefix-icon="el-icon-document"
-            />
+            >
+            </el-input>
             <h3>
               病史内容
             </h3>
@@ -57,26 +58,7 @@
                 <el-input v-model="medicalRecordForm.opinion"/>
               </el-form-item>
             </el-form>
-            <!-- 诊断疾病列表，可动态新增和删除 -->
-            <div style="margin-top:60px">
-              <el-button @click="diseaseDialogVisible = true">新增</el-button>
-              <el-button @click="$refs.diseaseEditableTable.removeSelecteds()">删除选中</el-button>
-              <el-button @click="$refs.diseaseEditableTable.clear()">清空</el-button>
-
-              <elx-editable ref="diseaseEditableTable" :data.sync="diseaseEditableTableData">
-                <elx-editable-column type="selection" width="55"/>
-                <elx-editable-column type="index" width="55"/>
-
-                <elx-editable-column prop="disease.diseaseName" label="疾病名称"/>
-                <elx-editable-column prop="disease.diseaseIcd" label="疾病ICD编码"/>
-                <!-- 需求太难，放弃主诊 -->
-                <!-- <elx-editable-column prop="mainDisease" label="主诊" :edit-render="{name: 'ElSelect', options: yesOrNoList}"></elx-editable-column> -->
-                <!-- <elx-editable-column prop="suspect" label="疑似" :edit-render="{name: 'ElSelect', options: yesOrNoList}"></elx-editable-column> -->
-                <elx-editable-column prop="suspect" label="疑似" :edit-render="{name: 'ElSwitch', type: 'visible'}"/>
-                <elx-editable-column prop="incidenceDate" label="发病日期"
-                                     :edit-render="{name: 'ElDatePicker', props: {type: 'date', format: 'yyyy/MM/dd'}}"/>
-              </elx-editable>
-            </div>
+            
             <!-- 全局按钮 -->
             <div style="text-align:center;margin-top:40px;">
               <el-button type="primary" @click="submitMedicalRecordForm('medicalRecordForm', 1)">提交</el-button>
@@ -129,81 +111,6 @@
           <el-button v-show="!modelDialogEditable" type="primary" @click="saveCurrentIntoTemplate()">保存模板</el-button>
         </span>
       </el-dialog>
-
-      <!-- 历史病历的对话框 -->
-      <el-dialog title="历史病历" :visible.sync="patientHistoryDialogVisible" width="30%">
-        <el-form ref="modelForm" :model="patientHistoryForm">
-          <el-form-item label="主诉" prop="mainInfo">
-            <el-input v-model="patientHistoryForm.mainInfo" :disabled="true"/>
-          </el-form-item>
-          <el-form-item label="现病史" prop="currentDisease">
-            <el-input v-model="patientHistoryForm.currentDisease" :disabled="true"/>
-          </el-form-item>
-          <el-form-item label="既往史" prop="pastDisease">
-            <el-input v-model="patientHistoryForm.pastDisease" type="textarea" :rows="2" :disabled="true"/>
-          </el-form-item>
-          <el-form-item label="体格检查" prop="physicalExam">
-            <el-input v-model="patientHistoryForm.physicalExam" type="textarea" :rows="2" :disabled="true"/>
-          </el-form-item>
-          <el-form-item label="辅助检查" prop="auxiliaryExam">
-            <el-input v-model="patientHistoryForm.auxiliaryExam" type="textarea" :rows="2" :disabled="true"/>
-          </el-form-item>
-          <el-form-item label="处理意见" prop="opinion">
-            <el-input v-model="patientHistoryForm.opinion" :disabled="true"/>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="patientHistoryDialogVisible = false">确  认</el-button>
-        </span>
-      </el-dialog>
-
-      <!-- 诊断疾病的dialog -->
-      <el-dialog title="新建疾病诊断条目" :visible.sync="diseaseDialogVisible" width="30%">
-        <el-form ref="diseaseForm" :model="diseaseForm">
-          <el-form-item label="疾病种类" prop="diseaseCategory">
-            <template>
-              <el-select
-                v-model="diseaseForm.diseaseCategory"
-                filterable
-                placeholder="请选择"
-                width="100%"
-                @change="forceChange"
-              >
-                <el-option
-                  v-for="item in diseaseCategoryList"
-                  :key="item.diseaseCategoryId"
-                  :label="item.diseaseName"
-                  :value="item.diseaseCategoryId"
-                />
-              </el-select>
-            </template>
-          </el-form-item>
-          <el-form-item label="疾病名称" prop="disease.diseaseId">
-            <template>
-              <el-select
-                v-model="diseaseForm.disease.diseaseId"
-                filterable
-                placeholder="请选择"
-                width="100%"
-                :disabled="diseaseFormDisableBool"
-                @change="forceChange2"
-              >
-                <el-option
-                  v-for="item in diseaseList"
-                  :key="item.diseaseId"
-                  :label="item.diseaseName"
-                  :value="item.diseaseId"
-                />
-              </el-select>
-            </template>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="diseaseDialogVisible = false">取 消</el-button>
-          <el-button @click="resetForm('diseaseForm')">重置</el-button>
-          <el-button type="primary" @click="insertDiseaseTable()">确 定</el-button>
-        </div>
-      </el-dialog>
     </el-container>
   </div>
 
@@ -227,10 +134,10 @@
     selectPatientHistoryMedicalRecords
   } from '../../api/medicalRecord/medicalRecord'
 
-Vue.use(Editable)
-Vue.use(EditableColumn)
-Vue.component('ElxEditable', Editable)
-Vue.component('ElxEditableColumn', EditableColumn)
+  Vue.use(Editable)
+  Vue.use(EditableColumn)
+  Vue.component('ElxEditable', Editable)
+  Vue.component('ElxEditableColumn', EditableColumn)
 
   export default {
   components: { ThemePicker },
@@ -271,37 +178,12 @@ Vue.component('ElxEditableColumn', EditableColumn)
           {required: true, message: '请选择', trigger: 'blur'}
         ],
       },
-      // 疾病 列表
-      diseaseEditableTableData: [],
-      yesOrNoList: [{
-        'label': '是',
-        'value': '1'
-      }, {
-        'label': '否',
-        'value': '0'
-      }],
-      // 疾病 对话框
-      diseaseDialogVisible: false,
-      diseaseForm: {
-        disease: {
-          diseaseId: '',
-          diseaseIcd: '',
-          diseaseName: '',
-          diseaseCode: '',
-          diseaseCategory: '',
-          valid: ''
-        },
-        diseaseCategory: '',
-        mainDisease: '',
-        suspect: '',
-        incidenceDate: ''
-      },
+    
       formLabelWidth: '120px',
       diseaseFormDisableBool: true,
       diseaseCategoryList: [],
       diseaseList: [],
-      // 左侧手风琴激活状态
-      CollapseAccordionActiveName: 1,
+      
       // 模板的树形目录
       medicalRecordTemplateTreeData: [
         {
@@ -339,106 +221,57 @@ Vue.component('ElxEditableColumn', EditableColumn)
           value: '4',
           label: '个人模板'
       }],
-      // 历史病历部分
-      patientHistoryTable: [{}],
-      patientHistoryDialogVisible: false,
-      patientHistoryForm: {},
-      // 常用病
-      commonDiseaseTags: [
-        { name: '急性扁桃体炎', type: '', disease: {
-          diseaseCategory: 18,
-          diseaseCode: "JXBTTY",
-          diseaseIcd: "J03.903",
-          diseaseId: 9018,
-          diseaseName: "急性扁桃体炎",
-          valid: 1
-        } },
-        { name: '脓疱性痤疮', type: 'success', disease: {
-          diseaseCategory: 48,
-          diseaseCode: "NPXCC",
-          diseaseIcd: "L70.002",
-          diseaseId: 11609,
-          diseaseName: "脓疱性痤疮",
-          valid: 1
-        } },
-        { name: '局部肥胖', type: 'info', disease: {
-          diseaseCategory: 77,
-          diseaseCode: "JBFP",
-          diseaseIcd: "E65.X52",
-          diseaseId: 5023,
-          diseaseName: "局部肥胖",
-          valid: 1
-        } },
-        { name: '发热，伴有寒战', type: 'warning', disease: {
-          diseaseCategory: 73,
-          diseaseCode: "FRBYHZ",
-          diseaseIcd: "R50.051",
-          diseaseId: 16325,
-          diseaseName: "发热，伴有寒战",
-          valid: 1
-        } },
-        { name: '急性气管炎', type: 'danger', disease: {
-          diseaseCategory: 283,
-          diseaseCode: "JXQGY",
-          diseaseIcd: "J04.101",
-          diseaseId: 9032,
-          diseaseName: "急性气管炎",
-          valid: 1
-        } }
-      ],
     }
   },
   created() {
-    this.invokeFetchDiseaseCategory()
     this.invokeSelectMedicalRecordsTemplateList()
-    this.invokeSelectPatientHistoryMedicalRecords()
   },
   methods: {
     openModelPanel() {
       this.model_panel_show = !this.model_panel_show
     },
-    submitMedicalRecordForm(formName, choose) {
-      // choose 1 提交 0 暂存
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          // console.log(this.medicalRecordForm)
-          this.medicalRecordForm.saveState = choose
-          this.medicalRecordForm.doctorId = this.doctorId
-          this.medicalRecordForm.medicalRecordsId = ''
-          // console.log(this.diseaseEditableTableData)
-          this.medicalRecordForm.disease = []
-          for (var i = 0; i < this.diseaseEditableTableData.length; ++i) {
-            this.medicalRecordForm.disease.push({
-              'diseaseId': this.diseaseEditableTableData[i].disease.diseaseId,
-              'mainDisease': 0,
-              'suspect': this.diseaseEditableTableData[i].suspect == true ? 1 : 0,
-              'incidenceDate': this.diseaseEditableTableData[i].incidenceDate
-            })
-          }
-          console.log(this.medicalRecordForm)
-          saveMedicalRecord({'medicalRecordJson': this.medicalRecordForm}).then(response => {
-            if (choose == 1) {
-              this.$message({
-                message: '提交数据成功！',
-                type: 'success'
-              })
-              // 跳转
-            } else {
-              this.$message({
-                message: '暂存数据成功！',
-                type: 'success'
-              })
-            }
-          }).catch(error => {
-            console.log('saveMedicalRecord error: ')
-            console.log(error)
-          })
-        } else {
-          console.log('error submitMedicalRecordForm!!')
-          return false
-        }
-      })
-    },
+    // submitMedicalRecordForm(formName, choose) {
+    //   // choose 1 提交 0 暂存
+    //   this.$refs[formName].validate((valid) => {
+    //     if (valid) {
+    //       // console.log(this.medicalRecordForm)
+    //       this.medicalRecordForm.saveState = choose
+    //       this.medicalRecordForm.doctorId = this.doctorId
+    //       this.medicalRecordForm.medicalRecordsId = ''
+    //       // console.log(this.diseaseEditableTableData)
+    //       this.medicalRecordForm.disease = []
+    //       for (var i = 0; i < this.diseaseEditableTableData.length; ++i) {
+    //         this.medicalRecordForm.disease.push({
+    //           'diseaseId': this.diseaseEditableTableData[i].disease.diseaseId,
+    //           'mainDisease': 0,
+    //           'suspect': this.diseaseEditableTableData[i].suspect == true ? 1 : 0,
+    //           'incidenceDate': this.diseaseEditableTableData[i].incidenceDate
+    //         })
+    //       }
+    //       console.log(this.medicalRecordForm)
+    //       saveMedicalRecord({'medicalRecordJson': this.medicalRecordForm}).then(response => {
+    //         if (choose == 1) {
+    //           this.$message({
+    //             message: '提交数据成功！',
+    //             type: 'success'
+    //           })
+    //           // 跳转
+    //         } else {
+    //           this.$message({
+    //             message: '暂存数据成功！',
+    //             type: 'success'
+    //           })
+    //         }
+    //       }).catch(error => {
+    //         console.log('saveMedicalRecord error: ')
+    //         console.log(error)
+    //       })
+    //     } else {
+    //       console.log('error submitMedicalRecordForm!!')
+    //       return false
+    //     }
+    //   })
+    // },
     // 疾病对话框处理
     insertDiseaseTable() {
       console.log(this.diseaseForm)
@@ -562,86 +395,6 @@ Vue.component('ElxEditableColumn', EditableColumn)
         console.log('saveMedicalRecordAsTemplate error: ')
         console.log(error)
       })
-    },
-    // 疾病列表和种类的获取
-    invokeFetchDiseaseCategory() {
-      fetchDiseaseCategory().then(response => {
-        this.diseaseCategoryList = response.data
-      }).catch(error => {
-        console.log('fetchDiseaseCategory error: ')
-        console.log(error)
-      })
-    },
-    invokeFetchDiseaseList() {
-      var query = {
-        'currentPage': 1,
-        'pageSize': 400,
-        'diseaseCategoryId': this.diseaseForm.diseaseCategory
-      }
-      fetchDiseaseList(query).then(response => {
-        console.log('fetchDiseaseList')
-        console.log(response)
-        this.diseaseList = response.data.list
-      }).catch(error => {
-        console.log('fetchDiseaseList error: ')
-        console.log(error)
-      })
-    },
-    // 获取历史病历
-    invokeSelectPatientHistoryMedicalRecords() {
-      var query = {
-        'registrationId': this.registrationId,
-      }
-      selectPatientHistoryMedicalRecords(query).then(response => {
-        // console.log('selectPatientHistoryMedicalRecords response')
-        // console.log(response)
-        this.patientHistoryTable = JSON.parse(response.data)
-        for (var i = 0; i < this.patientHistoryTable.length; ++i) {
-          if (this.patientHistoryTable[i].mainInfo.length > 5) 
-            this.patientHistoryTable[i].abstract = this.patientHistoryTable[i].mainInfo.substring(0, 5)
-          else
-            this.patientHistoryTable[i].abstract = this.patientHistoryTable[i].mainInfo
-        }
-        console.log(this.patientHistoryTable)
-      }).catch(error => {
-        console.log('selectPatientHistoryMedicalRecords error: ')
-        console.log(error)
-      })
-    },
-    // 打开该历史病例
-    openPatientHistoryDialog(row, event, column) {
-      this.patientHistoryForm = row
-      this.patientHistoryDialogVisible = true
-    },
-    // 常用病插入
-    insertCommonDisease(val) {
-      this.diseaseForm.suspect = true
-      this.diseaseForm.incidenceDate = new Date()
-      this.diseaseForm.disease = val.disease
-      this.$refs.diseaseEditableTable.insert(this.diseaseForm)
-      this.$message({
-        message: '插入数据成功！',
-        type: 'success'
-      })
-    },
-    // 疾病对话框的第一个选择后触发
-    forceChange() {
-      this.diseaseFormDisableBool = false
-      this.invokeFetchDiseaseList()
-    },
-    // 疾病对话框的第一个选择后触发
-    forceChange2() {
-      if (this.diseaseForm.disease.diseaseId === '' || this.diseaseForm.disease.diseaseId == null) {
-        return
-      }
-      this.diseaseForm.suspect = true
-      this.diseaseForm.incidenceDate = new Date()
-      for (var i = 0; i < this.diseaseList.length; ++i) {
-        if (this.diseaseList[i].diseaseId === this.diseaseForm.disease.diseaseId) {
-          this.diseaseForm.disease = this.diseaseList[i]
-          break
-        }
-      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
