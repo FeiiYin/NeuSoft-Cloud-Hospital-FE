@@ -182,6 +182,12 @@ export const constantRoutes = [
         meta: { title: '门诊病历信息', noCache: true }
       },
       {
+        path: 'medicalPrescription',
+        component: () => import('@/views/medicalRecord/medicinePrescription'),
+        name: 'medicalPrescription',
+        meta: { title: '成药处方管理', noCache: true }
+      },
+      {
         path: 'index',
         component: () => import('@/views/medicalRecord/index'),
         name: 'medicalIndex',
@@ -207,6 +213,32 @@ export const constantRoutes = [
       }
     ]
   },
+
+  {
+    path: '/pharmacy',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'pharmacy',
+    meta: {
+      title: '门诊药房工作站',
+      icon: 'lock'
+    },
+    children: [
+      {
+        path: 'dispensingListSearch',
+        component: () => import('@/views/pharmacy/dispensingListSearch'),
+        name: 'dispensingListSearch',
+        meta: { title: '发药列表查询', noCache: true }
+      },
+      {
+        path: 'dispensing',
+        component: () => import('@/views/pharmacy/dispensing'),
+        name: 'dispensing',
+        meta: { title: '发药', noCache: true }
+      }      
+    ]
+  },
+
   {
     path: '/',
     component: Layout,
