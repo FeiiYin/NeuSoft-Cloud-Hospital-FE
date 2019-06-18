@@ -52,7 +52,7 @@
               size="mini"
               @click="editRegistrationCategoryFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit"></i>
+              <i class="el-icon-edit" />
             </el-button>
           </template>
         </el-table-column>
@@ -82,7 +82,7 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="addRegistrationCategoryDataDialogVisible = false">取 消</el-button>
+          <el-button @click="clearAddRegistrationCategoryDataDialog">取 消</el-button>
           <el-button type="primary" @click="submitAdd('userForm')">确 定</el-button>
         </span>
       </el-dialog>
@@ -126,7 +126,7 @@ import {
   updateRegistration_categoryByPrimaryKey,
   deleteRegistration_categoryByPrimaryKey
 } from '../../api/basicInfo/registration_category'
-import registration from "../registration/registration";
+import registration from '../registration/registration'
 
 export default {
   data() {
@@ -243,6 +243,10 @@ export default {
         console.log('selectResponseCategory error:')
         console.log(error)
       })
+    },
+    clearAddRegistrationCategoryDataDialog() {
+      this.addRegistrationCategoryDataDialogVisible = false
+      this.$refs['addRegistrationCategoryForm'].resetFields()
     }
   }
 }

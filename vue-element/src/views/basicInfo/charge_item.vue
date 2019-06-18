@@ -68,7 +68,7 @@
               size="mini"
               @click="editChargeItemDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit"/>
+              <i class="el-icon-edit" />
             </el-button>
           </template>
         </el-table-column>
@@ -133,7 +133,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addChargeItemDataDialogVisible = false">取 消</el-button>
+        <el-button @click="clearAddChargeItemDataDialog">取 消</el-button>
         <el-button type="primary" @click="submitAdd('userForm')">确 定</el-button>
       </span>
     </el-dialog>
@@ -358,6 +358,10 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    clearAddChargeItemDataDialog() {
+      this.addChargeItemDataDialogVisible = false
+      this.$refs['addChargeItemForm'].resetFields()
     }
   }
 }
