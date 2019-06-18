@@ -97,7 +97,7 @@
       >
         <el-form ref="addUserForm" :model="addUserForm" :rules="rules" label-position="top">
           <el-form-item label="用户名" prop="userName">
-            <el-input v-model="addUserForm.username" auto-complete="off" />
+            <el-input v-model="addUserForm.userName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="密码" prop="passWord">
             <el-input v-model="addUserForm.passWord" auto-complete="off" show-password />
@@ -150,7 +150,7 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="addUserDataDialogVisible = false">取 消</el-button>
+          <el-button @click="clearAddUserDataDialog">取 消</el-button>
           <el-button type="primary" @click="submitAdd('userForm')">确 定</el-button>
         </span>
       </el-dialog>
@@ -339,7 +339,7 @@ export default {
           { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
         ],
         realName: [
-          { required: true, message: '真实姓名', trigger: 'blur' },
+          { required: true, message: '请输入真实姓名', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
         userDepartmentName: [
@@ -446,6 +446,10 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    clearAddUserDataDialog() {
+      this.addUserDataDialogVisible = false
+      this.$refs['addUserForm'].resetFields()
     }
   }
 }

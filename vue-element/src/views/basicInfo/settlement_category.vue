@@ -44,7 +44,7 @@
               size="mini"
               @click="editSettlementCategoryFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit"></i>
+              <i class="el-icon-edit" />
             </el-button>
           </template>
         </el-table-column>
@@ -68,7 +68,7 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="addSettlementCategoryDataDialogVisible = false">取 消</el-button>
+          <el-button @click="clearAddSettlementCategoryDataDialog">取 消</el-button>
           <el-button type="primary" @click="submitAdd('userForm')">确 定</el-button>
         </span>
       </el-dialog>
@@ -169,6 +169,10 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    clearAddSettlementCategoryDataDialog() {
+      this.addSettlementCategoryDataDialogVisible = false
+      this.$refs['addSettlementCategoryForm'].resetFields()
     }
   }
 }
