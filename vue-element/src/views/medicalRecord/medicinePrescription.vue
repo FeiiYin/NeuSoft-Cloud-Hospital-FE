@@ -74,17 +74,12 @@
                 <svg-icon icon-class="money" />
               </span>
               <el-input v-model="totalListMoney" :disabled="true" style="width:20%" />
-
-              <el-button type="info" style="float:right">
-                <i class="el-icon-printer" />
-                打印
-              </el-button>
             </aside>
 
             <!-- 全局按钮 -->
             <div style="text-align:center;margin-top:40px;">
               <el-button type="primary" @click="submitPrescriptionItemList">提交</el-button>
-              <el-button @click="doPrint">打印预览</el-button>
+              <el-button type="info" @click="doPrint"><i class="el-icon-printer" />打印预览</el-button>
             </div>
             
           </el-main>
@@ -222,13 +217,28 @@
     <div v-show="false" id="subOutputRank-print">
       <strong>处方列表</strong>
       <br />
+      <hr>
       <span
         v-for="item in prescriptionItemEditableTableData"
         :key="item.medicineId"
         :label="item.nameZh"
         :value="item.medicineId">
-        <p> {{ item.nameZh }} </p>
+        <p> 
+          <span>{{ item.nameZh }}</span>
+          <span>{{ item.medicineSpecification }}</span>
+          <span>{{ item.medicineUnit }}</span>
+          <span>{{ item.medicineManufacturer }}</span>
+          <span>{{ item.medicineDosageId }}</span>
+          <span>{{ item.medicinePrice }}</span>
+          *
+          <span>{{ item.medicineQuantity }}</span>
+          共
+          <span>{{ item.medicineQuantity*item.medicinePrice }}</span>
+          元
+        </p>
       </span>
+      <hr>
+      <strong>合计 {{ totalListMoney }} 元</strong>
     </div>
   </div>
 </template>

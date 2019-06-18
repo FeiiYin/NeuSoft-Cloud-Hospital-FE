@@ -212,10 +212,10 @@ export const constantRoutes = [
         meta: { title: '测试', noCache: true }
       },
       {
-        path: 'test2',
-        component: () => import('@/views/medicalRecord/test2'),
-        name: 'medicalTest2',
-        meta: { title: '测试2', noCache: true }
+        path: 'medicalRecordTemplate',
+        component: () => import('@/views/medicalRecord/medicalRecordTemplate'),
+        name: 'medicalRecordTemplate',
+        meta: { title: '病历模板管理', noCache: true }
       }
     ]
   },
