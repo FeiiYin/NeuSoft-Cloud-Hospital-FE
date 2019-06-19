@@ -72,3 +72,15 @@ export function updateAccount(query) {
   )
 }
 
+export function deleteAccount(deleteAccount) {
+  console.log('deleteAccount: ', deleteAccount)
+  return request(
+    {
+      url: '/account/delete_account',
+      method: 'delete',
+      params: deleteAccount,
+      baseURL: 'http://localhost:8081/cloud-hospital/',
+      contentType: 'application/x-wwww-form-urlencoded'
+    })
+}
+
