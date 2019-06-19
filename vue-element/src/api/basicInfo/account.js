@@ -58,12 +58,12 @@ export function addAccount(newAccount) {
  * 修改用户信息
  * @param query 修改后的用户信息，将根据主键找到原信息进行修改
  */
-export function updateAccountByPrimaryKey(query) {
-  console.log('updateAccountByPrimaryKey: ')
+export function updateAccount(query) {
+  console.log('updateAccount:')
   console.log(query)
   return request(
     {
-      url: '/account/update',
+      url: '/account/update_account',
       method: 'put',
       params: query,
       baseURL: 'http://localhost:8081/cloud-hospital/',

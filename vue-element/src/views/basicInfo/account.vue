@@ -84,7 +84,8 @@
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalNumber"
-        />
+        >
+        </el-pagination>
       </div>
       <!--新增用户信息对话框-->
       <el-dialog
@@ -105,20 +106,21 @@
           <el-form-item v-model="addAccountForm.departmentName" label="科室" prop="departmentName">
             <!--新增用户对话框中，选择用户所在科室-->
             <template>
-              <el-select v-model="selectValue1" filterable placeholder="请选择" @change="forceChange">
+              <el-select v-model="selectValue1" filterable placeholder="请选择" @change="forceChange1">
                 <el-option
                   v-for="item in accountDepartment"
                   :key="item.departmentId"
                   :label="item.departmentName"
                   :value="item.departmentId"
-                />
+                >
+                </el-option>
               </el-select>
             </template>
           </el-form-item>
           <el-form-item label="类别" prop="accountType">
             <!--新增用户对话框中，选择用户分类-->
             <template>
-              <el-select v-model="selectValue2" filterable placeholder="请选择" @change="true">
+              <el-select v-model="selectValue2" filterable placeholder="请选择" @change="forceChange2">
                 <el-option
                   v-for="item in accountTyper"
                   :key="item.constantItemId"
@@ -135,7 +137,7 @@
           >
             <!--新增用户对话框中，选择职称信息-->
             <template>
-              <el-select v-model="selectValue3" filterable placeholder="请选择" @change="true">
+              <el-select v-model="selectValue3" filterable placeholder="请选择" @change="forceChange3">
                 <el-option
                   v-for="item in accountJob"
                   :key="item.constantItemId"
@@ -150,8 +152,8 @@
             label="是否参与排班"
             prop="doctorScheduling"
           >
-            <el-radio v-model="doctorSchedulingRadio_Add" label="1">是</el-radio>
-            <el-radio v-model="doctorSchedulingRadio_Add" label="2">否</el-radio>
+            <el-radio v-model="doctorSchedulingRadio_Add" label="1"  @change="forceChange4">是</el-radio>
+            <el-radio v-model="doctorSchedulingRadio_Add" label="2"  @change="forceChange4">否</el-radio>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -178,7 +180,7 @@
           <!--修改用户对话框中，选择科室分类-->
           <el-form-item label="科室" prop="accountDepartment">
             <template>
-              <el-select v-model="selectEditValue1" filterable placeholder="请选择" @change="forceChange">
+              <el-select v-model="selectEditValue1" filterable placeholder="请选择" @change="forceChange1">
                 <el-option
                   v-for="item in accountDepartment"
                   :key="item.departmentId"
@@ -227,7 +229,7 @@
               prop="doctorScheduling"
             >
               <el-radio v-model="doctorSchedulingRadio" label="1">是</el-radio>
-              <el-radio v-model="doctorSchedulingRadio" label="2">否</el-radio>
+              <el-radio v-model="doctorSchedulingRadio" label="0">否</el-radio>
             </el-form-item>
           </template>
         </el-form>
@@ -244,7 +246,7 @@
 import {
   addAccount,
   selectAccountList,
-  updateAccountByPrimaryKey
+  updateAccount
 } from '../../api/basicInfo/account'
 import {
   fetchDepartmentList
@@ -281,7 +283,7 @@ export default {
         userName: '',
         userPassword: '',
         realName: '',
-        departmentName: '',
+        departmentId: '',
         accountType: '',
         jobTitle: '',
         doctorScheduling: ''
@@ -297,7 +299,7 @@ export default {
         userName: '',
         userPassword: '',
         realName: '',
-        departmentName: '',
+        departmentId: '',
         accountType: '',
         jobTitle: '',
         doctorScheduling: ''
@@ -363,7 +365,7 @@ export default {
           { required: true, message: '真实姓名', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
-        departmentName: [
+        departmentId: [
           { required: true, message: '请选择', trigger: 'blur' }
         ],
         accountType: [
@@ -459,20 +461,13 @@ export default {
         console.log(error)
       })
       // 开始加载对应的所有科室
-      this.departmentQuery = { 'currentPage': this.currentPage, 'pageSize': 152 }
+      this.departmentQuery = { 'currentPage': this.currentPage, 'pageSize': 400 }
+
+      // console.log(this.departmentQuery)
       fetchDepartmentList(this.departmentQuery).then(response => { // 获取科室常量信息表
-        console.log('fetchDepartmentList response: ')
         console.log(response)
-        this.totalNumber = response.data.total
-        this.accountDepartment = []
-        for (let i = 0; i < this.totalNumber; ++i) {
-          this.accountDepartment.push(response.data.list[i])
-        }
+        this.accountDepartment = response.data.list
       })
-    },
-    forceChange(val) {
-      this.$set(this.departmentForm, 'category', val)
-      this.$set(this.editDepartmentForm, 'category', val)
     },
     editAccountDataFormFunction(index, row) {
       this.editAccountDataDialogVisible = true
@@ -485,13 +480,24 @@ export default {
       if (row.doctorScheduling === '是') {
         this.doctorSchedulingRadio = '1'
       } else {
-        this.doctorSchedulingRadio = '2'
+        this.doctorSchedulingRadio = '0'
       }
+    }, // 1是科室，2是类别，3是职称, 4是排班
+    forceChange1(val) {
+      this.$set(this.addAccountForm, 'departmentId', val)
+      this.$set(this.editAccountForm, 'departmentId', val)
     },
-    // eslint-disable-next-line no-dupe-keys,vue/no-dupe-keys
-    forceChange(val) {
-      this.$set(this.addAccountForm, 'departmentName', val)
-      this.$set(this.editAccountForm, 'departmentName', val)
+    forceChange2(val) {
+      this.$set(this.addAccountForm, 'accountType', val)
+      this.$set(this.editAccountForm, 'accountType', val)
+    },
+    forceChange3(val) {
+      this.$set(this.addAccountForm, 'jobTitle', val)
+      this.$set(this.editAccountForm, 'jobTitle', val)
+    },
+    forceChange4(val) {
+      this.$set(this.addAccountForm, 'doctorScheduling', val)
+      this.$set(this.editAccountForm, 'doctorScheduling', val)
     },
     toggleSelection(rows) {
       if (rows) {
@@ -504,18 +510,18 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-    },
+    }, // 增加用户
     submitAdd(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.editAccountDataDialogVisible = false
+          this.addAccountDataDialogVisible = false
           addAccount(this.addAccountForm).then(response => {
-            console.log('add acount response: ')
+            console.log('add account response: ')
             console.log(response)
             this.totalNumber += 1
             var tmp = Math.ceil(this.totalNumber / this.pageSize)
             this.current = tmp
-            this.$refs('addAccountForm').resetForm() // 清空内容及选择器
+            this.$refs('addAccountForm').resetField() // 清空内容及选择器
             this.selectEditValue1 = ''
             this.selectEditValue2 = ''
             this.selectEditValue3 = ''
@@ -529,6 +535,29 @@ export default {
           return false
         }
       })
+    },
+    submitUpdate(formName) {
+      this.$refs(formName).validate((valid) => {
+        if (valid) {
+          this.editAccountDataDialogVisible = false
+          updateAccount(this.editAccountForm).then(response => {
+            console.log('update account response: ')
+            console.log(response)
+            this.$refs('editAccountForm').resetField()
+            this.selectEditValue1 = ''
+            this.selectEditValue2 = ''
+            this.selectEditValue3 = ''
+          }).catch(error => {
+            console.log('update account error: ')
+            console.log(error)
+          })
+          this.invokeSelectAccount()
+        } else {
+          console.log('error updateAccount')
+          return false
+        }
+      }
+      )
     }
   }
 }
