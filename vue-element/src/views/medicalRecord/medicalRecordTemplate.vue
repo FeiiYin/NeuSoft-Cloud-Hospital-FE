@@ -6,7 +6,6 @@
           <div style="width:500px;">
             <el-aside style="background:#eef1f6;width:500px">
               病历模板
-              <el-button type="primary" plain style="float:right;" @click="invokeSaveCurrentIntoTemplate">保存当前</el-button>
             </el-aside>
             <el-tree
               :data="medicalRecordTemplateTreeData"
@@ -27,18 +26,17 @@
         </aside>
         <el-container>
           <el-main id="subOutputRank-print">
-            <span>当前患者病历号</span>
-            <el-input
-              v-model="medicalRecordForm.registrationId"
-              :disabled="true"
-              style="width:350px;margin-left:20px;"
-              prefix-icon="el-icon-document"
-            >
-            </el-input>
             <h3>
-              病史内容
+              病历内容模板
             </h3>
             <el-form ref="medicalRecordForm" :model="medicalRecordForm" :rules="rules" label-width="100px">
+              <el-form-item label="模板编号" prop="medicalRecordsId">
+                <el-input v-model="medicalRecordForm.medicalRecordsId" :disabled="true" style="width:86%"/>
+                <el-button type="primary" plain @click="medicalRecordForm.medicalRecordsId=''" style="float:right"><i class="el-icon-refresh" /></el-button>
+              </el-form-item>
+              <el-form-item label="模板名称" prop="templateName">
+                <el-input v-model="medicalRecordForm.templateName" />
+              </el-form-item>
               <el-form-item label="主诉" prop="mainInfo">
                 <el-input v-model="medicalRecordForm.mainInfo"/>
               </el-form-item>
@@ -57,14 +55,22 @@
               <el-form-item label="处理意见" prop="opinion">
                 <el-input v-model="medicalRecordForm.opinion"/>
               </el-form-item>
+              <el-form-item label="模板类别" prop="saveState">
+                <el-select v-model="medicalRecordForm.saveState" placeholder="请选择" >
+                  <el-option
+                    v-for="item in templateCategory"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
             </el-form>
             
             <!-- 全局按钮 -->
             <div style="text-align:center;margin-top:40px;">
-              <el-button type="primary" @click="submitMedicalRecordForm('medicalRecordForm', 1)">提交</el-button>
-              <el-button @click="resetForm('medicalRecordForm')">重置</el-button>
-              <el-button @click="submitMedicalRecordForm('medicalRecordForm', 0)">暂存</el-button>
-              <el-button @click="doPrint('medicalRecordForm')">预览</el-button>
+              <el-button type="primary" @click="true">删除模板</el-button>
+              <el-button type="primary" plain @click="saveCurrentIntoTemplate">保存当前</el-button>
             </div>
           </el-main>
         </el-container>
@@ -73,6 +79,7 @@
       <!--模板的对话框-->
       <el-dialog title="模板预览" :visible.sync="modelDialogVisible" width="30%">
         <el-form ref="modelForm" :model="modelForm" :rules="templateRules">
+          
           <el-form-item label="模板名称" prop="templateName">
             <el-input v-model="modelForm.templateName" :disabled="modelDialogEditable"/>
           </el-form-item>
@@ -107,7 +114,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="modelDialogVisible = false">取 消</el-button>
-          <el-button v-show="modelDialogEditable" type="primary" @click="useTemplate()">应用模板</el-button>
+          <el-button v-show="modelDialogEditable" type="primary" @click="useTemplate()">修改模板</el-button>
           <el-button v-show="!modelDialogEditable" type="primary" @click="saveCurrentIntoTemplate()">保存模板</el-button>
         </span>
       </el-dialog>
@@ -150,6 +157,7 @@
       model_panel_show: false,
       // 提交表单
       medicalRecordForm: {
+        medicalRecordsId: '',
         registrationId: 1, // 挂号单编号
         doctorId: '', // 医生id，应当从 登录用户获取
         mainInfo: '', // 主诉
@@ -166,9 +174,30 @@
         }] // 评估/诊断（JSONArray）
       },
       rules: {
+        templateName: [
+          {required: true, message: '请输入', trigger: 'blur'}
+        ],
         mainInfo: [
           {required: true, message: '请输入', trigger: 'blur'}
-        ]
+        ],
+        currentDisease: [
+          {required: true, message: '请输入', trigger: 'blur'}
+        ],
+        pastDisease: [
+          {required: true, message: '请输入', trigger: 'blur'}
+        ],
+        physicalExam: [
+          {required: true, message: '请输入', trigger: 'blur'}
+        ],
+        auxiliaryExam: [
+          {required: true, message: '请输入', trigger: 'blur'}
+        ],
+        opinion: [
+          {required: true, message: '请输入', trigger: 'blur'}
+        ],
+        saveState: [
+          {required: true, message: '请选择', trigger: 'blur'}
+        ],
       },
       templateRules: {
         templateName: [
@@ -180,10 +209,7 @@
       },
     
       formLabelWidth: '120px',
-      diseaseFormDisableBool: true,
-      diseaseCategoryList: [],
-      diseaseList: [],
-      
+            
       // 模板的树形目录
       medicalRecordTemplateTreeData: [
         {
@@ -230,59 +256,6 @@
     openModelPanel() {
       this.model_panel_show = !this.model_panel_show
     },
-    // submitMedicalRecordForm(formName, choose) {
-    //   // choose 1 提交 0 暂存
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       // console.log(this.medicalRecordForm)
-    //       this.medicalRecordForm.saveState = choose
-    //       this.medicalRecordForm.doctorId = this.doctorId
-    //       this.medicalRecordForm.medicalRecordsId = ''
-    //       // console.log(this.diseaseEditableTableData)
-    //       this.medicalRecordForm.disease = []
-    //       for (var i = 0; i < this.diseaseEditableTableData.length; ++i) {
-    //         this.medicalRecordForm.disease.push({
-    //           'diseaseId': this.diseaseEditableTableData[i].disease.diseaseId,
-    //           'mainDisease': 0,
-    //           'suspect': this.diseaseEditableTableData[i].suspect == true ? 1 : 0,
-    //           'incidenceDate': this.diseaseEditableTableData[i].incidenceDate
-    //         })
-    //       }
-    //       console.log(this.medicalRecordForm)
-    //       saveMedicalRecord({'medicalRecordJson': this.medicalRecordForm}).then(response => {
-    //         if (choose == 1) {
-    //           this.$message({
-    //             message: '提交数据成功！',
-    //             type: 'success'
-    //           })
-    //           // 跳转
-    //         } else {
-    //           this.$message({
-    //             message: '暂存数据成功！',
-    //             type: 'success'
-    //           })
-    //         }
-    //       }).catch(error => {
-    //         console.log('saveMedicalRecord error: ')
-    //         console.log(error)
-    //       })
-    //     } else {
-    //       console.log('error submitMedicalRecordForm!!')
-    //       return false
-    //     }
-    //   })
-    // },
-    // 疾病对话框处理
-    insertDiseaseTable() {
-      console.log(this.diseaseForm)
-      this.$refs.diseaseEditableTable.insert(this.diseaseForm)
-      this.diseaseList = []
-      this.$message({
-        message: '插入数据成功！',
-        type: 'success'
-      })
-      this.diseaseDialogVisible = false
-    },
     // 树形目录检测
     handleNodeClick(data) {
       console.log(data)
@@ -299,14 +272,34 @@
         return
       }
       var now = this.medicalRecordTemplateTreeDirectory
-      // console.log(this.medicalRecordTemplateTreeDirectory)
+      // console.log('this directory'+this.medicalRecordTemplateTreeDirectory)
       // console.log(data.label)
       for (var i = 0; i < this.medicalRecordTemplateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
         if (this.medicalRecordTemplateData[now][i].templateName == data.label) {
-          this.modelDialogVisible = true
-          this.modelDialogEditable = true
-          this.modelForm = this.medicalRecordTemplateData[now][i]
+          console.log(this.medicalRecordTemplateData[now][i])
+          // this.modelDialogVisible = true
+          // this.modelDialogEditable = true
+          // problem init
+          // this.modelForm = this.medicalRecordTemplateData[now][i]
+          this.medicalRecordForm.medicalRecordsId = this.medicalRecordTemplateData[now][i].medicalRecordsId
+          this.medicalRecordForm.mainInfo = this.medicalRecordTemplateData[now][i].mainInfo
+          this.medicalRecordForm.currentDisease = this.medicalRecordTemplateData[now][i].currentDisease
+          this.medicalRecordForm.pastDisease = this.medicalRecordTemplateData[now][i].pastDisease
+          this.medicalRecordForm.physicalExam = this.medicalRecordTemplateData[now][i].physicalExam
+          this.medicalRecordForm.auxiliaryExam = this.medicalRecordTemplateData[now][i].auxiliaryExam
+          this.medicalRecordForm.opinion = this.medicalRecordTemplateData[now][i].opinion
+
+          // 双向绑定问题
+          // JSON.parse(JSON.stringify(this.temp1));
+          this.medicalRecordForm.templateName = this.medicalRecordTemplateData[now][i].templateName
+          // this.modelForm.saveState = this.medicalRecordTemplateData[now][i].saveState
+          if (this.medicalRecordTemplateTreeDirectory == 0)
+            this.medicalRecordForm.saveState = '全院模板'
+          else if (this.medicalRecordTemplateTreeDirectory == 1) 
+            this.medicalRecordForm.saveState = '科室模板'
+          else 
+            this.medicalRecordForm.saveState = '个人模板'
           break
         }
       }
@@ -348,6 +341,7 @@
           // 个人
           query.templateScope = 4
           selectMedicalRecordsTemplateList(query).then(response => {
+            console.log('template response')
             console.log(response)
             this.medicalRecordTemplateData.push(response.data)
             for (var i = 0; i < response.data.length; ++i) {
@@ -357,43 +351,49 @@
         })
       })
     },
-    // 将当前打开的模板追加到当前的病历上
-    useTemplate() {
-      // console.log('TODO')
-      // console.log(this.modelForm)
-      this.medicalRecordForm.auxiliaryExam = this.modelForm.auxiliaryExam
-      this.medicalRecordForm.currentDisease = this.modelForm.currentDisease
-      this.medicalRecordForm.mainInfo = this.modelForm.mainInfo
-      this.medicalRecordForm.opinion = this.modelForm.opinion
-      this.medicalRecordForm.pastDisease = this.modelForm.pastDisease
-      this.medicalRecordForm.physicalExam = this.modelForm.physicalExam
-      this.modelDialogVisible = false
-    },
     // 将当前的病历存储为模板
     invokeSaveCurrentIntoTemplate() {
-      this.modelDialogVisible = true
-      this.modelDialogEditable = false
-      this.modelForm.doctorId = this.doctorId
-      this.modelForm.mainInfo = this.medicalRecordForm.mainInfo
-      this.modelForm.currentDisease = this.medicalRecordForm.currentDisease
-      this.modelForm.pastDisease = this.medicalRecordForm.pastDisease
-      this.modelForm.physicalExam = this.medicalRecordForm.physicalExam
-      this.modelForm.auxiliaryExam = this.medicalRecordForm.auxiliaryExam
-      this.modelForm.opinion = this.medicalRecordForm.opinion
-      this.modelForm.saveState = ''
-      this.modelForm.templateName = ''
-      this.modelForm.medicalRecordsId = ''
-      // saveMedicalRecordAsTemplate()
+      this.$refs['medicalRecordForm'].validate((valid) => {
+        if (valid) {
+          this.modelDialogVisible = true
+          this.modelDialogEditable = false
+          this.modelForm = this.medicalRecordForm
+          // this.modelForm.doctorId = this.doctorId
+          // this.modelForm.mainInfo = this.medicalRecordForm.mainInfo
+          // this.modelForm.currentDisease = this.medicalRecordForm.currentDisease
+          // this.modelForm.pastDisease = this.medicalRecordForm.pastDisease
+          // this.modelForm.physicalExam = this.medicalRecordForm.physicalExam
+          // this.modelForm.auxiliaryExam = this.medicalRecordForm.auxiliaryExam
+          // this.modelForm.opinion = this.medicalRecordForm.opinion
+          // this.modelForm.saveState = ''
+          // this.modelForm.templateName = ''
+          // this.modelForm.medicalRecordsId = ''
+          // saveMedicalRecordAsTemplate()
+        }
+      })
     },
     saveCurrentIntoTemplate() {
-      var query = this.modelForm
-      // console.log(query)
-      this.modelDialogVisible = false
-      saveMedicalRecordAsTemplate(query).then(response => {
-        this.invokeSelectMedicalRecordsTemplateList()
-      }).catch(error => {
-        console.log('saveMedicalRecordAsTemplate error: ')
-        console.log(error)
+      this.$refs['medicalRecordForm'].validate((valid) => {
+        if (valid) {
+          this.medicalRecordForm.doctorId = this.doctorId
+          if (this.medicalRecordForm.saveState == '全院模板')
+            this.medicalRecordForm.saveState = 2
+          else if (this.medicalRecordForm.saveState == '科室模板') 
+            this.medicalRecordForm.saveState = 3
+          else 
+            this.medicalRecordForm.saveState = 4
+          var query = this.medicalRecordForm
+
+          console.log('template query: ')
+          console.log(query)
+          // saveMedicalRecordAsTemplate(query).then(response => {
+          //   this.medicalRecordForm = {}
+          //   this.invokeSelectMedicalRecordsTemplateList()
+          // }).catch(error => {
+          //   console.log('saveMedicalRecordAsTemplate error: ')
+          //   console.log(error)
+          // })
+        }
       })
     },
     resetForm(formName) {
