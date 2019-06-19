@@ -122,9 +122,6 @@ export default {
     }
   },
   methods: {
-    testLog() {
-      console.log('???')
-    },
     getList() {
       this.loading = true
       console.log("refreshListener: " + this.refreshListener)
