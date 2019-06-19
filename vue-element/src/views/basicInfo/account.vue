@@ -84,8 +84,7 @@
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalNumber"
-        >
-        </el-pagination>
+        />
       </div>
       <!--新增用户信息对话框-->
       <el-dialog
@@ -103,8 +102,8 @@
           <el-form-item label="真实姓名" prop="realName">
             <el-input v-model="addAccountForm.realName" auto-complete="off" />
           </el-form-item>
+          <!--新增用户对话框中，选择用户所在科室-->
           <el-form-item v-model="addAccountForm.departmentName" label="科室" prop="departmentName">
-            <!--新增用户对话框中，选择用户所在科室-->
             <template>
               <el-select v-model="selectValue1" filterable placeholder="请选择" @change="forceChange1">
                 <el-option
@@ -112,23 +111,20 @@
                   :key="item.departmentId"
                   :label="item.departmentName"
                   :value="item.departmentId"
-                >
-                </el-option>
-              </el-select>
-            </template>
-          </el-form-item>
-          <el-form-item label="类别" prop="accountType">
-            <!--新增用户对话框中，选择用户分类-->
-            <template>
-              <el-select v-model="selectValue2" filterable placeholder="请选择" @change="forceChange2">
-                <el-option
-                  v-for="item in accountTyper"
-                  :key="item.constantItemId"
-                  :label="item.constantName"
-                  :value="item.constantItemId"
                 />
               </el-select>
             </template>
+          </el-form-item>
+          <!--新增用户对话框中，选择用户分类-->
+          <el-form-item v-model="addAccountForm.accountType" label="类别" prop="accountType">
+            <el-select v-model="selectValue2" filterable placeholder="请选择" @change="forceChange2">
+              <el-option
+                v-for="item in accountTyper"
+                :key="item.constantItemId"
+                :label="item.constantName"
+                :value="item.constantItemId"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item
             v-if="radioSelect === '门诊医生' || radioSelect === '医技医生'|| radioSelect === '所有用户'"
@@ -152,8 +148,8 @@
             label="是否参与排班"
             prop="doctorScheduling"
           >
-            <el-radio v-model="doctorSchedulingRadio_Add" label="1"  @change="forceChange4">是</el-radio>
-            <el-radio v-model="doctorSchedulingRadio_Add" label="0"  @change="forceChange4">否</el-radio>
+            <el-radio v-model="doctorSchedulingRadio_Add" label="1" @change="forceChange4">是</el-radio>
+            <el-radio v-model="doctorSchedulingRadio_Add" label="0" @change="forceChange4">否</el-radio>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -178,7 +174,7 @@
             <el-input v-model="editAccountForm.realName" auto-complete="off" />
           </el-form-item>
           <!--修改用户对话框中，选择科室分类-->
-          <el-form-item label="科室" prop="accountDepartment">
+          <el-form-item v-model="editAccountForm.departmentName" label="科室" prop="departmentName">
             <template>
               <el-select v-model="selectEditValue1" filterable placeholder="请选择" @change="forceChange1">
                 <el-option
@@ -210,8 +206,8 @@
             label="医生职称"
             prop="accountTitle"
           >
-            <template slot-scope="scope">
-              <el-select v-model="selectEditValue3" filterable placeholder="请选择" :disabled="scope.row.selectEditValue2 === '医院管理员' || '药房操作员' || '挂号收费员' || '财务管理员'" @change="forceChange3">
+            <template>
+              <el-select v-model="selectEditValue3" filterable placeholder="请选择" @change="forceChange3">
                 <el-option
                   v-for="item in accountJob"
                   :key="item.constantItemId"
@@ -228,8 +224,8 @@
               label="是否参与排班"
               prop="doctorScheduling"
             >
-              <el-radio v-model="doctorSchedulingRadio" label="1" @change="forceChange4" >是</el-radio>
-              <el-radio v-model="doctorSchedulingRadio" label="0" @change="forceChange4" >否</el-radio>
+              <el-radio v-model="doctorSchedulingRadio" label="1" @change="forceChange4">是</el-radio>
+              <el-radio v-model="doctorSchedulingRadio" label="0" @change="forceChange4">否</el-radio>
             </el-form-item>
           </template>
         </el-form>
@@ -283,7 +279,7 @@ export default {
         userName: '',
         userPassword: '',
         realName: '',
-        departmentId: '',
+        departmentName: '',
         accountType: '',
         jobTitle: '',
         doctorScheduling: ''
@@ -299,7 +295,7 @@ export default {
         userName: '',
         userPassword: '',
         realName: '',
-        departmentId: '',
+        departmentName: '',
         accountType: '',
         jobTitle: '',
         doctorScheduling: ''
@@ -365,7 +361,7 @@ export default {
           { required: true, message: '真实姓名', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
-        departmentId: [
+        departmentName: [
           { required: true, message: '请选择', trigger: 'blur' }
         ],
         accountType: [
