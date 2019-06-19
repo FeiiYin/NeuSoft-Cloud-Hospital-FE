@@ -154,6 +154,7 @@
         <el-aside style="background:#eef1f6;width:500px">
           处方模板
           <el-button type="primary" plain style="float:right;" @click="templateDialogVisible=true">保存为模板</el-button>
+          <el-button plain style="float:right;margin-right:10px" @click="applyTemplate">应用</el-button>
         </el-aside>
         <el-tree
           :data="prescriptionTemplateTreeData"
@@ -176,8 +177,8 @@
       <el-col :span="10"><div >
         <el-aside style="background:#eef1f6;width:500px">
           处方暂存记录
-          <el-button type="primary" plain style="float:right;" @click="true">暂存</el-button>
-          <el-button plain style="float:right;margin-right:10px;" @click="true">删除</el-button>
+          <el-button type="primary" plain style="float:right;" @click="submitPrescriptionItemList(-1, 0)">暂存</el-button>
+          <el-button plain style="float:right;margin-right:10px;" @click="invokeDeletePrescription">删除</el-button>
         </el-aside>
         <el-table ref="tempsavePrescriptionTable"  :data="tempsavePrescriptionTable" border
           @selection-change="handleTempSaveTableSelectionChange"
@@ -395,6 +396,7 @@
     this.invokeSelectMedicine()
     this.invokeCommonMedicine()
     this.invokeSelectPrescriptionTemplate()
+    this.invokeSelectHistoryPrescription()
   },
   methods: {
     // 疾病对话框处理
@@ -485,7 +487,10 @@
         this.$message({
           type: 'success',
           message: '提交成功!'
-        });    
+        });
+        if (saveState === 0) {
+          this.invokeSelectHistoryPrescription()
+        }
       }).catch(error => {
         console.log('savePrescription error: ')
         console.log(error)
@@ -551,6 +556,21 @@
       this.commonMedicineDialogVisible = false
     },
     // 模板
+    applyTemplate() {
+      if (this.prescriptionTemplateMedicineExample.length === 0 || this.prescriptionTemplateMedicineExample.length == null) {
+        this.$message.error('当前未选中模板，错误！')
+        return
+      }
+      for (var i = 0; i < this.prescriptionTemplateMedicineExample.length; ++i) {
+        var id = this.prescriptionTemplateMedicineExample[i].medicineId - 1
+        this.prescriptionItem = this.medicineTotalList[id]
+        this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
+      }
+      this.$message({
+        message: '应用模板成功！',
+        type: 'success'
+      })
+    },
     invokeSelectPrescriptionTemplate() {
       this.prescriptionTemplateData = []
       var query = {
@@ -611,14 +631,13 @@
       for (var i = 0; i < this.prescriptionTemplateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
         if (this.prescriptionTemplateData[now][i].prescriptionName == data.label) {
-          console.log('>>>>>>>>>>>>>>>>>')
-          console.log(this.prescriptionTemplateData[now][i])
+          // console.log(this.prescriptionTemplateData[now][i])
           var tempList = JSON.parse(this.prescriptionTemplateData[now][i].medicine)
-          console.log('tempList')
-          console.log(tempList)
+          // console.log('tempList')
+          // console.log(tempList)
           this.prescriptionTemplateMedicineExample = []
           for (var j = 0; j < tempList.length; ++j) {
-            this.prescriptionTemplateMedicineExample.push(this.medicineTotalList[tempList[j].medicineId])
+            this.prescriptionTemplateMedicineExample.push(this.medicineTotalList[tempList[j].medicineId-1])
           }          
           console.log(this.prescriptionTemplateMedicineExample)
           break
@@ -643,8 +662,18 @@
     // 暂存
     invokeSelectHistoryPrescription() {
       selectHistoryPrescription({'registrationId': this.registrationId}).then(response => {
-        console.log('selectHistoryPrescription response: ')
-        console.log(response)
+        var tempList = JSON.parse(response.data)
+        this.tempsavePrescriptionTable = []
+        this.historyPrescriptionTable = []
+        // console.log('selectHistoryPrescription response:')
+        // console.log(tempList)
+        for (var i = 0; i < tempList.length; ++i) {
+          if (tempList[i].saveState === 1) {
+            this.historyPrescriptionTable.push(tempList[i])
+          } else if (tempList[i].saveState === 0) {
+            this.tempsavePrescriptionTable.push(tempList[i])
+          }
+        }        
         // 0 提交 1 暂存
       }).catch(error => {
         console.log('selectHistoryPrescription error: ')
@@ -655,18 +684,32 @@
       this.tempsavePrescriptionTableMultipleSelection = val
     },
     showTempsavePrescriptionMedicineExample(row, event, column) {
-      for (var i = 0; i < this.tempsavePrescriptionData.length; ++i) {
-        // if (this.tempsavePrescriptionData[i]... == row...) {
-        //   this.tempsavePrescriptionMedicineExample = row    
-        // }
+      var tempList = JSON.parse(row.medicine)
+      this.tempsavePrescriptionMedicineExample = []
+      for (var i = 0; i < tempList.length; ++i) {
+        this.tempsavePrescriptionMedicineExample.push(this.medicineTotalList[tempList[i].medicineId-1])
       }
+    },
+    // 删除暂存的处方
+    invokeDeletePrescription() {
+      var tempList = []
+      // console.log(this.tempsavePrescriptionTableMultipleSelection)
+      for (var i = 0; i < this.tempsavePrescriptionTableMultipleSelection.length; ++i)
+        tempList.push(this.tempsavePrescriptionTableMultipleSelection[i].prescriptionId)
+      deletePrescription({'prescriptionIdList': tempList}).then(response => {
+        this.invokeSelectHistoryPrescription()
+        this.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+      })
     },
     // 历史
     showHistoryPrescriptionMedicineExample(row, event, column) {
-      for (var i = 0; i < this.historyPrescriptionData.length; ++i) {
-        // if (this.historyPrescriptionData[i]... == row...) {
-        //   this.historyPrescriptionMedicineExample = row    
-        // }
+      var tempList = JSON.parse(row.medicine)
+      this.historyPrescriptionMedicineExample = []
+      for (var i = 0; i < tempList.length; ++i) {
+        this.historyPrescriptionMedicineExample.push(this.medicineTotalList[tempList[i].medicineId-1])
       }
     },
     doPrint(e) {
