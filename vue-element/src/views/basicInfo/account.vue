@@ -212,7 +212,7 @@
             v-if="radioSelect === '门诊医生' || radioSelect === '医技医生'|| radioSelect === '所有用户'"
             v-model="editAccountForm.jobTitle"
             label="医生职称"
-            prop="accountTitle"
+            prop="jobTitle"
           >
             <template>
               <el-select v-model="selectEditValue3" filterable placeholder="请选择" @change="forceChange3">
@@ -313,7 +313,10 @@ export default {
       },
       addAccountDataDialogVisible: false, // 新增用户表单可见
       //  用户所在科室下拉框
-      accountDepartment: [],
+      accountDepartment: [{
+        departmentId: '',
+        departmentName: ''
+      }],
       // 用户分类下拉框
       accountTyper: [{
         constantItemId: '00',
@@ -373,10 +376,10 @@ export default {
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
         departmentName: [
-          { required: true, message: '请选择', trigger: 'blur' }
+          { message: '请选择', trigger: 'blur' }
         ],
         accountType: [
-          { required: true, message: '请选择', trigger: 'blur' }
+          { message: '请选择', trigger: 'blur' }
         ],
         jobTitle: [
           { message: '请选择', trigger: 'blur' }
@@ -516,6 +519,7 @@ export default {
       this.$set(this.addAccountForm, 'doctorScheduling', val)
       this.$set(this.editAccountForm, 'doctorScheduling', val)
     },
+    // 全部选择
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -527,7 +531,8 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-    }, // 增加用户
+    },
+    // 增加用户
     submitAdd(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
