@@ -61,8 +61,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/basicInfo/schedule.js'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+//import { fetchList } from '@/api/basicInfo/schedule.js'
 
 export default {
   data() {
@@ -85,13 +84,13 @@ export default {
   },
 
   methods: {
-    getList() { // 获取列表
-      this.listLoading = true // 列表正在加载
-      fetchList(this.listQuery).then(response => {
-        // todo
-        this.listLoading = false // 列表加载完成
-      })
-    }
+    // getList() { // 获取列表
+    //   this.listLoading = true // 列表正在加载
+    //   fetchList(this.listQuery).then(response => {
+    //     // todo
+    //     this.listLoading = false // 列表加载完成
+    //   })
+    // }
   }
 }
 </script>
