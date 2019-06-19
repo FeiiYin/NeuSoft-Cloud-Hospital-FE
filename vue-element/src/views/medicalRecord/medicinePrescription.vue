@@ -78,7 +78,7 @@
 
             <!-- 全局按钮 -->
             <div style="text-align:center;margin-top:40px;">
-              <el-button type="primary" @click="submitPrescriptionItemList">提交</el-button>
+              <el-button type="primary" @click="submitPrescriptionItemList(-1, 1)">提交</el-button>
               <el-button type="info" @click="doPrint"><i class="el-icon-printer" />打印预览</el-button>
             </div>
             
@@ -258,7 +258,10 @@
     selectMedicine,
     searchMedicine,
     savePrescription,
-    commonMedicine
+    commonMedicine,
+    deletePrescription,
+    selectHistoryPrescription,
+    selectPrescriptionTemplate,
   } from '../../api/medicalRecord/prescription'
 
   Vue.use(Editable)
@@ -362,7 +365,7 @@
       // 模板
       templateDialogVisible: false,
       prescriptionTemplateTreeDirectory: 0,
-      // 模板的完整数据
+      // 模板的完整数据 二维的
       prescriptionTemplateData: [],
       // 一个具体模板的数据
       prescriptionTemplateMedicineExample: [],
@@ -389,9 +392,9 @@
     }
   },
   created() {
-    // 该方法被弃用
     this.invokeSelectMedicine()
     this.invokeCommonMedicine()
+    this.invokeSelectPrescriptionTemplate()
   },
   methods: {
     // 疾病对话框处理
@@ -460,7 +463,35 @@
       }
       return true
     },
-    submitPrescriptionItemList() {
+    invokekSavePrescription(prescriptionId, saveState) {
+      for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
+        this.prescriptionItemEditableTableData[i].skinTest = ''
+        this.prescriptionItemEditableTableData[i].skinTestResult = ''
+      }
+      var query = {
+        'prescriptionJson': {
+          'prescriptionId': prescriptionId, // 新增时填-1
+          'prescriptionName': this.prescriptionName,
+          'registrationId': this.registrationId,
+          'saveState': saveState, // 保存状态（暂存 0；正式提交 1；模板 2,3,4）
+          'doctorId': this.doctorId,
+          'medicine': this.prescriptionItemEditableTableData
+        }          
+      }
+      console.log(query)
+      savePrescription(query).then(response => {
+        console.log('savePrescription response: ')
+        console.log(response)
+        this.$message({
+          type: 'success',
+          message: '提交成功!'
+        });    
+      }).catch(error => {
+        console.log('savePrescription error: ')
+        console.log(error)
+      })
+    },
+    submitPrescriptionItemList(prescriptionId, saveState) {
       if (this.submitCheck() == false)
         return
       this.calculateTotalMoney()
@@ -469,32 +500,7 @@
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
-          this.prescriptionItemEditableTableData[i].skinTest = ''
-          this.prescriptionItemEditableTableData[i].skinTestResult = ''
-        }
-        var query = {
-          'prescriptionJson': {
-            'prescriptionId': -1, // 新增时填-1
-            'prescriptionName': this.prescriptionName,
-            'registrationId': this.registrationId,
-            'saveState': 1, // 保存状态（暂存 0；正式提交 1；模板 2）
-            'medicine': this.prescriptionItemEditableTableData
-          }
-          
-        }
-        console.log(query)
-        savePrescription(query).then(response => {
-          console.log('savePrescription response: ')
-          console.log(response)
-          this.$message({
-            type: 'success',
-            message: '分发成功!'
-          });    
-        }).catch(error => {
-          console.log('savePrescription error: ')
-          console.log(error)
-        })
+        this.invokekSavePrescription(prescriptionId, saveState)
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -545,6 +551,47 @@
       this.commonMedicineDialogVisible = false
     },
     // 模板
+    invokeSelectPrescriptionTemplate() {
+      this.prescriptionTemplateData = []
+      var query = {
+        'prescriptionScope': 2,
+        'doctorId': this.doctorId,
+      }
+      selectPrescriptionTemplate(query).then(response => {
+        console.log('selectPrescriptionTemplate response:')
+        console.log(response)
+        this.prescriptionTemplateData.push(JSON.parse(response.data))
+        // this.medicineTotalList = response.data
+        query.prescriptionScope = 3;
+        selectPrescriptionTemplate(query).then(response => {
+          this.prescriptionTemplateData.push(JSON.parse(response.data))
+          query.prescriptionScope = 4;
+          selectPrescriptionTemplate(query).then(response => {
+            this.prescriptionTemplateData.push(JSON.parse(response.data))
+            console.log(this.prescriptionTemplateData)
+            
+            this.prescriptionTemplateTreeData = [
+            {
+              label: '全院',
+              children: []
+            }, {
+              label: '科室',
+              children: []
+            }, {
+              label: '个人',
+              children: []
+            }]
+            // 加到树形列表中
+            for (var i = 0; i < 3; ++i) {
+              for (var j = 0; j < this.prescriptionTemplateData[i].length; ++j) {
+                this.prescriptionTemplateTreeData[i].children.push({'label': this.prescriptionTemplateData[i][j].prescriptionName})
+              }
+            }
+          })
+        })
+      })
+    },
+    
     // 树形目录检测
     handleNodeClick(data) {
       console.log(data)
@@ -561,17 +608,22 @@
         return
       }
       var now = this.prescriptionTemplateTreeDirectory
-      
-      console.log('TODO')
-      // for (var i = 0; i < this.medicalRecordTemplateData[now].length; ++i) {
-      //   // console.log(this.medicalRecordTemplateData[now][i].templateName)
-      //   if (this.medicalRecordTemplateData[now][i].templateName == data.label) {
-      //     this.modelDialogVisible = true
-      //     this.modelDialogEditable = true
-      //     this.modelForm = this.medicalRecordTemplateData[now][i]
-      //     break
-      //   }
-      // }
+      for (var i = 0; i < this.prescriptionTemplateData[now].length; ++i) {
+        // console.log(this.medicalRecordTemplateData[now][i].templateName)
+        if (this.prescriptionTemplateData[now][i].prescriptionName == data.label) {
+          console.log('>>>>>>>>>>>>>>>>>')
+          console.log(this.prescriptionTemplateData[now][i])
+          var tempList = JSON.parse(this.prescriptionTemplateData[now][i].medicine)
+          console.log('tempList')
+          console.log(tempList)
+          this.prescriptionTemplateMedicineExample = []
+          for (var j = 0; j < tempList.length; ++j) {
+            this.prescriptionTemplateMedicineExample.push(this.medicineTotalList[tempList[j].medicineId])
+          }          
+          console.log(this.prescriptionTemplateMedicineExample)
+          break
+        }
+      }
     },
     saveCurrentIntoTemplate() {
       if (this.submitCheck() == false)
@@ -580,12 +632,25 @@
         this.$message.error('未选择保存模板类型，错误！')
         return
       }
-      console.log('TODO')
+      this.templateDialogVisible = false
+      this.invokekSavePrescription(-1, this.saveState)
+      this.invokeSelectPrescriptionTemplate()
+      // console.log('now here ' + this.saveState)
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
     // 暂存
+    invokeSelectHistoryPrescription() {
+      selectHistoryPrescription({'registrationId': this.registrationId}).then(response => {
+        console.log('selectHistoryPrescription response: ')
+        console.log(response)
+        // 0 提交 1 暂存
+      }).catch(error => {
+        console.log('selectHistoryPrescription error: ')
+        console.log(error)
+      })
+    },
     handleTempSaveTableSelectionChange(val) {
       this.tempsavePrescriptionTableMultipleSelection = val
     },

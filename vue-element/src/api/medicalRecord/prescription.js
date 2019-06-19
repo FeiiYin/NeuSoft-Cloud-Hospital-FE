@@ -24,7 +24,7 @@ export function selectMedicine() {
  * @return
  */
 export function searchMedicine(query) {
-  console.log('searchMedicine response: ')
+  console.log('searchMedicine query: ')
   console.log(query)
   return request({
     url: '/prescription/search_medicine',
@@ -58,7 +58,7 @@ export function searchMedicine(query) {
  * - skinTestResult 皮试结果
  */
 export function savePrescription(query) {
-  console.log('savePrescription response: ')
+  console.log('savePrescription query: ')
   console.log(query)
   return request({
     url: '/prescription/save_prescription',
@@ -70,15 +70,72 @@ export function savePrescription(query) {
 }
 
 /**
- * 返回常用药
- * medicineNumber 数量
+ * 获取常用药品
+ *
+ * @param medicineNumber 常用药品的数量
+ * @return 常用药品信息列表
  */
 export function commonMedicine(query) {
-  console.log('commonMedicine response: ')
+  console.log('commonMedicine query: ')
   console.log(query)
   return request({
     url: '/prescription/common_medicine',
     method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 查询处方模板
+ *
+ * @param prescriptionScope 查询的处方模板的范围（全院模板 2；科室模板 3；医生个人模板 4）
+ * @param doctorId          医生编号
+ * @return 处方模板列表
+ */
+export function selectPrescriptionTemplate(query) {
+  console.log('selectPrescriptionTemplate query: ')
+  console.log(query)
+  return request({
+    url: '/prescription/prescription_template',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 获取历史处方（暂存 或 正式提交）
+ *
+ * @param registrationId 挂号编号
+ * @return 历史处方列表，json 字符串列表
+ */
+export function selectHistoryPrescription(query) {
+  console.log('selectHistoryPrescription query: ')
+  console.log(query)
+  return request({
+    url: '/prescription/history_prescription',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 删除处方记录
+ *
+ * @param prescriptionIdList 处方编号列表
+ * @return 操作结果
+ */
+export function deletePrescription(query) {
+  console.log('deletePrescription query: ')
+  console.log(query)
+  return request({
+    url: '/prescription/delete_prescription',
+    method: 'delete',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
