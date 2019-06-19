@@ -153,7 +153,7 @@
             prop="doctorScheduling"
           >
             <el-radio v-model="doctorSchedulingRadio_Add" label="1"  @change="forceChange4">是</el-radio>
-            <el-radio v-model="doctorSchedulingRadio_Add" label="2"  @change="forceChange4">否</el-radio>
+            <el-radio v-model="doctorSchedulingRadio_Add" label="0"  @change="forceChange4">否</el-radio>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -193,7 +193,7 @@
           <!--修改用户对话框中，选择用户类别-->
           <el-form-item v-model="editAccountForm.accountType" label="类别" prop="accountType">
             <template>
-              <el-select v-model="selectEditValue2" filterable placeholder="请选择" @change="true">
+              <el-select v-model="selectEditValue2" filterable placeholder="请选择" @change="forceChange2">
                 <el-option
                   v-for="item in accountTyper"
                   :key="item.constantItemId"
@@ -211,7 +211,7 @@
             prop="accountTitle"
           >
             <template slot-scope="scope">
-              <el-select v-model="selectEditValue3" filterable placeholder="请选择" :disabled="scope.row.selectEditValue2 === '医院管理员' || '药房操作员' || '挂号收费员' || '财务管理员'" @change="true">
+              <el-select v-model="selectEditValue3" filterable placeholder="请选择" :disabled="scope.row.selectEditValue2 === '医院管理员' || '药房操作员' || '挂号收费员' || '财务管理员'" @change="forceChange3">
                 <el-option
                   v-for="item in accountJob"
                   :key="item.constantItemId"
@@ -228,8 +228,8 @@
               label="是否参与排班"
               prop="doctorScheduling"
             >
-              <el-radio v-model="doctorSchedulingRadio" label="1">是</el-radio>
-              <el-radio v-model="doctorSchedulingRadio" label="0">否</el-radio>
+              <el-radio v-model="doctorSchedulingRadio" label="1" @change="forceChange4" >是</el-radio>
+              <el-radio v-model="doctorSchedulingRadio" label="0" @change="forceChange4" >否</el-radio>
             </el-form-item>
           </template>
         </el-form>
