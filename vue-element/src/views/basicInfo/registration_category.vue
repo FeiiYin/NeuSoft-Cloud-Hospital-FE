@@ -71,19 +71,19 @@
             <el-input v-model="addRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="是否默认" prop="isDefault_Add">
-            <el-radio v-model="isDefaultRadio_Add" label="1">是</el-radio>
-            <el-radio v-model="isDefaultRadio_Add" label="2">否</el-radio>
+            <el-radio v-model="isDefaultRadio_Add" label=true>是</el-radio>
+            <el-radio v-model="isDefaultRadio_Add" label=false>否</el-radio>
           </el-form-item>
           <el-form-item label="顺序号" prop="sequenceNo">
             <el-input v-model="addRegistrationCategoryForm.sequenceNo" auto-complete="off" />
           </el-form-item>
           <el-form-item label="挂号费" prop="registrationFee">
-            <el-input v-model="addRegistrationCategoryForm.fee" auto-complete="off" />
+            <el-input v-model="addRegistrationCategoryForm.registrationFee" auto-complete="off" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="clearAddRegistrationCategoryDataDialog">取 消</el-button>
-          <el-button type="primary" @click="submitAdd('userForm')">确 定</el-button>
+          <el-button type="primary" @click="submitAdd('addRegistrationCategoryForm')">确 定</el-button>
         </span>
       </el-dialog>
       <!--修改挂号信息对话框-->
@@ -100,19 +100,19 @@
             <el-input v-model="editRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="是否默认" prop="isDefault">
-            <el-radio v-model="isDefaultRadio" label="1">是</el-radio>
-            <el-radio v-model="isDefaultRadio" label="2">否</el-radio>
+            <el-radio v-model="isDefaultRadio" label=true>是</el-radio>
+            <el-radio v-model="isDefaultRadio" label=false>否</el-radio>
           </el-form-item>
           <el-form-item label="顺序号" prop="sequenceNo">
             <el-input v-model="editRegistrationCategoryForm.sequenceNo" auto-complete="off" />
           </el-form-item>
           <el-form-item label="挂号费" prop="registrationFee">
-            <el-input v-model="editRegistrationCategoryForm.fee" auto-complete="off" />
+            <el-input v-model="editRegistrationCategoryForm.registrationFee" auto-complete="off" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editRegistrationCategoryDataDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitAdd('editRegistrationCategoryForm')">确 定 修 改</el-button>
+          <el-button type="primary" @click="submitUpdate('editRegistrationCategoryForm')">确 定 修 改</el-button>
         </span>
       </el-dialog>
     </div>
@@ -133,13 +133,15 @@ export default {
     return {
       currentPage: 1,
       pageSize: 20,
+      isDefaultId: 0,
       // 新增挂号类别表单
       addRegistrationCategoryForm: {
         registrationCategoryId: '',
         registrationCategoryName: '',
         sequenceNo: '',
-        isDefault_Add: '',
-        fee: ''
+        isDefault: false,
+        registrationFee: '',
+        isDefaultId: 0
       },
       addRegistrationCategoryDataDialogVisible: false, // 新增挂号级别表单可见
       isDefaultRadio: '', // 单选器
@@ -149,9 +151,9 @@ export default {
       editRegistrationCategoryForm: {
         registrationCategoryId: '',
         registrationCategoryName: '',
-        isDefault: '',
+        isDefault: false,
         sequenceNo: '',
-        fee: ''
+        registrationFee: ''
       },
       editRegistrationCategoryDataDialogVisible: false, // 修改挂号级别表单可见
       rules: {
@@ -167,7 +169,7 @@ export default {
           { required: true, message: '请输入顺序号', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
-        fee: [
+        registrationFee: [
           { required: true, message: '请输入号挂号费', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ]
@@ -178,21 +180,21 @@ export default {
         registrationCategoryName: '普通号',
         isDefault: '是',
         sequenceNo: '001',
-        fee: '10'
+        registrationFee: '10'
       },
       {
         registrationCategoryId: '2',
         registrationCategoryName: '专家号',
         isDefault: '否',
         sequenceNo: '002',
-        fee: '20'
+        registrationFee: '20'
       },
       {
         registrationCategoryId: '3',
         registrationCategoryName: '急诊号',
         isDefault: '否',
         sequenceNo: '003',
-        fee: '25'
+        registrationFee: '25'
       }],
       multipleSelection: []
     }
@@ -208,7 +210,7 @@ export default {
       this.editRegistrationCategoryForm.registrationCategoryId = row.registrationCategoryId
       this.editRegistrationCategoryForm.registrationCategoryName = row.registrationCategoryName
       this.editRegistrationCategoryForm.sequenceNo = row.sequenceNo
-      this.editRegistrationCategoryForm.fee = row.fee
+      this.editRegistrationCategoryForm.registrationFee = row.registrationFee
       if (row.isDefault === '是') {
         this.isDefaultRadio = '1'
       } else {
@@ -237,6 +239,16 @@ export default {
         response => {
           console.log('selectRegistrationCategory response: ')
           console.log(response)
+          this.registrationTableData = response.data.list
+          this.registrationTableData.map((value) => {
+            if (value.isDefault === true) {
+              value.isDefault = '是'
+              this.isDefaultId = value.registrationCategoryId
+              console.log('isDefaultId', this.isDefaultId)
+            } else if (value.isDefault === false) {
+              value.isDefault = '否'
+            }
+          })
           this.listLoading = false
         }
       ).catch(error => {
@@ -247,6 +259,36 @@ export default {
     clearAddRegistrationCategoryDataDialog() {
       this.addRegistrationCategoryDataDialogVisible = false
       this.$refs['addRegistrationCategoryForm'].resetFields()
+    },
+    submitAdd(formName) {
+      console.log('add registration_category: ', this.addRegistrationCategoryForm)
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.addRegistrationCategoryDataDialogVisible = false
+          this.$refs[formName].isDefaultId = this.isDefaultId
+          console.log('defa id: ', this.$refs[formName].isDefaultId)
+          console.log('addRegistration_category: ', this.addRegistration_category)
+          addRegistration_category(this.addRegistrationCategoryForm).then(response => {
+            console.log('add rc resp:  ', response)
+            this.totalNumber += 1
+            var tmp = Math.ceil(this.totalNumber / this.pageSize)
+            this.current = tmp
+            this.$refs[formName].resetFields()
+            this.isDefaultRadio_Add = ''
+            this.getRegistration_category()
+          }).catch(error => {
+            console.log('add r c error: ')
+            console.log(error)
+          })
+        } else {
+          console.log('error addRC!!')
+          return false
+        }
+      }
+      )
+    },
+    submitUpdate(){
+
     }
   }
 }

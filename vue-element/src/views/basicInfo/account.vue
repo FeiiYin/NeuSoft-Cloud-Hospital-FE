@@ -564,8 +564,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.editAccountDataDialogVisible = false
-          console.log('editForm')
-          console.log(this.$refs['editAccountForm'])
           updateAccount(this.editAccountForm).then(response => {
             console.log('update account response: ')
             console.log(response)
