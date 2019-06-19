@@ -71,7 +71,7 @@
               size="mini"
               @click="editAccountDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit" />
+              <i class="el-icon-edit" ></i>
             </el-button>
           </template>
         </el-table-column>
@@ -517,43 +517,41 @@ export default {
             this.totalNumber += 1
             var tmp = Math.ceil(this.totalNumber / this.pageSize)
             this.current = tmp
-            this.$refs('addAccountForm').resetField() // 清空内容及选择器
-            this.selectEditValue1 = ''
-            this.selectEditValue2 = ''
-            this.selectEditValue3 = ''
+            this.$refs['addAccountForm'].resetFields() // 清空内容及选择器
+            this.selectValue1 = ''
+            this.selectValue2 = ''
+            this.selectValue3 = ''
           }).catch(error => {
             console.log('add account error: ')
             console.log(error)
           })
-          this.invokeSelectAccount()
         } else {
           console.log('error addAccount!!')
           return false
         }
       })
+      this.invokeSelectAccount()
     },
     submitUpdate(formName) {
-      this.$refs(formName).validate((valid) => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           this.editAccountDataDialogVisible = false
+          console.log('editForm')
+          console.log(this.$refs('editAccountForm'))
           updateAccount(this.editAccountForm).then(response => {
             console.log('update account response: ')
             console.log(response)
-            this.$refs('editAccountForm').resetField()
-            this.selectEditValue1 = ''
-            this.selectEditValue2 = ''
-            this.selectEditValue3 = ''
           }).catch(error => {
             console.log('update account error: ')
             console.log(error)
           })
-          this.invokeSelectAccount()
         } else {
           console.log('error updateAccount')
           return false
         }
       }
       )
+      this.invokeSelectAccount()
     }
   }
 }
