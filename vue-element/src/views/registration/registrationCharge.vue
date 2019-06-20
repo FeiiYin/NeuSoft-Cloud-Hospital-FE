@@ -64,11 +64,11 @@
       </el-table-column>
       <el-table-column  prop="reserve2" label="单价" >
       </el-table-column>
-      <el-table-column  prop="itemCount" label="数量" >
+      <el-table-column  prop="nums" label="数量" >
       </el-table-column>
       <el-table-column  prop="reserve1" label="单位" >
       </el-table-column>
-      <el-table-column  prop="totalMoney" label="金额" >
+      <el-table-column  prop="totalPrice" label="金额" >
       </el-table-column>
       <el-table-column  prop="departmentName" label="执行科室">
       </el-table-column>
@@ -195,7 +195,7 @@ import {
   addChargeItemToForm,
   deleteChargeItemInForm,
   payBill,
-} from '../../api/registrationCharge/chargeForm'
+} from '../../api/registrationCharge/chargeEntry'
 
 import {
   fetchDepartmentList,
@@ -363,13 +363,13 @@ export default {
         this.totalListMoney = 0
         this.chargeFormTableList = response.data.list
         for (var i = 0; i < this.chargeFormTableList.length; ++i) {
-          this.chargeFormTableList[i].totalMoney = this.chargeFormTableList[i].itemCount * this.chargeFormTableList[i].reserve2
-          this.totalListMoney += this.chargeFormTableList[i].totalMoney
+          // this.chargeFormTableList[i].totalPrice = this.chargeFormTableList[i].itemCount * this.chargeFormTableList[i].reserve2
+          this.totalListMoney += this.chargeFormTableList[i].totalPrice
           // this.chargeFormTableList[i].chargeItemId = this.chargeFormTableList[i].reserve3
           for (var j = 0; j < this.departmentList.length; ++j) {
             if (this.departmentList[j].departmentId == this.chargeFormTableList[i].departmentId)
               this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName
-          }          
+          }
         }
         this.totalNumber = response.data.total
         this.charge_form.actual_charge = 0
@@ -393,7 +393,9 @@ export default {
             'registrationId': this.registrationForm.registrationId,
             'itemCount': this.addChargeForm.number,
             'collectorId': this.collectorId,
+            'doctorAdvice': '医嘱'
           }
+          // 'unitPrice' should be done on back
           this.addChargeFormVisible = false
           addChargeItemToForm(query).then(response => {
             console.log('addChargeItemToForm response: ')

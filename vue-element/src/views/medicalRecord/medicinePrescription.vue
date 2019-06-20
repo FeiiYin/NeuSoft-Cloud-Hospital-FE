@@ -469,6 +469,9 @@
       for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
         this.prescriptionItemEditableTableData[i].skinTest = ''
         this.prescriptionItemEditableTableData[i].skinTestResult = ''
+        this.prescriptionItemEditableTableData[i].doctorAdvice = '医嘱'
+        this.prescriptionItemEditableTableData[i].nums = this.prescriptionItemEditableTableData[i].medicineQuantity
+        this.prescriptionItemEditableTableData[i].unitPrice = this.prescriptionItemEditableTableData[i].medicinePrice
       }
       var query = {
         'prescriptionJson': {

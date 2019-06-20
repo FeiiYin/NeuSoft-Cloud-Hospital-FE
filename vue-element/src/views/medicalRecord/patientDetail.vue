@@ -8,7 +8,7 @@
         当前进度
       </el-col>
       <el-col :span="20">
-        <el-progress :text-inside="true" :stroke-width="18" :percentage="progressPercentage" status="progressStatus"></el-progress>
+        <el-progress :text-inside="true" :stroke-width="18" :percentage="progressPercentage"></el-progress>
       </el-col>      
     </div>
     <div>
@@ -59,8 +59,29 @@
         </el-form-item>        
       </el-form>
     </div>
-    <div>
+    <div >
+      <div style="margin:20px"><span >门诊医生诊断</span></div>
       <!-- 检查，项目，药品 -->
+      <el-form ref="medicalRecordForm" :model="medicalRecordForm" label-width="80px">
+        <el-form-item label="主诉" prop="mainInfo">
+          <el-input v-model="medicalRecordForm.mainInfo"/>
+        </el-form-item>
+        <el-form-item label="现病史" prop="currentDisease">
+          <el-input v-model="medicalRecordForm.currentDisease"/>
+        </el-form-item>
+        <el-form-item label="既往史" prop="pastDisease">
+          <el-input v-model="medicalRecordForm.pastDisease"/>
+        </el-form-item>
+        <el-form-item label="体格检查" prop="physicalExam">
+          <el-input v-model="medicalRecordForm.physicalExam" />
+        </el-form-item>
+        <el-form-item label="辅助检查" prop="auxiliaryExam">
+          <el-input v-model="medicalRecordForm.auxiliaryExam" />
+        </el-form-item>
+        <el-form-item label="处理意见" prop="opinion">
+          <el-input v-model="medicalRecordForm.opinion"/>
+        </el-form-item>
+      </el-form>
       <el-form ref="registrationForm" :model="registrationForm" label-width="80px">
         
       </el-form>
@@ -75,7 +96,6 @@
         // 基础信息
         registrationId: 1,
         // 进度条
-        progressStatus: 'exception',
         progressPercentage: 10,
         // 患者信息
         registrationForm: {
@@ -101,10 +121,16 @@
           collectorId: 1001,
           totalCharge: ''
         },
-        
+        medicalRecordForm: {}
       }
     },
     methods: {
+      // medicalRecordForm
+      invokeSelectPatientHistoryMedicalRecords() {
+        var query = {
+          'registrationId': this.registrationId,
+        }
+      },
       resetForm(formName) {
         this.$refs[formName].resetFields()
       }

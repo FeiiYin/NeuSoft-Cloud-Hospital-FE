@@ -188,9 +188,9 @@ export const constantRoutes = [
         meta: { title: '门诊病历信息', noCache: true }
       },
       {
-        path: 'chargeEntry',
-        component: () => import('@/views/medicalRecord/chargeEntry'),
-        name: 'chargeEntry',
+        path: 'examination',
+        component: () => import('@/views/medicalRecord/examination'),
+        name: 'examination',
         meta: { title: '检查申请', noCache: true }
       },
       {

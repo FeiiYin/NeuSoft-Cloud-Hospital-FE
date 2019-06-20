@@ -9,7 +9,7 @@ export function selectChargeForm(query) {
   console.log('selectChargeForm')
   console.log(query)
   return request({
-    url: '/charge_form/list',
+    url: '/charge_entry/list',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
@@ -26,7 +26,7 @@ export function selectChargeItemByDepartmentId(departmentId) {
   console.log('selectChargeItemByDepartmentId')
   console.log(departmentId)
   return request({
-    url: '/charge_form/list_charge_item',
+    url: '/charge_entry/list_charge_item',
     method: 'get',
     params: departmentId,
     baseURL: 'http://localhost:8081/cloud-hospital/',
@@ -41,13 +41,15 @@ export function selectChargeItemByDepartmentId(departmentId) {
  * @param registrationId 挂号编号
  * @param itemCount      收费项目计数
  * @param collectorId    收费员编号
+ * @param unitPrice    收费员编号
+ * @param doctorAdvice    收费员编号
  * @return 添加成功 true；添加失败 false
  */
 export function addChargeItemToForm(query) {
   console.log('addChargeItemToForm')
   console.log(query)
   return request({
-    url: '/charge_form/add_charge_item_to_form',
+    url: '/charge_entry/add_charge_item_to_form',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
@@ -65,7 +67,7 @@ export function deleteChargeItemInForm(query) {
   console.log('deleteChargeItemInForm')
   console.log(query)
   return request({
-    url: '/charge_form/delete_charge_item_in_form',
+    url: '/charge_entry/delete_charge_item_in_form',
     method: 'delete',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
@@ -83,7 +85,7 @@ export function payBill(query) {
   console.log('payBill')
   console.log(query)
   return request({
-    url: '/charge_form/pay_bill',
+    url: '/charge_entry/pay_bill',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
