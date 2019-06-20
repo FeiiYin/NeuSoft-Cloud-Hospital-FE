@@ -188,16 +188,28 @@ export const constantRoutes = [
         meta: { title: '门诊病历信息', noCache: true }
       },
       {
+        path: 'chargeEntry',
+        component: () => import('@/views/medicalRecord/chargeEntry'),
+        name: 'chargeEntry',
+        meta: { title: '检查申请', noCache: true }
+      },
+      {
+        path: 'confirmMedicalReord',
+        component: () => import('@/views/medicalRecord/confirmMedicalReord'),
+        name: 'confirmMedicalReord',
+        meta: { title: '确诊', noCache: true }
+      },
+      {
         path: 'medicalPrescription',
         component: () => import('@/views/medicalRecord/medicinePrescription'),
         name: 'medicalPrescription',
         meta: { title: '成药处方管理', noCache: true }
       },
       {
-        path: 'index',
-        component: () => import('@/views/medicalRecord/index'),
-        name: 'medicalIndex',
-        meta: { title: '两个折叠', noCache: true }
+        path: 'disposalApplication',
+        component: () => import('@/views/medicalRecord/disposalApplication'),
+        name: 'disposalApplication',
+        meta: { title: '处置管理', noCache: true }
       },
       {
         path: 'medicine',
@@ -212,6 +224,12 @@ export const constantRoutes = [
         meta: { title: '测试', noCache: true }
       },
       {
+        path: 'patientDetail',
+        component: () => import('@/views/medicalRecord/patientDetail'),
+        name: 'patientDetail',
+        meta: { title: '患者详细信息', noCache: true }
+      },
+      {
         path: 'endMedicalRecord',
         component: () => import('@/views/medicalRecord/endMedicalRecord'),
         name: 'endMedicalRecord',
@@ -222,6 +240,12 @@ export const constantRoutes = [
         component: () => import('@/views/medicalRecord/medicalRecordTemplate'),
         name: 'medicalRecordTemplate',
         meta: { title: '病历模板管理', noCache: true }
+      },
+      {
+        path: 'workload',
+        component: () => import('@/views/medicalRecord/workload'),
+        name: 'workload',
+        meta: { title: '工作量统计', noCache: true }
       }
     ]
   },
@@ -247,6 +271,12 @@ export const constantRoutes = [
         component: () => import('@/views/pharmacy/dispensing'),
         name: 'dispensing',
         meta: { title: '发药', noCache: true }
+      },
+      {
+        path: 'withdrawMedicine',
+        component: () => import('@/views/pharmacy/withdrawMedicine'),
+        name: 'withdrawMedicine',
+        meta: { title: '退药', noCache: true }
       },
       {
         path: 'medicine',
