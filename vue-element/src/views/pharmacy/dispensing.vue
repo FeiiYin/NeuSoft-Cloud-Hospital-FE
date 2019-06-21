@@ -149,7 +149,7 @@
     addChargeItemToForm,
     deleteChargeItemInForm,
     payBill,
-  } from '../../api/registrationCharge/chargeForm'
+  } from '../../api/registrationCharge/chargeEntry'
 
   import {
     fetchDepartmentList,

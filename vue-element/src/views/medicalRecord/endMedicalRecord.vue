@@ -174,7 +174,7 @@
       routerToDispensing(row, event) {
         // console.log(row)
         this.$router.push({
-          path:"/pharmacy/dispensing", //这个path是在router/index.js里边配置的路径
+          path:"/medicalRecord/patientDetail", //这个path是在router/index.js里边配置的路径
           query:{
             registrationId: row.registrationId
           }

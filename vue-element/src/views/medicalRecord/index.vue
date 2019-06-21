@@ -134,82 +134,81 @@ import Vue from 'vue'
 import ThemePicker from '@/components/ThemePicker'
 
 export default {
-  components: { ThemePicker },
   data() {
     return {
-        model_panel_show: false,
-        right_model_panel_show: false,
-        activeName: '1',
-        model_array: 1,
+      model_panel_show: false,
+      right_model_panel_show: false,
+      activeName: '1',
+      model_array: 1,
 
-        activeName_tmp: '1',
-        ruleForm: {
-          name: '',
-          region: '',
-          date1: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        },
-        rules: {
-          name: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-          ],
-          region: [
-            { required: true, message: '请选择活动区域', trigger: 'change' }
-          ],
-          date1: [
-            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-          ],
-          type: [
-            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-          ],
-          resource: [
-            { required: true, message: '请选择活动资源', trigger: 'change' }
-          ],
-          desc: [
-            { required: true, message: '请填写活动形式', trigger: 'blur' }
-          ]
-        }
+      activeName_tmp: '1',
+      ruleForm: {
+        name: '',
+        region: '',
+        date1: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        region: [
+          { required: true, message: '请选择活动区域', trigger: 'change' }
+        ],
+        date1: [
+          { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+        ],
+        type: [
+          { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+        ],
+        resource: [
+          { required: true, message: '请选择活动资源', trigger: 'change' }
+        ],
+        desc: [
+          { required: true, message: '请填写活动形式', trigger: 'blur' }
+        ]
+      }
     }
   },
   methods: {
     openModelPanel() {
-        this.model_panel_show = ! this.model_panel_show;
+      this.model_panel_show = !this.model_panel_show
     },
-    show_medical_record (num) {
-        this.model_array = num;
-        this.$notify({
-          title: '切换成功',
-          message: '切换面板成功',
-          type: 'success'
-        });
+    show_medical_record(num) {
+      this.model_array = num
+      this.$notify({
+        title: '切换成功',
+        message: '切换面板成功',
+        type: 'success'
+      })
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          alert('submit!')
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields()
     },
     doPrint(e){
-        let subOutputRankPrint = document.getElementById('subOutputRank-print');
-        console.log(subOutputRankPrint.innerHTML);
-        let newContent =subOutputRankPrint.innerHTML;
-        let oldContent = document.body.innerHTML;
-        document.body.innerHTML = newContent;
-        window.print();
-        window.location.reload();
-        document.body.innerHTML = oldContent;
-        return false;
+      let subOutputRankPrint = document.getElementById('subOutputRank-print');
+      console.log(subOutputRankPrint.innerHTML);
+      let newContent =subOutputRankPrint.innerHTML;
+      let oldContent = document.body.innerHTML;
+      document.body.innerHTML = newContent;
+      window.print();
+      window.location.reload();
+      document.body.innerHTML = oldContent;
+      return false;
     }
   }
 }

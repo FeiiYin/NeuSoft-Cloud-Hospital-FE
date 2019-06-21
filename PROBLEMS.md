@@ -19,3 +19,11 @@
   https://www.cnblogs.com/mophy/p/8590291.html  采用该方法
 
   tabPane 调用是个数组，tabPane[0]
+
++ 赋值出现无限递归爆栈
+
+  this.diseaseEditableTableData[j].disease = this.diseaseEditableTableData[j]
+
+  [Vue warn]: Error in callback for watcher "data": "RangeError: Maximum call stack size exceeded"
+
+  RangeError: Maximum call stack size exceeded

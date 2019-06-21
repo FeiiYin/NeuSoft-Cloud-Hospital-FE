@@ -54,8 +54,11 @@
         新增
       </el-button>
     </aside>
-    <el-table :data="chargeFormTableList" style="width: 100%" 
-      @selection-change="handleSelectionChange" v-loading="chargeFormTableLoading">
+    <el-table
+      :data="chargeFormTableList"
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+      v-loading="chargeFormTableLoading">
       <el-table-column type="selection" width="55">
       </el-table-column>
       <el-table-column  prop="reserve3" label="名称" sortable>
@@ -87,7 +90,7 @@
     </div>
 
     <aside style="height:60px;">
-      <span>总计金额： 
+      <span>总计金额：
         <svg-icon icon-class="money" />
       </span>
       <el-input v-model="totalListMoney" :disabled="true" style="width:20%" />
@@ -96,7 +99,9 @@
         <i class="el-icon-printer" />
         打印发票
       </el-button>
-      <el-button type="primary" style="float:right;margin-right:20px;"
+      <el-button
+        type="primary"
+        style="float:right;margin-right:20px;"
         @click="openChargeFormDialog()">
         <svg-icon icon-class="money" />
         交费
@@ -151,8 +156,8 @@
                 :label="item.departmentName"
                 :value="item.departmentId"
               />
-            </el-select> 
-          </template>       
+            </el-select>
+          </template>
         </el-form-item>
         <el-form-item label="项目名称" prop="name">
           <template>
@@ -169,8 +174,8 @@
                 :label="item.nameZh"
                 :value="item.chargeItemId"
               />
-            </el-select> 
-          </template>       
+            </el-select>
+          </template>
         </el-form-item>
         <el-form-item label="数量" prop="number">
           <el-input v-model="addChargeForm.number" auto-complete="off" />
@@ -186,7 +191,7 @@
 
 <script>
 import {
-  selectRegistrationByPrimaryKey,
+  selectRegistrationByPrimaryKey
 } from '../../api/registrationCharge/registration'
 
 import {
@@ -194,11 +199,11 @@ import {
   selectChargeItemByDepartmentId,
   addChargeItemToForm,
   deleteChargeItemInForm,
-  payBill,
+  payBill
 } from '../../api/registrationCharge/chargeEntry'
 
 import {
-  fetchDepartmentList,
+  fetchDepartmentList
 } from '../../api/basicInfo/department'
 
 export default {
@@ -244,7 +249,7 @@ export default {
       },
       chargeFormTableList: [],
       multipleSelectionChargeFormTable: [],
-      chargeFormTableLoading: false,    
+      chargeFormTableLoading: false,
       // 总共金额
       totalListMoney: '0.00',
       // 充值金额
@@ -285,7 +290,7 @@ export default {
       addChargeForm: {
         departmentId: '',
         name: '',
-        number: '',
+        number: ''
       },
       addChargeFormDisableBool: true,
       collectorId: 1001,
@@ -296,19 +301,19 @@ export default {
       // 提交验证
       rules: {
         departmentId: [
-          { required: true, message: '请选择', trigger: 'blur' },
+          { required: true, message: '请选择', trigger: 'blur' }
         ],
         name: [
-          { required: true, message: '请选择', trigger: 'blur' },
+          { required: true, message: '请选择', trigger: 'blur' }
         ],
         number: [
-          { required: true, message: '请输入', trigger: 'blur' },
+          { required: true, message: '请输入', trigger: 'blur' }
         ]
       },
       // 分页
       currentPage: 1,
       pageSize: 50,
-      totalNumber: 0,
+      totalNumber: 0
     }
   },
   created() {
@@ -337,7 +342,7 @@ export default {
           this.$message({
             message: '获取成功',
             type: 'success'
-          });
+          })
           this.registrationForm = response.data
           this.registrationForm.departmentId = response.data.reserve1
           this.registrationForm.doctorId = response.data.reserve2
@@ -350,13 +355,13 @@ export default {
     },
     // 根据 病历号 获取当前所有对应条目 所有未交费条目
     invokeFetchChargeItemListWithRegistrationId() {
-      this.chargeFormTableLoading = true;
+      this.chargeFormTableLoading = true
       var query = {
-        'currentPage': this.currentPage, 
+        'currentPage': this.currentPage,
         'pageSize': this.pageSize,
-        'registrationId' : this.registrationForm.registrationId, 
+        'registrationId': this.registrationForm.registrationId,
         'chargeFormCategory': 0 // 未完成支付
-      }      
+      }
       selectChargeForm(query).then(response => {
         console.log('selectChargeForm response: ')
         console.log(response)
@@ -367,14 +372,15 @@ export default {
           this.totalListMoney += this.chargeFormTableList[i].totalPrice
           // this.chargeFormTableList[i].chargeItemId = this.chargeFormTableList[i].reserve3
           for (var j = 0; j < this.departmentList.length; ++j) {
-            if (this.departmentList[j].departmentId == this.chargeFormTableList[i].departmentId)
+            if (this.departmentList[j].departmentId === this.chargeFormTableList[i].departmentId) {
               this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName
+            }
           }
         }
         this.totalNumber = response.data.total
         this.charge_form.actual_charge = 0
-        this.charge_form.actual_exchange = 0        
-        this.chargeFormTableLoading = false        
+        this.charge_form.actual_exchange = 0
+        this.chargeFormTableLoading = false
       }).catch(error => {
         console.log('selectChargeForm error: ')
         console.log(error)
@@ -382,8 +388,8 @@ export default {
     },
     // 临时添加一个条目
     invokeAddChargeItem(formName) {
-      if (this.registrationForm.registrationId == '' || this.registrationForm.registrationId == null) {
-        this.$message.error('未输入病历号，错误！');
+      if (this.registrationForm.registrationId === '' || this.registrationForm.registrationId == null) {
+        this.$message.error('未输入病历号，错误！')
         return
       }
       this.$refs[formName].validate((valid) => {
@@ -415,7 +421,7 @@ export default {
     },
     // 临时删除一个项目
     invokeDeleteChargeItemInForm() {
-      if (this.multipleSelectionChargeFormTable.length == 0) {
+      if (this.multipleSelectionChargeFormTable.length === 0) {
         this.$message.error('当前未选中条目，错误！');
         return
       }
@@ -440,12 +446,12 @@ export default {
       this.charge_form.should_charge = this.totalListMoney
     },
     invokeChargeSubmit() {
-      if (this.charge_form.should_charge == 0) {
-        this.$message.error('付款金额为 0 ，错误！');
+      if (this.charge_form.should_charge === 0) {
+        this.$message.error('付款金额为 0 ，错误！')
         return
       }
       if (this.charge_form.actual_charge < this.charge_form.should_charge) {
-        this.$message.error('实际付款小于应当付款 ，错误！');
+        this.$message.error('实际付款小于应当付款 ，错误！')
         return
       }
       this.dialogFormVisible = false
@@ -472,7 +478,7 @@ export default {
     },
     filterTag(value, row) {
       return row.tag === value
-    },    
+    },
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -514,8 +520,7 @@ export default {
         console.log('selectChargeItemByDepartmentId error: ')
         console.log(error)
       })
-    },
-    
+    }
   }
 }
 </script>

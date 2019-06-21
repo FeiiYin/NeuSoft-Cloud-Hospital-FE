@@ -265,10 +265,10 @@
     selectPatientHistoryMedicalRecords
   } from '../../api/medicalRecord/medicalRecord'
 
-Vue.use(Editable)
-Vue.use(EditableColumn)
-Vue.component('ElxEditable', Editable)
-Vue.component('ElxEditableColumn', EditableColumn)
+  Vue.use(Editable)
+  Vue.use(EditableColumn)
+  Vue.component('ElxEditable', Editable)
+  Vue.component('ElxEditableColumn', EditableColumn)
 
   export default {
   components: { ThemePicker },
