@@ -351,7 +351,6 @@ export default {
         }
       })
     },
-
     openConfirmDeleteMessageBox() {
       if (this.multipleSelection.length === 0 || this.multipleSelection.length == null) {
         this.$message.error('请选择您要删除的记录。')
