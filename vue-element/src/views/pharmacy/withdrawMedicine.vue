@@ -101,35 +101,6 @@
         发药
       </el-button>
     </aside>
-    <!-- 缴费对话框 -->
-    <el-dialog title="收费" :visible.sync="dialogFormVisible">
-      <el-form :model="charge_form">
-        <el-form-item label="应收金额">
-          <el-input v-model="charge_form.should_charge" :disabled="true" />
-        </el-form-item>
-        <el-form-item label="实收金额">
-          <el-input v-model="charge_form.actual_charge" />
-        </el-form-item>
-        <el-form-item label="实际找零">
-          <el-input v-model="charge_form.actual_exchange" :disabled="true" />
-        </el-form-item>
-        <el-form-item label="支付方式">
-          <el-select v-model="value" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="invokeChargeSubmit()">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 

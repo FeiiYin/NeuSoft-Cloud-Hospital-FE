@@ -32,6 +32,10 @@
           type="selection"
           width="34px"
         />
+        <el-table-column prop="accountId" label="id" v-if="1 === 0">
+        </el-table-column>
+        <el-table-column prop="departmentId" label="id" v-if="1 === 0">
+        </el-table-column>
         <el-table-column
           prop="userName"
           label="用户名"
@@ -164,6 +168,10 @@
         width="30%"
       >
         <el-form ref="editAccountForm" :model="editAccountForm" :rules="rules" label-position="top">
+          <el-form-item label="id" prop="accountId" v-if="1 === 0">
+          </el-form-item>
+          <el-form-item label="id" prop="departmentId" v-if="1 === 0">
+          </el-form-item>
           <el-form-item label="用户名" prop="userName">
             <el-input v-model="editAccountForm.userName" auto-complete="off" />
           </el-form-item>
@@ -242,7 +250,8 @@
 import {
   addAccount,
   selectAccountList,
-  updateAccount
+  updateAccount,
+  deleteAccount
 } from '../../api/basicInfo/account'
 import {
   fetchDepartmentList
@@ -276,10 +285,12 @@ export default {
       selectEditValue3: '', // 选择医生职称
       // 修改用户信息表单
       editAccountForm: {
+        accountId: '',
         userName: '',
         userPassword: '',
         realName: '',
         departmentName: '',
+        departmentId: '',
         accountType: '',
         jobTitle: '',
         doctorScheduling: ''
@@ -376,13 +387,15 @@ export default {
       },
       // 用户表格数据
       accountTableData: [{
+        accountId: '1',
         userName: 'cxk',
         userPassword: '12345',
         realName: 'cxk',
         departmentName: '外科',
         accountType: '门诊医生',
         jobTitle: '主任医师',
-        doctorScheduling: '否'
+        doctorScheduling: '否',
+        departmentId: '1'
       }],
       accountConstant: [{
         constantItemId: '',
@@ -391,7 +404,8 @@ export default {
         constantName: '',
         valid: null
       }],
-      multipleSelection: []
+      multipleSelection: [],
+      account_id_list: []
     }
   },
 
@@ -470,16 +484,23 @@ export default {
     },
     editAccountDataFormFunction(index, row) {
       this.editAccountDataDialogVisible = true
+      this.editAccountForm.accountId = row.accountId
       this.editAccountForm.userName = row.userName
       this.editAccountForm.userPassword = row.userPassword
       this.editAccountForm.realName = row.realName
+      this.editAccountForm.departmentId = row.departmentId
       this.selectEditValue1 = row.departmentName
+      this.editAccountForm.departmentName = row.departmentName
       this.selectEditValue2 = row.accountType
+      this.editAccountForm.accountType = row.accountType
       this.selectEditValue3 = row.jobTitle
+      this.editAccountForm.jobTitle = row.jobTitle
       if (row.doctorScheduling === '是') {
         this.doctorSchedulingRadio = '1'
+        this.editAccountForm.doctorScheduling = 1
       } else {
         this.doctorSchedulingRadio = '0'
+        this.editAccountForm.doctorScheduling = 0
       }
     }, // 1是科室，2是类别，3是职称, 4是排班
     forceChange1(val) {
@@ -526,6 +547,7 @@ export default {
             this.selectValue1 = ''
             this.selectValue2 = ''
             this.selectValue3 = ''
+            this.invokeSelectAccount()
           }).catch(error => {
             console.log('add account error: ')
             console.log(error)
@@ -535,17 +557,17 @@ export default {
           return false
         }
       })
-      this.invokeSelectAccount()
     },
     submitUpdate(formName) {
+      console.log('form content')
+      console.log(this.editAccountForm)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.editAccountDataDialogVisible = false
-          console.log('editForm')
-          console.log(this.$refs('editAccountForm'))
           updateAccount(this.editAccountForm).then(response => {
             console.log('update account response: ')
             console.log(response)
+            this.invokeSelectAccount()
           }).catch(error => {
             console.log('update account error: ')
             console.log(error)
@@ -556,7 +578,45 @@ export default {
         }
       }
       )
-      this.invokeSelectAccount()
+    },
+    openConfirmDeleteMessageBox() {
+      if (this.multipleSelection.length === 0 || this.multipleSelection.length == null) {
+        this.$message.error('请选择您要删除的记录。')
+        return
+      }
+      this.$confirm('这将永久删除这些记录, 是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(response => {
+        this.account_id_list = []
+        for (let i = 0; i < this.multipleSelection.length; ++i) {
+          this.account_id_list.push(this.multipleSelection[i].accountId)
+        }
+        this.account_id_list = { 'accountIdList': this.account_id_list }
+        /**
+         * 按主键删除用户信息的请求
+         */
+        deleteAccount(this.account_id_list).then(response => {
+          console.log('deleteDepartmentByPrimaryKey response: ')
+          console.log(response)
+          this.$message({
+            type: 'success',
+            message: '已删除'
+          })
+          this.invokeSelectAccount()
+        }).catch(error => {
+          console.log('deleteDepartmentByPrimaryKey error: ')
+          console.log(error)
+          this.$message.error('删除失败')
+        })
+        this.currentPage = 1
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }

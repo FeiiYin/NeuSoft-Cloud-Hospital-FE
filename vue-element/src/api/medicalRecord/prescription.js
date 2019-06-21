@@ -43,19 +43,22 @@ export function searchMedicine(query) {
  * 该 json 字符串包含的属性：
  * - prescriptionId 处方编号（新增时填 -1，更新时填被更新的编号）
  * - prescriptionName 处方名称
- * - registrationId 挂号编号
+ * - registrationId 挂号编号（暂存或正式提交 必填，模板 可空）
+ * - doctorId 创建模板的医生编号（暂存或正式提交 可空，模板 必填）
  * - saveState 保存状态（暂存 0；正式提交 1；全院模板 2；科室模板 3；医生个人模板 4）
  * - medicine 处方中包含的药物清单，json 数组
  * <p>
  * - medicine 数组中每个元素包含的属性：
  * - medicineId 处方药品编号
+ * - unitPrice 药品单价
+ * - nums 药品数量
  * - medicineUsage 药品用途
  * - medicineDosage 药品用量
  * - medicineFrequency 药品使用频率
  * - medicineNumberDay 药品使用天数
- * - medicineQuantity 药品数量
  * - skinTest 皮试
  * - skinTestResult 皮试结果
+ * - doctorAdvice 医嘱
  */
 export function savePrescription(query) {
   console.log('savePrescription query: ')

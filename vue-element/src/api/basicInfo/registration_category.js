@@ -22,7 +22,7 @@ export function selectRegistration_categoryList(query) {
  * @param newRegistration_category 新增的挂号级别信息
  */
 export function addRegistration_category(newRegistration_category) {
-  console.log('addRegistration_category: ')
+  console.log('addRegistration_category js: ')
   console.log(newRegistration_category)
   return request(
     {
@@ -39,7 +39,7 @@ export function addRegistration_category(newRegistration_category) {
  * 修改挂号级别信息
  * @param query 修改后的挂号级别信息，将根据主键找到原信息进行修改
  */
-export function updateRegistration_categoryByPrimaryKey(query) {
+export function updateRegistration_category(query) {
   console.log('updateRegistration_categoryByPrimaryKey: ')
   console.log(query)
   return request(
