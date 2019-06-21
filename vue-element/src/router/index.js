@@ -119,6 +119,12 @@ export const constantRoutes = [
         component: () => import('@/views/basicInfo/schedule'),
         name: 'schedule',
         meta: { title: '医生排班管理', noCache: true }
+      },
+      {
+        path: 'cost',
+        component: () => import('@/views/basicInfo/cost'),
+        name: 'cost',
+        meta: { title: '收据', noCache: true }
       }
     ]
   },
