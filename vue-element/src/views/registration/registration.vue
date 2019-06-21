@@ -206,7 +206,7 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">应收金额</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.totalCharge" :disabled="true"/>
+              <el-input v-model="registrationForm.totalCharge" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -221,14 +221,14 @@
 </template>
 
 <script>
-  import {
-    fetchCurrentAvailableDoctor,
-    fetchDepartment,
-    fetchPatientInfoByIdentityCardNo,
-    register
-  } from '../../api/registrationCharge/registration'
+import {
+  fetchCurrentAvailableDoctor,
+  fetchDepartment,
+  fetchPatientInfoByIdentityCardNo,
+  register
+} from '../../api/registrationCharge/registration'
 
-  export default {
+export default {
   data() {
     return {
       // 病历本是否需要
@@ -275,31 +275,31 @@
           { min: 18, max: 18, message: '长度应为 18 个字符', trigger: 'blur' }
         ],
         patientName: [
-          {required: true, message: '请输入用户姓名', trigger: 'blur'}
+          { required: true, message: '请输入用户姓名', trigger: 'blur' }
         ],
         registrationCategory: [
-          {required: true, message: '请输入挂号类型', trigger: 'blur'}
+          { required: true, message: '请输入挂号类型', trigger: 'blur' }
         ],
         medicalCategory: [
-          {required: true, message: '请输入医疗类别', trigger: 'blur'}
+          { required: true, message: '请输入医疗类别', trigger: 'blur' }
         ],
         settleAccountsCategory: [
-          {required: true, message: '请输入结算类别', trigger: 'blur'}
+          { required: true, message: '请输入结算类别', trigger: 'blur' }
         ],
         registrationDate: [
-          {required: true, message: '请输入挂号日期', trigger: 'blur'}
+          { required: true, message: '请输入挂号日期', trigger: 'blur' }
         ],
         registrationSource: [
-          {required: true, message: '请输入挂号来源', trigger: 'blur'}
+          { required: true, message: '请输入挂号来源', trigger: 'blur' }
         ],
         departmentId: [
-          {required: true, message: '请输入挂号科室', trigger: 'blur'}
+          { required: true, message: '请输入挂号科室', trigger: 'blur' }
         ],
         doctorId: [
-          {required: true, message: '请输入看诊医生', trigger: 'blur'}
+          { required: true, message: '请输入看诊医生', trigger: 'blur' }
         ],
         age: [
-          {required: true, message: '请输入年龄', trigger: 'blur'}
+          { required: true, message: '请输入年龄', trigger: 'blur' }
         ]
       }
     }
@@ -350,7 +350,7 @@
     // 科室选择改变，医生列表改变，可以选择
     departmentSelectionChange(departmentIdOfDoctor) {
       this.boolDepartmentSelectionChange = false
-      this.query = {'departmentId': departmentIdOfDoctor}
+      this.query = { 'departmentId': departmentIdOfDoctor }
       fetchCurrentAvailableDoctor(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchCurrentAvailableDoctor response: ')
         console.log(response)
@@ -366,7 +366,7 @@
         if (valid) {
           console.log('register valid passed ')
           // date 格式化
-          Date.prototype.Format = function (fmt) {
+          Date.prototype.Format = function(fmt) {
             const o = {
               'M+': this.getMonth() + 1, // 月份
               'd+': this.getDate(), // 日

@@ -23,7 +23,7 @@ export function selectPatient(query) {
  * @param registrationId 挂号单编号
  * @return 药品列表，json 字符串
  */
-export function selectChargeFormList(query) {
+export function selectChargeEntryList(query) {
   return request({
     url: '/medicine_distribute/list_medicine',
     method: 'get',
@@ -36,7 +36,7 @@ export function selectChargeFormList(query) {
 /**
  * 发放药品
  *
- * @param chargeFormIdList 被发放药品的编号列表
+ * @param chargeEntryIdList 被发放药品的编号列表
  * @return 操作结果
  */
 export function medicineDistribute(query) {

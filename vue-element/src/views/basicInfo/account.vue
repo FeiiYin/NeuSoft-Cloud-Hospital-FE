@@ -32,10 +32,8 @@
           type="selection"
           width="34px"
         />
-        <el-table-column prop="accountId" label="id" v-if="1 === 0">
-        </el-table-column>
-        <el-table-column prop="departmentId" label="id" v-if="1 === 0">
-        </el-table-column>
+        <el-table-column v-if="1 === 0" prop="accountId" label="id" />
+        <el-table-column v-if="1 === 0" prop="departmentId" label="id" />
         <el-table-column
           prop="userName"
           label="用户名"
@@ -75,7 +73,7 @@
               size="mini"
               @click="editAccountDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit" ></i>
+              <i class="el-icon-edit" />
             </el-button>
           </template>
         </el-table-column>
@@ -168,10 +166,8 @@
         width="30%"
       >
         <el-form ref="editAccountForm" :model="editAccountForm" :rules="rules" label-position="top">
-          <el-form-item label="id" prop="accountId" v-if="1 === 0">
-          </el-form-item>
-          <el-form-item label="id" prop="departmentId" v-if="1 === 0">
-          </el-form-item>
+          <el-form-item v-if="1 === 0" label="id" prop="accountId" />
+          <el-form-item v-if="1 === 0" label="id" prop="departmentId" />
           <el-form-item label="用户名" prop="userName">
             <el-input v-model="editAccountForm.userName" auto-complete="off" />
           </el-form-item>

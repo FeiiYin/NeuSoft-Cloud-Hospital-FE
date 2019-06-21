@@ -8,33 +8,29 @@
       </el-button>
     </aside>
     <div>
-      <el-table :data="registrationList" style="width: 100%" v-loading="registrationListLoading">
-        <el-table-column prop="registrationDate" label="挂号日期" sortable>
-        </el-table-column>
-        <el-table-column prop="medicalRecordId" label="病历号">
-        </el-table-column>
-        <el-table-column prop="patientName" label="姓名">
-        </el-table-column>
-        <el-table-column prop="gender" label="性别">
-        </el-table-column>
-        <el-table-column prop="identityCardNo" label="身份证号" width="200">
-        </el-table-column>
-        <el-table-column prop="departmentId" label="科室">
-        </el-table-column>
-        <el-table-column prop="doctorId" label="医生">
-        </el-table-column>
-        <el-table-column prop="isVisited" label="是否已诊">
-        </el-table-column>
-        <el-table-column prop="totalCharge" label="实收费用">
-        </el-table-column>
-        <el-table-column prop="valid" label="状态" fixed
+      <el-table v-loading="registrationListLoading" :data="registrationList" style="width: 100%">
+        <el-table-column prop="registrationDate" label="挂号日期" sortable />
+        <el-table-column prop="medicalRecordId" label="病历号" />
+        <el-table-column prop="patientName" label="姓名" />
+        <el-table-column prop="gender" label="性别" />
+        <el-table-column prop="identityCardNo" label="身份证号" width="200" />
+        <el-table-column prop="departmentId" label="科室" />
+        <el-table-column prop="doctorId" label="医生" />
+        <el-table-column prop="isVisited" label="是否已诊" />
+        <el-table-column prop="totalCharge" label="实收费用" />
+        <el-table-column
+          prop="valid"
+          label="状态"
+          fixed
           :filters="[{ text: '正常', value: '正常' }, { text: '已退号', value: '已退号' }]"
           :filter-method="filterTag"
-          filter-placement="bottom-end">
+          filter-placement="bottom-end"
+        >
           <template slot-scope="scope">
             <el-tag
               :type="scope.row.valid === '已退号' ? 'primary' : 'success'"
-              close-transition>{{scope.row.valid}}
+              close-transition
+            >{{ scope.row.valid }}
             </el-tag>
           </template>
         </el-table-column>
@@ -57,7 +53,7 @@
 <script>
 
 import {
-  fetchRegistrationList,
+  fetchRegistrationList
 } from '../../api/registrationCharge/registrationListSearch'
 
 export default {
@@ -73,7 +69,7 @@ export default {
           isVisited: '1',
           totalCharge: '1',
           valid: '正常',
-          gender: '',
+          gender: ''
 
         },
         {
@@ -84,21 +80,24 @@ export default {
           isVisited: '1',
           totalCharge: '1',
           valid: '已退号'
-        },
+        }
       ],
       registrationListLoading: false,
       // 分页
       currentPage: 1, // 当前页码
       pageSize: 50, // 页码大小
-      totalNumber: 0,
+      totalNumber: 0
     }
+  },
+  created() {
+    this.queryRegistrationListWithPage()
   },
   methods: {
     formatter(row, column) {
-      return row.address;
+      return row.address
     },
     filterTag(value, row) {
-      return row.valid === value;
+      return row.valid === value
     },
     // 分页
     handleSizeChange(val) {
@@ -112,7 +111,7 @@ export default {
       this.queryRegistrationListWithPage()
     },
     queryRegistrationListWithPage() {
-      this.registrationListLoading = true;
+      this.registrationListLoading = true
       var query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
       console.log(query)
       fetchRegistrationList(query).then(response => { // 然后获取科室信息列表
@@ -122,7 +121,7 @@ export default {
         this.totalNumber = response.data.total
         for (var i = 0; i < this.registrationList.length; ++i) {
           this.registrationList[i].registrationDate = this.registrationList[i].registrationDate.substring(0, 10)
-          this.registrationList[i].valid = this.registrationList[i].valid == 1 ? "正常" : "已退号"
+          this.registrationList[i].valid = this.registrationList[i].valid == 1 ? '正常' : '已退号'
           this.registrationList[i].departmentId = response.data.list[i].reserve1
           this.registrationList[i].doctorId = response.data.list[i].reserve2
           this.registrationList[i].medicalRecordId = response.data.list[i].registrationId
@@ -141,10 +140,7 @@ export default {
         console.log('fetchRegistrationList error: ')
         console.log(error)
       })
-    },
-  },
-  created() {
-    this.queryRegistrationListWithPage()
-  },
+    }
+  }
 }
 </script>

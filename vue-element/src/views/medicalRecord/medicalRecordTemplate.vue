@@ -19,8 +19,8 @@
       <el-main>
         <aside>
           <el-button id="show_button" type="primary" @click="openModelPanel()">
-            <i v-show="model_panel_show" class="el-icon-caret-left"/>
-            <i v-show="!model_panel_show" class="el-icon-caret-right"/>
+            <i v-show="model_panel_show" class="el-icon-caret-left" />
+            <i v-show="!model_panel_show" class="el-icon-caret-right" />
           </el-button>
           <span style="margin-left:30px;">门诊病历消息</span>
         </aside>
@@ -31,42 +31,42 @@
             </h3>
             <el-form ref="medicalRecordForm" :model="medicalRecordForm" :rules="rules" label-width="100px">
               <el-form-item label="模板编号" prop="medicalRecordsId">
-                <el-input v-model="medicalRecordForm.medicalRecordsId" :disabled="true" style="width:86%"/>
-                <el-button type="primary" plain @click="medicalRecordForm.medicalRecordsId=''" style="float:right"><i class="el-icon-refresh" /></el-button>
+                <el-input v-model="medicalRecordForm.medicalRecordsId" :disabled="true" style="width:86%" />
+                <el-button type="primary" plain style="float:right" @click="medicalRecordForm.medicalRecordsId=''"><i class="el-icon-refresh" /></el-button>
               </el-form-item>
               <el-form-item label="模板名称" prop="templateName">
                 <el-input v-model="medicalRecordForm.templateName" />
               </el-form-item>
               <el-form-item label="主诉" prop="mainInfo">
-                <el-input v-model="medicalRecordForm.mainInfo"/>
+                <el-input v-model="medicalRecordForm.mainInfo" />
               </el-form-item>
               <el-form-item label="现病史" prop="currentDisease">
-                <el-input v-model="medicalRecordForm.currentDisease"/>
+                <el-input v-model="medicalRecordForm.currentDisease" />
               </el-form-item>
               <el-form-item label="既往史" prop="pastDisease">
-                <el-input v-model="medicalRecordForm.pastDisease" type="textarea" :rows="4"/>
+                <el-input v-model="medicalRecordForm.pastDisease" type="textarea" :rows="4" />
               </el-form-item>
               <el-form-item label="体格检查" prop="physicalExam">
-                <el-input v-model="medicalRecordForm.physicalExam" type="textarea" :rows="4"/>
+                <el-input v-model="medicalRecordForm.physicalExam" type="textarea" :rows="4" />
               </el-form-item>
               <el-form-item label="辅助检查" prop="auxiliaryExam">
-                <el-input v-model="medicalRecordForm.auxiliaryExam" type="textarea" :rows="4"/>
+                <el-input v-model="medicalRecordForm.auxiliaryExam" type="textarea" :rows="4" />
               </el-form-item>
               <el-form-item label="处理意见" prop="opinion">
-                <el-input v-model="medicalRecordForm.opinion"/>
+                <el-input v-model="medicalRecordForm.opinion" />
               </el-form-item>
               <el-form-item label="模板类别" prop="saveState">
-                <el-select v-model="medicalRecordForm.saveState" placeholder="请选择" >
+                <el-select v-model="medicalRecordForm.saveState" placeholder="请选择">
                   <el-option
                     v-for="item in templateCategory"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
-                  </el-option>
+                    :value="item.value"
+                  />
                 </el-select>
               </el-form-item>
             </el-form>
-            
+
             <!-- 全局按钮 -->
             <div style="text-align:center;margin-top:40px;">
               <el-button type="primary" @click="true">删除模板</el-button>
@@ -79,27 +79,27 @@
       <!--模板的对话框-->
       <el-dialog title="模板预览" :visible.sync="modelDialogVisible" width="30%">
         <el-form ref="modelForm" :model="modelForm" :rules="templateRules">
-          
+
           <el-form-item label="模板名称" prop="templateName">
-            <el-input v-model="modelForm.templateName" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.templateName" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="主诉" prop="mainInfo">
-            <el-input v-model="modelForm.mainInfo" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.mainInfo" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="现病史" prop="currentDisease">
-            <el-input v-model="modelForm.currentDisease" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.currentDisease" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="既往史" prop="pastDisease">
-            <el-input v-model="modelForm.pastDisease" type="textarea" :rows="2" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.pastDisease" type="textarea" :rows="2" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="体格检查" prop="physicalExam">
-            <el-input v-model="modelForm.physicalExam" type="textarea" :rows="2" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.physicalExam" type="textarea" :rows="2" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="辅助检查" prop="auxiliaryExam">
-            <el-input v-model="modelForm.auxiliaryExam" type="textarea" :rows="2" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.auxiliaryExam" type="textarea" :rows="2" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="处理意见" prop="opinion">
-            <el-input v-model="modelForm.opinion" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.opinion" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="模板类别" prop="saveState">
             <el-select v-model="modelForm.saveState" placeholder="请选择" :disabled="modelDialogEditable">
@@ -107,8 +107,8 @@
                 v-for="item in templateCategory"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
-              </el-option>
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
         </el-form>
@@ -124,29 +124,29 @@
 </template>
 
 <script>
-  import 'element-ui/lib/theme-chalk/base.css'
-  // collapse 展开折叠
-  import Vue from 'vue'
-  import ThemePicker from '@/components/ThemePicker'
-  // 可编辑table使用
-  // table used
-  import {Editable, EditableColumn} from 'vue-element-extends'
-  import 'vue-element-extends/lib/index.css'
-  import {fetchDiseaseCategory, fetchDiseaseList} from '../../api/basicInfo/diagnosis'
+import 'element-ui/lib/theme-chalk/base.css'
+// collapse 展开折叠
+import Vue from 'vue'
+import ThemePicker from '@/components/ThemePicker'
+// 可编辑table使用
+// table used
+import { Editable, EditableColumn } from 'vue-element-extends'
+import 'vue-element-extends/lib/index.css'
+import { fetchDiseaseCategory, fetchDiseaseList } from '../../api/basicInfo/diagnosis'
 
-  import {
-    saveMedicalRecord,
-    saveMedicalRecordAsTemplate,
-    selectMedicalRecordsTemplateList,
-    selectPatientHistoryMedicalRecords
-  } from '../../api/medicalRecord/medicalRecord'
+import {
+  saveMedicalRecord,
+  saveMedicalRecordAsTemplate,
+  selectMedicalRecordsTemplateList,
+  selectPatientHistoryMedicalRecords
+} from '../../api/medicalRecord/medicalRecord'
 
-  Vue.use(Editable)
-  Vue.use(EditableColumn)
-  Vue.component('ElxEditable', Editable)
-  Vue.component('ElxEditableColumn', EditableColumn)
+Vue.use(Editable)
+Vue.use(EditableColumn)
+Vue.component('ElxEditable', Editable)
+Vue.component('ElxEditableColumn', EditableColumn)
 
-  export default {
+export default {
   components: { ThemePicker },
   data() {
     return {
@@ -175,41 +175,41 @@
       },
       rules: {
         templateName: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         mainInfo: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         currentDisease: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         pastDisease: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         physicalExam: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         auxiliaryExam: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         opinion: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         saveState: [
-          {required: true, message: '请选择', trigger: 'blur'}
-        ],
+          { required: true, message: '请选择', trigger: 'blur' }
+        ]
       },
       templateRules: {
         templateName: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         saveState: [
-          {required: true, message: '请选择', trigger: 'blur'}
-        ],
+          { required: true, message: '请选择', trigger: 'blur' }
+        ]
       },
-    
+
       formLabelWidth: '120px',
-            
+
       // 模板的树形目录
       medicalRecordTemplateTreeData: [
         {
@@ -238,15 +238,15 @@
         saveState: ''
       },
       templateCategory: [{
-          value: '2',
-          label: '全院模板'
-        }, {
-          value: '3',
-          label: '科室模板'
-        }, {
-          value: '4',
-          label: '个人模板'
-      }],
+        value: '2',
+        label: '全院模板'
+      }, {
+        value: '3',
+        label: '科室模板'
+      }, {
+        value: '4',
+        label: '个人模板'
+      }]
     }
   },
   created() {
@@ -294,12 +294,7 @@
           // JSON.parse(JSON.stringify(this.temp1));
           this.medicalRecordForm.templateName = this.medicalRecordTemplateData[now][i].templateName
           // this.modelForm.saveState = this.medicalRecordTemplateData[now][i].saveState
-          if (this.medicalRecordTemplateTreeDirectory == 0)
-            this.medicalRecordForm.saveState = '全院模板'
-          else if (this.medicalRecordTemplateTreeDirectory == 1) 
-            this.medicalRecordForm.saveState = '科室模板'
-          else 
-            this.medicalRecordForm.saveState = '个人模板'
+          if (this.medicalRecordTemplateTreeDirectory == 0) { this.medicalRecordForm.saveState = '全院模板' } else if (this.medicalRecordTemplateTreeDirectory == 1) { this.medicalRecordForm.saveState = '科室模板' } else { this.medicalRecordForm.saveState = '个人模板' }
           break
         }
       }
@@ -328,7 +323,7 @@
         // console.log(response)
         this.medicalRecordTemplateData.push(response.data)
         for (var i = 0; i < response.data.length; ++i) {
-          this.medicalRecordTemplateTreeData[0].children.push({'label': response.data[i].templateName})
+          this.medicalRecordTemplateTreeData[0].children.push({ 'label': response.data[i].templateName })
         }
         // 科室
         query.templateScope = 3
@@ -336,7 +331,7 @@
           // console.log(response)
           this.medicalRecordTemplateData.push(response.data)
           for (var i = 0; i < response.data.length; ++i) {
-            this.medicalRecordTemplateTreeData[1].children.push({'label': response.data[i].templateName})
+            this.medicalRecordTemplateTreeData[1].children.push({ 'label': response.data[i].templateName })
           }
           // 个人
           query.templateScope = 4
@@ -345,7 +340,7 @@
             console.log(response)
             this.medicalRecordTemplateData.push(response.data)
             for (var i = 0; i < response.data.length; ++i) {
-              this.medicalRecordTemplateTreeData[2].children.push({'label': response.data[i].templateName})
+              this.medicalRecordTemplateTreeData[2].children.push({ 'label': response.data[i].templateName })
             }
           })
         })
@@ -376,12 +371,7 @@
       this.$refs['medicalRecordForm'].validate((valid) => {
         if (valid) {
           this.medicalRecordForm.doctorId = this.doctorId
-          if (this.medicalRecordForm.saveState == '全院模板')
-            this.medicalRecordForm.saveState = 2
-          else if (this.medicalRecordForm.saveState == '科室模板') 
-            this.medicalRecordForm.saveState = 3
-          else 
-            this.medicalRecordForm.saveState = 4
+          if (this.medicalRecordForm.saveState == '全院模板') { this.medicalRecordForm.saveState = 2 } else if (this.medicalRecordForm.saveState == '科室模板') { this.medicalRecordForm.saveState = 3 } else { this.medicalRecordForm.saveState = 4 }
           var query = this.medicalRecordForm
 
           console.log('template query: ')

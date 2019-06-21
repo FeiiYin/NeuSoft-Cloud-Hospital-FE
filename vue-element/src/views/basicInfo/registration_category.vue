@@ -91,14 +91,14 @@
       >
         <el-form ref="editRegistrationCategoryForm" :model="editRegistrationCategoryForm" :rules="rules" label-position="top">
           <el-form-item label="号别编码" prop="registrationCategoryId">
-            <el-input v-model="editRegistrationCategoryForm.registrationCategoryId" auto-complete="off" :disabled="true"/>
+            <el-input v-model="editRegistrationCategoryForm.registrationCategoryId" auto-complete="off" :disabled="true" />
           </el-form-item>
           <el-form-item label="号别名称" prop="registrationCategoryName">
             <el-input v-model="editRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="是否默认" prop="isDefault">
-            <el-radio v-model="isDefaultRadio" label='1'>是</el-radio>
-            <el-radio v-model="isDefaultRadio" label='0'>否</el-radio>
+            <el-radio v-model="isDefaultRadio" label="1">是</el-radio>
+            <el-radio v-model="isDefaultRadio" label="0">否</el-radio>
           </el-form-item>
           <el-form-item label="顺序号" prop="sequenceNo">
             <el-input v-model="editRegistrationCategoryForm.sequenceNo" auto-complete="off" />

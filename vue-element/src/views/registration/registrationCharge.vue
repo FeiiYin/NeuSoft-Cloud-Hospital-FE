@@ -55,26 +55,19 @@
       </el-button>
     </aside>
     <el-table
+      v-loading="chargeFormTableLoading"
       :data="chargeFormTableList"
       style="width: 100%"
       @selection-change="handleSelectionChange"
-      v-loading="chargeFormTableLoading">
-      <el-table-column type="selection" width="55">
-      </el-table-column>
-      <el-table-column  prop="reserve3" label="名称" sortable>
-      </el-table-column>
-      <el-table-column  prop="reserve1" label="规格" >
-      </el-table-column>
-      <el-table-column  prop="reserve2" label="单价" >
-      </el-table-column>
-      <el-table-column  prop="nums" label="数量" >
-      </el-table-column>
-      <el-table-column  prop="reserve1" label="单位" >
-      </el-table-column>
-      <el-table-column  prop="totalPrice" label="金额" >
-      </el-table-column>
-      <el-table-column  prop="departmentName" label="执行科室">
-      </el-table-column>
+    >
+      <el-table-column type="selection" width="55" />
+      <el-table-column prop="reserve3" label="名称" sortable />
+      <el-table-column prop="reserve1" label="规格" />
+      <el-table-column prop="reserve2" label="单价" />
+      <el-table-column prop="nums" label="数量" />
+      <el-table-column prop="reserve1" label="单位" />
+      <el-table-column prop="totalPrice" label="金额" />
+      <el-table-column prop="departmentName" label="执行科室" />
     </el-table>
     <!-- 分页 -->
     <div style="background: #d3dce6;">
@@ -102,7 +95,8 @@
       <el-button
         type="primary"
         style="float:right;margin-right:20px;"
-        @click="openChargeFormDialog()">
+        @click="openChargeFormDialog()"
+      >
         <svg-icon icon-class="money" />
         交费
       </el-button>
@@ -147,9 +141,9 @@
               v-model="addChargeForm.departmentId"
               filterable
               placeholder="请选择"
-              @change="forceChange"
               width="100%"
-              >
+              @change="forceChange"
+            >
               <el-option
                 v-for="item in departmentList"
                 :key="item.departmentId"
@@ -167,7 +161,7 @@
               placeholder="请选择"
               width="100%"
               :disabled="addChargeFormDisableBool"
-              >
+            >
               <el-option
                 v-for="item in chargeItemList"
                 :key="item.chargeItemId"
@@ -245,7 +239,7 @@ export default {
         departmentId: '',
         doctorId: '',
         collectorId: '',
-        notGivenNums: '',
+        notGivenNums: ''
       },
       chargeFormTableList: [],
       multipleSelectionChargeFormTable: [],
@@ -316,9 +310,6 @@ export default {
       totalNumber: 0
     }
   },
-  created() {
-    this.getDepartmentList()
-  },
   watch: {
     'charge_form.actual_charge': function() {
       if (this.charge_form.actual_charge > this.charge_form.should_charge) {
@@ -327,6 +318,9 @@ export default {
         this.charge_form.actual_exchange = 0
       }
     }
+  },
+  created() {
+    this.getDepartmentList()
   },
   methods: {
     // 根据病历号 registrationId 返回整条registration记录
@@ -422,7 +416,7 @@ export default {
     // 临时删除一个项目
     invokeDeleteChargeItemInForm() {
       if (this.multipleSelectionChargeFormTable.length === 0) {
-        this.$message.error('当前未选中条目，错误！');
+        this.$message.error('当前未选中条目，错误！')
         return
       }
       var tempChargeFormIdList = []
@@ -460,13 +454,13 @@ export default {
         tempChargeItemIdList.push(this.chargeFormTableList[i].chargeFormId)
       }
       var query = {
-        'chargeItemIdList': tempChargeItemIdList,
+        'chargeItemIdList': tempChargeItemIdList
       }
       payBill(query).then(response => {
         this.$message({
           message: '缴费成功！',
           type: 'success'
-        });
+        })
         this.invokeFetchChargeItemListWithRegistrationId()
       }).catch(error => {
         console.log('deleteChargeItemInForm error: ')
