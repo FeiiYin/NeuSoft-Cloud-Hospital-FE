@@ -5,113 +5,96 @@
         <aside>
           <span style="margin-left:30px;">检查项目申请</span>
         </aside>
-        <el-container>
-          <el-main >
-            <el-row :gutter="10">
+        <div>
+          <el-form :model="examForm" ref="examForm" label-width="100px">
+            <el-row :gutter="10" style="margin-bottom:0px">
               <el-col :span="12">
-                <span>当前患者病历号</span>
-                <el-input
-                  v-model="registrationId"
-                  :disabled="true"
-                  style="width:350px;margin-left:20px;"
-                  prefix-icon="el-icon-document"
-                />
+                <el-form-item label="患者病历号" prop="registrationId">
+                  <el-input v-model="examForm.registrationId" :disabled="true" prefix-icon="el-icon-document"></el-input>
+                </el-form-item>
               </el-col>
               <el-col :span="12">
-                <span>医生诊断疾病</span>
-                <el-input
-                  v-model="disease"
-                  :disabled="true"
-                  style="width:350px;margin-left:20px;"
-                  prefix-icon="el-icon-document"
-                />
+                <el-form-item label="医生诊断疾病" prop="disease">
+                  <el-input v-model="examForm.disease" :disabled="true" prefix-icon="el-icon-document"></el-input>
+                </el-form-item>
               </el-col>
             </el-row>
-            <span>当前处方名称</span>
-            <el-input
-              v-model="prescriptionName"
-              style="width:350px;margin-left:20px;"
-              prefix-icon="el-icon-document"
-            />
-
-            <!-- 药品列表，可动态新增和删除 -->
-            <div style="margin-top:60px">
-              <el-button @click="medicineDialogVisible = true">新增</el-button>
-              
-              <el-button @click="commonMedicineDialogVisible = true">常用药</el-button>
-
-              <el-button @click="$refs.prescriptionItemEditableTableData.removeSelecteds()">删除选中</el-button>
-              <el-button @click="$refs.prescriptionItemEditableTableData.clear()">清空</el-button>
-
-              <elx-editable ref="prescriptionItemEditableTableData" :data.sync="prescriptionItemEditableTableData">
-              <elx-editable-column type="selection" width="55"/>
-              <elx-editable-column type="index" width="55"/>
-
-              <elx-editable-column prop="nameZh" label="药品名称"/>
-              
-              <elx-editable-column prop="medicineSpecification" label="药品规格"/>
-              <elx-editable-column prop="medicinePrice" label="单价"/>
-              <elx-editable-column prop="medicineUsage" label="药品用法" :edit-render="{name: 'ElInput'}"></elx-editable-column>
-              <elx-editable-column prop="medicineDosage" label="剂量" :edit-render="{name: 'ElInputNumber'}"></elx-editable-column>
-              
-              <elx-editable-column prop="medicineFrequency" label="频次" :edit-render="{name: 'ElSelect', options: frequencyList}"></elx-editable-column>
-              <elx-editable-column prop="medicineNumberDay" label="天数" :edit-render="{name: 'ElInputNumber'}"></elx-editable-column>
-              <elx-editable-column prop="medicineQuantity" label="购买数量" :edit-render="{name: 'ElInputNumber'}"></elx-editable-column>
-              <elx-editable-column prop="medicineUnit" label="单位"/>
-              </elx-editable>
-            </div>
-            <aside style="height:60px;">
-              <span>处方类型</span>
-              <el-select v-model="prescriptionType" clearable placeholder="请选择" style="margin-left:20px;margin-right:20px;">
-                <el-option
-                  v-for="item in prescriptionTypeList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-              <span>总计金额：
-                <svg-icon icon-class="money" />
-              </span>
-              <el-input v-model="totalListMoney" :disabled="true" style="width:20%" />
-            </aside>
-
-            <!-- 全局按钮 -->
-            <div style="text-align:center;margin-top:40px;">
-              <el-button type="primary" @click="submitPrescriptionItemList(-1, 1)">提交</el-button>
-              <el-button type="info" @click="doPrint"><i class="el-icon-printer" />打印预览</el-button>
-            </div>
-            
-          </el-main>
-        </el-container>
-      </el-main>
-      
-      <!-- 诊断药品的dialog -->
-      <el-dialog title="新建药品条目" :visible.sync="medicineDialogVisible" width="30%">
-        <el-form ref="medicineForm" :model="medicineForm">
-          <el-form-item label="药品名称或拼音码" >            
-            <el-select
-              v-model="medicineForm.medicineId"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remoteInvokeSearchMedicine"
-              :loading="medicineListSelectLoading">
-              <el-option
-                v-for="item in medicineList"
-                :key="item.medicineId"
-                :label="item.nameZh + '  ' + item.namePinyin"
-                :value="item.medicineId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="medicineDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="insertMedicineTable()">确 定</el-button>
+            <el-form-item label="检查申请名称" prop="examinationName">
+              <el-input v-model="examForm.examinationName" prefix-icon="el-icon-document"></el-input>
+            </el-form-item>
+            <el-form-item label="检查要求" prop="requirement">
+              <el-input v-model="examForm.requirement" prefix-icon="el-icon-document" type="textarea" :rows="3"></el-input>
+            </el-form-item>
+          </el-form>
         </div>
-      </el-dialog>
+
+        <!-- 检查列表，可动态新增和删除 -->
+        <div style="margin-top:60px">
+          <el-button @click="chargeItemFormVisible = true">新增</el-button>          
+          <el-button @click="commonMedicineDialogVisible = true">常用项目</el-button>
+
+          <el-button @click="$refs.chargeItemEditableTableData.removeSelecteds()">删除选中</el-button>
+          <el-button @click="$refs.chargeItemEditableTableData.clear()">清空</el-button>
+
+          <elx-editable ref="chargeItemEditableTableData" :data.sync="chargeItemEditableTableData">
+            <elx-editable-column type="selection" width="55"/>
+            <elx-editable-column type="index" width="55"/>
+            <elx-editable-column prop="nameZh" label="项目名称"/>
+            <elx-editable-column prop="specification" label="规格"/>
+            <elx-editable-column prop="price" label="单价"/>
+            <elx-editable-column prop="departmentId" label="科室名称"/>
+            <elx-editable-column prop="nums" label="数量" :edit-render="{name: 'ElInputNumber'}"></elx-editable-column>
+            <elx-editable-column prop="doctorAdvice" label="医嘱" :edit-render="{name: 'ElInput'}"></elx-editable-column>
+          </elx-editable>
+        </div>
+
+        <aside style="height:60px;">
+          <span>合计金额：
+            <svg-icon icon-class="money" />
+          </span>
+          <el-input v-model="totalListMoney" :disabled="true" style="width:20%" />
+        </aside>
+
+        <!-- 全局按钮 -->
+        <div style="text-align:center;margin-top:40px;">
+          <el-button type="primary" @click="submitExamination(1)">提交</el-button>
+          <el-button type="info" @click="doPrint"><i class="el-icon-printer" />打印预览</el-button>
+        </div>
+      </el-main>
+    </el-container>
+     
+    <!--新增条目的对话框-->
+    <el-dialog title="新增检查项目" :visible.sync="chargeItemFormVisible" width="30%">
+      <el-form ref="chargeItemForm" :model="chargeItemForm" label-width="120px">
+        <el-form-item label="科室名称" prop="departmentId">
+          <el-select v-model="chargeItemForm.departmentId" filterable
+            placeholder="请选择" width="100%" @change="forceChange">
+            <el-option
+              v-for="item in departmentList"
+              :key="item.departmentId"
+              :label="item.departmentName"
+              :value="item.departmentId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="检查项目名称" prop="chargeItemId">
+          <el-select v-model="chargeItemForm.chargeItemId" filterable placeholder="请选择" 
+            :disabled="chargeItemFormDisable" >
+            <el-option
+              v-for="item in chargeItemList"
+              :key="item.chargeItemId"
+              :label="item.nameZh"
+              :value="item.chargeItemId"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="chargeItemFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="insertChargeItemTable">确 定</el-button>
+      </span>
+    </el-dialog>  
+    
       <!-- 常用药dialog -->
       <el-dialog title="常用药" :visible.sync="commonMedicineDialogVisible" >
         <div style="margin-left:13%">
@@ -147,7 +130,6 @@
           <el-button type="primary" @click="saveCurrentIntoTemplate()">保存模板</el-button>
         </span>
       </el-dialog>
-    </el-container>
     
     <el-row :gutter="20" style="margin:20px">
       <el-col :span="10"><div >
@@ -177,7 +159,7 @@
       <el-col :span="10"><div >
         <el-aside style="background:#eef1f6;width:500px">
           处方暂存记录
-          <el-button type="primary" plain style="float:right;" @click="submitPrescriptionItemList(-1, 0)">暂存</el-button>
+          <el-button type="primary" plain style="float:right;" @click="submitExamination(0)">暂存</el-button>
           <el-button plain style="float:right;margin-right:10px;" @click="invokeDeletePrescription">删除</el-button>
         </el-aside>
         <el-table ref="tempsavePrescriptionTable"  :data="tempsavePrescriptionTable" border
@@ -220,7 +202,7 @@
       <br />
       <hr>
       <span
-        v-for="item in prescriptionItemEditableTableData"
+        v-for="item in chargeItemEditableTableData"
         :key="item.medicineId"
         :label="item.nameZh"
         :value="item.medicineId">
@@ -253,6 +235,18 @@
   // table used
   import {Editable, EditableColumn} from 'vue-element-extends'
   import 'vue-element-extends/lib/index.css'
+  import { deepClone } from '@/utils'
+
+  import {
+    fetchDepartmentList,
+  } from '../../api/basicInfo/department'
+
+  import {
+    selectExaminationItemListInChargeItemByDepartmentId,
+    addExamination
+  } from '../../api/medicalRecord/examination'
+
+  // pre 
   import {fetchDiseaseCategory, fetchDiseaseList} from '../../api/basicInfo/diagnosis'
 
   import {
@@ -275,33 +269,27 @@
   data() {
     return {
       // 基础前置信息
-      doctorId: 1,
-      registrationId: 1,
-      disease: '',
-      prescriptionType: '普通门诊',
-      totalListMoney: 0,
-      prescriptionName: '',
+      doctorId: 1,      
+      totalListMoney: 0,      
       prescriptionId: '',
-      // 药品 列表
-      prescriptionItemEditableTableData: [],
-      // 药品 对话框
-      medicineDialogVisible: false,
-      medicineForm: {
-        medicineId: '',
-        medicineCode: '',
-        nameZh: '',
-        medicineSpecification: '',
-        medicineUnit: '',
-        medicineManufacturer: '', // 生产商
-        medicineDosageId: '', // 剂量
-        medicineTypeId: '',
-        medicinePrice: '',
-        namePinyin: '',
-        creationTime: '',
-        nums: '',
-        nameEn: '',
-        valid: '',
+      // 检查表单
+      examForm: {
+        registrationId: 1,
+        disease: '',
+        examinationName: '',
+        requirement: '无'
       },
+      // 项目表单
+      chargeItemForm: {
+        chargeItemId: '',
+      },
+      chargeItemFormVisible: false,
+      chargeItemFormDisable: true,
+      departmentList: [],
+      chargeItemList: [],
+      // 项目列表
+      chargeItemEditableTableData: [],
+      
       // 处方物品-药品
       prescriptionItem: {
         prescriptionItemId: '',
@@ -314,26 +302,8 @@
         skinTest: '',
         skinTestResult: '',
       },
-      formLabelWidth: '120px',
-      // 选择 处方类型
-      prescriptionTypeList: [{
-          value: '普通门诊',
-          label: '普通门诊'
-        }, {
-          value: '急诊',
-          label: '急诊'
-      }],
-      // 频次
-      frequencyList: [{
-        label: '一天一次',
-        value: '一天一次'
-      }, {
-        label: '一天两次',
-        value: '一天两次'
-      }, {
-        label: '一天三次',
-        value: '一天三次'
-      }],
+      
+      
       // 药品远程选择
       medicineListSelectLoading: false,
       medicineTotalList: [],
@@ -393,110 +363,75 @@
     }
   },
   created() {
-    this.invokeSelectMedicine()
+    this.invokeFetchDepartmentList()
+    // pre
     this.invokeCommonMedicine()
     this.invokeSelectPrescriptionTemplate()
-    this.invokeSelectHistoryPrescription()
+    // this.invokeSelectHistoryPrescription()
   },
   methods: {
-    // 疾病对话框处理
-    insertMedicineTable() {
-      // console.log(this.medicineForm)
-      var id = this.medicineForm.medicineId - 1
-      this.prescriptionItem = this.medicineTotalList[id]
-      this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
+    // 获取
+    invokeFetchDepartmentList() {
+      var query = { 'currentPage': 1, 'pageSize': 400 }
+      fetchDepartmentList(query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentList = response.data.list
+      })
+    },
+    forceChange() {
+      this.chargeItemFormDisable = false
+      this.invokeSelectExaminationItemListInChargeItemByDepartmentId()
+    },
+    invokeSelectExaminationItemListInChargeItemByDepartmentId() {
+      var query = { 'departmentId': this.chargeItemForm.departmentId }
+      selectExaminationItemListInChargeItemByDepartmentId(query).then(response => {
+        console.log('selectExaminationItemListInChargeItemByDepartmentId response: ')
+        console.log(response)
+        this.chargeItemList = []
+        this.chargeItemList = response.data
+      })
+    },
+    insertChargeItemTable() {
+      var id = this.chargeItemForm.chargeItemId
+      for (var i = 0; i < this.chargeItemList.length; ++i) {
+        if (this.chargeItemList[i].chargeItemId === id) {
+          this.chargeItemForm = this.chargeItemList[i]
+          break
+        }
+      }
+      this.chargeItemForm.nums = 1
+      this.chargeItemForm.doctorAdvice = '无'
+      this.$refs.chargeItemEditableTableData.insert(this.chargeItemForm)
       this.$message({
         message: '插入数据成功！',
         type: 'success'
       })
-      this.medicineDialogVisible = false
-    },
-    // 获取药品列表
-    invokeSelectMedicine() {
-      selectMedicine().then(response => {
-        // console.log(response)
-        this.medicineTotalList = response.data
-      }).catch(error => {
-        console.log('selectMedicine error: ')
-        console.log(error)
-      })
-    },
-    // 远程搜索获取药品列表
-    remoteInvokeSearchMedicine(query) {
-      if (query !== '') {
-        this.medicineListSelectLoading = true;
-        setTimeout(() => {
-          this.medicineListSelectLoading = false;
-          this.medicineList = this.medicineTotalList.filter(item => {
-            return (item.nameZh.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1 || 
-              item.namePinyin.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1);
-          });
-        }, 200);
-      } else {
-        this.medicineList = [];
-      }
+      this.chargeItemFormVisible = false
+      this.chargeItemFormDisable = true
+      this.chargeItemForm = {}
     },
     submitCheck() {
-      if (this.prescriptionName === '') {
-        this.$message.error('未输入当前处方名称，错误！');
+      if (this.examForm.examinationName === '' || this.examForm.requirement === '') {
+        this.$message.error('当前检查名称信息缺失，错误！');
         return false
       }
-      if (this.prescriptionItemEditableTableData.length == 0 || this.prescriptionItemEditableTableData.length == null) {
-        this.$message.error('未选中任何药品，错误！');
+      if (this.chargeItemEditableTableData.length == 0 || this.chargeItemEditableTableData.length == null) {
+        this.$message.error('未选中任何项目，错误！');
         return false
       }
-      for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
-        if (this.prescriptionItemEditableTableData[i].medicineUsage == ''
-          || this.prescriptionItemEditableTableData[i].medicineDosage == ''
-          || this.prescriptionItemEditableTableData[i].medicineFrequency == ''
-          || this.prescriptionItemEditableTableData[i].medicineNumberDay == ''
-          || this.prescriptionItemEditableTableData[i].medicineQuantity == ''
-          || this.prescriptionItemEditableTableData[i].medicineUsage == null
-          || this.prescriptionItemEditableTableData[i].medicineDosage == null
-          || this.prescriptionItemEditableTableData[i].medicineFrequency == null
-          || this.prescriptionItemEditableTableData[i].medicineNumberDay == null
-          || this.prescriptionItemEditableTableData[i].medicineQuantity == null
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        if (this.chargeItemEditableTableData[i].nums == null
+          || this.chargeItemEditableTableData[i].nums == ''
+          || this.chargeItemEditableTableData[i].nums < 0
           ) {
-          this.$message.error('药品信息缺失，错误！');
+          this.$message.error('项目信息缺失或错误，错误！');
           return false
         }
       }
       return true
     },
-    invokekSavePrescription(prescriptionId, saveState) {
-      for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
-        this.prescriptionItemEditableTableData[i].skinTest = ''
-        this.prescriptionItemEditableTableData[i].skinTestResult = ''
-      }
-      var query = {
-        'prescriptionJson': {
-          'prescriptionId': prescriptionId, // 新增时填-1
-          'prescriptionName': this.prescriptionName,
-          'registrationId': this.registrationId,
-          'saveState': saveState, // 保存状态（暂存 0；正式提交 1；模板 2,3,4）
-          'doctorId': this.doctorId,
-          'medicine': this.prescriptionItemEditableTableData
-        }          
-      }
-      console.log(query)
-      savePrescription(query).then(response => {
-        console.log('savePrescription response: ')
-        console.log(response)
-        this.$message({
-          type: 'success',
-          message: '提交成功!'
-        });
-        if (saveState === 0) {
-          this.invokeSelectHistoryPrescription()
-        }
-      }).catch(error => {
-        console.log('savePrescription error: ')
-        console.log(error)
-      })
-    },
-    submitPrescriptionItemList(prescriptionId, saveState) {
+    submitExamination(saveState) {
       if (this.submitCheck() == false)
         return
       this.calculateTotalMoney()
@@ -505,7 +440,7 @@
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.invokekSavePrescription(prescriptionId, saveState)
+        this.invokeAddExamination(saveState)
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -515,11 +450,48 @@
     },
     calculateTotalMoney() {
       this.totalListMoney = 0
-      for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
-        this.totalListMoney += this.prescriptionItemEditableTableData[i].medicineQuantity
-          * this.prescriptionItemEditableTableData[i].medicinePrice
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        this.totalListMoney += this.chargeItemEditableTableData[i].nums
+          * this.chargeItemEditableTableData[i].price
       }
     },
+    invokeAddExamination(saveState) {
+      var tempList = []
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        tempList.push({
+          'chargeItemId': this.chargeItemEditableTableData[i].chargeItemId,
+          'nums': this.chargeItemEditableTableData[i].nums,
+          'collectorId': -1, // 新增
+          'doctorAdvice': this.chargeItemEditableTableData[i].doctorAdvice
+        })
+      }
+      var examinationJson = {
+        'examinationJson': {
+          'registrationId': this.examForm.registrationId,
+          'saveState': saveState, // 暂存 0；正式提交 1；全院模板 2；科室模板 3；医生个人模板 4
+          'examName': this.examForm.examName,
+          'requirement': this.examForm.requirement,
+          'clinicalImpression': '',
+          'examResult': '',
+          'chargeEntryList': tempList
+        }
+      }
+      console.log(examinationJson)
+      addExamination(examinationJson).then(response => {
+        console.log('addExamination response: ')
+        console.log(response)
+        this.$message({
+          type: 'success',
+          message: '提交成功!'
+        });
+        // 历史时调用
+        // if (saveState === 0) {
+        //   this.invokeSelectHistoryPrescription()
+        // }
+      })
+    },
+       
+    
     // 常用药
     invokeCommonMedicine() {
       commonMedicine({'medicineNumber': 7}).then(response => {
@@ -546,7 +518,7 @@
       for (var i = 0; i < this.commonMedicineListValue.length; ++i) {
         var id = this.commonMedicineListValue[i] - 1
         this.prescriptionItem = this.medicineTotalList[id]
-        this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
+        this.$refs.chargeItemEditableTableData.insert(this.prescriptionItem)
       }
       this.commonMedicineListValue = []
       this.$message({
@@ -564,7 +536,7 @@
       for (var i = 0; i < this.prescriptionTemplateMedicineExample.length; ++i) {
         var id = this.prescriptionTemplateMedicineExample[i].medicineId - 1
         this.prescriptionItem = this.medicineTotalList[id]
-        this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
+        this.$refs.chargeItemEditableTableData.insert(this.prescriptionItem)
       }
       this.$message({
         message: '应用模板成功！',

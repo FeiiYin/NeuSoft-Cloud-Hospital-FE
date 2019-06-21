@@ -25,14 +25,23 @@
         </el-col>
       </el-row>
       <el-table :data="workloadTable" ref="workloadTable">
-        <el-table-column label=""></el-table-column>
+        <el-table-column label="科室"></el-table-column>
+        <el-table-column label="看诊人次"></el-table-column>
+        <el-table-column label="发票数量"></el-table-column>
       </el-table>
     </div>
-    <el-col :xs="24" :sm="24" :lg="8">
+    <div style="text-align:center;">
+      <el-col :xs="24" :sm="24" :lg="12">
+        <div class="chart-wrapper">
+          <bar-chart />
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper">
           <pie-chart />
         </div>
       </el-col>
+    </div>
   </div>
 </template>
 

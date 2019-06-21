@@ -94,7 +94,7 @@
 <script>
 import {
   selectChargeForm,
-} from '../../api/registrationCharge/chargeForm'
+} from '../../api/registrationCharge/chargeEntry'
 
 import {
   fetchDepartmentList,
