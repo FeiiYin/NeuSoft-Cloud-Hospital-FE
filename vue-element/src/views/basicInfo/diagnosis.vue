@@ -68,7 +68,7 @@
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false; selectEditValue1 = ''">取 消</el-button>
-                <el-button type="primary" @click="submitAddDisease('diseaseForm')">确 定</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false; submitAddDisease('diseaseForm')">确 定</el-button>
               </div>
             </el-dialog>
 
@@ -100,7 +100,7 @@
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button @click="editDialogFormVisible = false; selectEditValue1 = ''">取 消</el-button>
+                <el-button @click="editDialogFormVisible = false; selectEditValue2 = ''">取 消</el-button>
                 <el-button type="primary" @click="submitUpdateDisease('editDiseaseForm')">确 定</el-button>
               </div>
             </el-dialog>
@@ -161,6 +161,13 @@
             </el-table-column>
           </el-table>
           <div style="height:30px;" />
+          <el-pagination
+            :current-page="currentPage"
+            :page-sizes="[20, 50, 100, 200]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalNumber"
+          />
         </div>
       </el-col>
       <!-- <el-col :span="16"><div class="grid-content bg-purple"></div></el-col> -->
@@ -169,11 +176,12 @@
 </template>
 
 <script>
-import { fetchDiseaseCategory, fetchDiseaseList, addDisease, updateDisease, deleteDiseaseByPrimaryKey } from '@/api/basicInfo/diagnosis.js'
+import { fetchDiseaseCategory, fetchDiseaseList, addDisease, updateDisease, deleteDiseaseByPrimaryKey } from '../../api/basicInfo/diagnosis'
 
 export default {
   data() {
     return {
+      totalNumber: 0,
       // 页面左侧：疾病种类
       diseaseCategoryList: [{
         diseaseId: null,
@@ -187,13 +195,19 @@ export default {
       selectEditValue1: '',
       selectEditValue2: '',
       multipleSelection: [],
-      diseaseForm: {},
-      editDiseaseForm: {
+      diseaseForm: {
         diseaseId: 0,
-        diseaseCategory: '',
+        diseaseCategory: 0,
         diseaseIcd: '',
         diseaseName: '',
-        diseaseCode: 0
+        diseaseCode: ''
+      },
+      editDiseaseForm: {
+        diseaseId: 0,
+        diseaseCategory: 0,
+        diseaseIcd: '',
+        diseaseName: '',
+        diseaseCode: ''
       },
       diseaseIdList: [],
       dialogFormVisible: false,
@@ -306,7 +320,7 @@ export default {
         var tmp = Math.ceil(this.totalNumber / this.pageSize)
         this.current = tmp
         this.getDiseaseList()
-        this.$refs[formName].resetFields() // 清空内容及选择器
+        this.$refs[formName] = '' // 清空内容及选择器
       })
     }, // 修改 ，读取原有row 数据
     editDiseaseFormFunction(index, row) {

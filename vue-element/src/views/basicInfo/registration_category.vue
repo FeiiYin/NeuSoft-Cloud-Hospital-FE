@@ -123,7 +123,6 @@ import {
   updateRegistration_category,
   deleteRegistration_categoryByPrimaryKey
 } from '../../api/basicInfo/registration_category'
-import registration from '../registration/registration'
 
 export default {
   data() {
