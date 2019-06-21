@@ -17,14 +17,13 @@
       </transition>
       <el-main>
         <aside>
-          <el-button id="show_button" type="primary" @click="openModelPanel()">
+          <el-button type="primary" @click="openModelPanel()">
             <i v-show="model_panel_show" class="el-icon-caret-left" />
             <i v-show="!model_panel_show" class="el-icon-caret-right" />
           </el-button>
           <span style="margin-left:30px;">门诊病历消息</span>
 
           <el-button
-            id="show_button"
             type="primary"
             style="float:right"
             @click="right_model_panel_show=!right_model_panel_show"
@@ -130,10 +129,6 @@
 <script>
 import 'element-ui/lib/theme-chalk/base.css'
 // collapse 展开折叠
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
-import Vue from 'vue'
-
-import ThemePicker from '@/components/ThemePicker'
 
 export default {
   data() {

@@ -127,18 +127,13 @@
 import 'element-ui/lib/theme-chalk/base.css'
 // collapse 展开折叠
 import Vue from 'vue'
-import ThemePicker from '@/components/ThemePicker'
 // 可编辑table使用
 // table used
 import { Editable, EditableColumn } from 'vue-element-extends'
 import 'vue-element-extends/lib/index.css'
-import { fetchDiseaseCategory, fetchDiseaseList } from '../../api/basicInfo/diagnosis'
 
 import {
-  saveMedicalRecord,
-  saveMedicalRecordAsTemplate,
-  selectMedicalRecordsTemplateList,
-  selectPatientHistoryMedicalRecords
+  selectMedicalRecordsTemplateList
 } from '../../api/medicalRecord/medicalRecord'
 
 Vue.use(Editable)
@@ -147,7 +142,6 @@ Vue.component('ElxEditable', Editable)
 Vue.component('ElxEditableColumn', EditableColumn)
 
 export default {
-  components: { ThemePicker },
   data() {
     return {
       // 当前医生Id
@@ -259,15 +253,15 @@ export default {
     // 树形目录检测
     handleNodeClick(data) {
       console.log(data)
-      if (data.label == '全院') {
+      if (data.label === '全院') {
         this.medicalRecordTemplateTreeDirectory = 0
         return
       }
-      if (data.label == '科室') {
+      if (data.label === '科室') {
         this.medicalRecordTemplateTreeDirectory = 1
         return
       }
-      if (data.label == '个人') {
+      if (data.label === '个人') {
         this.medicalRecordTemplateTreeDirectory = 2
         return
       }
@@ -276,7 +270,7 @@ export default {
       // console.log(data.label)
       for (var i = 0; i < this.medicalRecordTemplateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
-        if (this.medicalRecordTemplateData[now][i].templateName == data.label) {
+        if (this.medicalRecordTemplateData[now][i].templateName === data.label) {
           console.log(this.medicalRecordTemplateData[now][i])
           // this.modelDialogVisible = true
           // this.modelDialogEditable = true
@@ -294,7 +288,7 @@ export default {
           // JSON.parse(JSON.stringify(this.temp1));
           this.medicalRecordForm.templateName = this.medicalRecordTemplateData[now][i].templateName
           // this.modelForm.saveState = this.medicalRecordTemplateData[now][i].saveState
-          if (this.medicalRecordTemplateTreeDirectory == 0) { this.medicalRecordForm.saveState = '全院模板' } else if (this.medicalRecordTemplateTreeDirectory == 1) { this.medicalRecordForm.saveState = '科室模板' } else { this.medicalRecordForm.saveState = '个人模板' }
+          if (this.medicalRecordTemplateTreeDirectory === 0) { this.medicalRecordForm.saveState = '全院模板' } else if (this.medicalRecordTemplateTreeDirectory === 1) { this.medicalRecordForm.saveState = '科室模板' } else { this.medicalRecordForm.saveState = '个人模板' }
           break
         }
       }
@@ -371,7 +365,13 @@ export default {
       this.$refs['medicalRecordForm'].validate((valid) => {
         if (valid) {
           this.medicalRecordForm.doctorId = this.doctorId
-          if (this.medicalRecordForm.saveState == '全院模板') { this.medicalRecordForm.saveState = 2 } else if (this.medicalRecordForm.saveState == '科室模板') { this.medicalRecordForm.saveState = 3 } else { this.medicalRecordForm.saveState = 4 }
+          if (this.medicalRecordForm.saveState === '全院模板') {
+            this.medicalRecordForm.saveState = 2
+          } else if (this.medicalRecordForm.saveState === '科室模板') {
+            this.medicalRecordForm.saveState = 3
+          } else {
+            this.medicalRecordForm.saveState = 4
+          }
           var query = this.medicalRecordForm
 
           console.log('template query: ')

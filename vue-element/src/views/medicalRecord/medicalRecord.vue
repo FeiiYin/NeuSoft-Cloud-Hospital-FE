@@ -246,14 +246,12 @@
       </el-dialog>
     </el-container>
   </div>
-
 </template>
 
 <script>
 import 'element-ui/lib/theme-chalk/base.css'
 // collapse 展开折叠
 import Vue from 'vue'
-import ThemePicker from '@/components/ThemePicker'
 // 可编辑table使用
 // table used
 import { Editable, EditableColumn } from 'vue-element-extends'
@@ -273,7 +271,6 @@ Vue.component('ElxEditable', Editable)
 Vue.component('ElxEditableColumn', EditableColumn)
 
 export default {
-  components: { ThemePicker },
   data() {
     return {
       // 当前医生Id
@@ -451,13 +448,13 @@ export default {
             this.medicalRecordForm.disease.push({
               'diseaseId': this.diseaseEditableTableData[i].disease.diseaseId,
               'mainDisease': 0,
-              'suspect': this.diseaseEditableTableData[i].suspect == true ? 1 : 0,
+              'suspect': this.diseaseEditableTableData[i].suspect === true ? 1 : 0,
               'incidenceDate': this.diseaseEditableTableData[i].incidenceDate
             })
           }
           console.log(this.medicalRecordForm)
           saveMedicalRecord({ 'medicalRecordJson': this.medicalRecordForm }).then(response => {
-            if (choose == 1) {
+            if (choose === 1) {
               this.$message({
                 message: '提交数据成功！',
                 type: 'success'
@@ -493,15 +490,15 @@ export default {
     // 树形目录检测
     handleNodeClick(data) {
       console.log(data)
-      if (data.label == '全院') {
+      if (data.label === '全院') {
         this.medicalRecordTemplateTreeDirectory = 0
         return
       }
-      if (data.label == '科室') {
+      if (data.label === '科室') {
         this.medicalRecordTemplateTreeDirectory = 1
         return
       }
-      if (data.label == '个人') {
+      if (data.label === '个人') {
         this.medicalRecordTemplateTreeDirectory = 2
         return
       }
@@ -510,7 +507,7 @@ export default {
       // console.log(data.label)
       for (var i = 0; i < this.medicalRecordTemplateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
-        if (this.medicalRecordTemplateData[now][i].templateName == data.label) {
+        if (this.medicalRecordTemplateData[now][i].templateName === data.label) {
           this.modelDialogVisible = true
           this.modelDialogEditable = true
           this.modelForm = this.medicalRecordTemplateData[now][i]

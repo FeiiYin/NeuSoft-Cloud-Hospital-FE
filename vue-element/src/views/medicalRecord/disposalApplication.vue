@@ -251,12 +251,10 @@
 import 'element-ui/lib/theme-chalk/base.css'
 // collapse 展开折叠
 import Vue from 'vue'
-import ThemePicker from '@/components/ThemePicker'
 // 可编辑table使用
 // table used
 import { Editable, EditableColumn } from 'vue-element-extends'
 import 'vue-element-extends/lib/index.css'
-import { deepClone } from '@/utils'
 
 import {
   fetchDepartmentList
@@ -266,17 +264,10 @@ import {
   addDisposal,
   selectDisposalItemListInChargeItemByDepartmentId,
   selectHistoryDisposal,
-  deleteDisposalEntry,
   deleteDisposal
 } from '../../api/medicalRecord/disposal'
 
-// pre
-import { fetchDiseaseCategory, fetchDiseaseList } from '../../api/basicInfo/diagnosis'
-
 import {
-  savePrescription,
-  deletePrescription,
-  selectHistoryPrescription,
   selectPrescriptionTemplate
 } from '../../api/medicalRecord/prescription'
 
@@ -286,7 +277,6 @@ Vue.component('ElxEditable', Editable)
 Vue.component('ElxEditableColumn', EditableColumn)
 
 export default {
-  components: { ThemePicker },
   data() {
     return {
       // 基础前置信息
@@ -435,13 +425,13 @@ export default {
         this.$message.error('当前治疗名称信息缺失，错误！')
         return false
       }
-      if (this.chargeItemEditableTableData.length == 0 || this.chargeItemEditableTableData.length == null) {
+      if (this.chargeItemEditableTableData.length === 0 || this.chargeItemEditableTableData.length == null) {
         this.$message.error('未选中任何项目，错误！')
         return false
       }
       for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
         if (this.chargeItemEditableTableData[i].nums == null ||
-          this.chargeItemEditableTableData[i].nums == '' ||
+          this.chargeItemEditableTableData[i].nums === '' ||
           this.chargeItemEditableTableData[i].nums < 0
         ) {
           this.$message.error('项目信息缺失或错误，错误！')
@@ -451,7 +441,7 @@ export default {
       return true
     },
     submitDisposal(saveState) {
-      if (this.submitCheck() == false) { return }
+      if (this.submitCheck() === false) { return }
       this.calculateTotalMoney()
       if (saveState === 1) {
         this.$confirm('分发药品, 合计' + this.totalListMoney + '元，是否继续？', '提示', {
@@ -536,7 +526,7 @@ export default {
       // commonMedicine({'medicineNumber': 7}).then(response => {
     },
     insertCommonDisposal() {
-      if (this.commonDisposalListValue.length == 0) {
+      if (this.commonDisposalListValue.length === 0) {
         this.$message('未插入常用治疗')
         this.commonDisposalDialogVisible = false
         return
@@ -544,7 +534,7 @@ export default {
       for (var i = 0; i < this.commonDisposalListValue.length; ++i) {
         var id = this.commonDisposalListValue[i]
         for (var j = 0; j < this.commonDisposalListData.length; ++j) {
-          if (id == this.commonDisposalListData[j].chargeItemId) {
+          if (id === this.commonDisposalListData[j].chargeItemId) {
             this.$refs.chargeItemEditableTableData.insert(this.commonDisposalListData[j])
             break
           }
@@ -684,22 +674,22 @@ export default {
     // 树形目录检测
     handleNodeClick(data) {
       console.log(data)
-      if (data.label == '全院') {
+      if (data.label === '全院') {
         this.prescriptionTemplateTreeDirectory = 0
         return
       }
-      if (data.label == '科室') {
+      if (data.label === '科室') {
         this.prescriptionTemplateTreeDirectory = 1
         return
       }
-      if (data.label == '个人') {
+      if (data.label === '个人') {
         this.prescriptionTemplateTreeDirectory = 2
         return
       }
       var now = this.prescriptionTemplateTreeDirectory
       for (var i = 0; i < this.prescriptionTemplateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
-        if (this.prescriptionTemplateData[now][i].prescriptionName == data.label) {
+        if (this.prescriptionTemplateData[now][i].prescriptionName === data.label) {
           // console.log(this.prescriptionTemplateData[now][i])
           var tempList = JSON.parse(this.prescriptionTemplateData[now][i].medicine)
           // console.log('tempList')
@@ -714,8 +704,8 @@ export default {
       }
     },
     saveCurrentIntoTemplate() {
-      if (this.submitCheck() == false) { return }
-      if (this.saveState == '') {
+      if (this.submitCheck() === false) { return }
+      if (this.saveState === '') {
         this.$message.error('未选择保存模板类型，错误！')
         return
       }

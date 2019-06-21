@@ -81,13 +81,8 @@
 
 <script>
 import 'element-ui/lib/theme-chalk/base.css'
-// collapse 展开折叠
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
-import Vue from 'vue'
-import ThemePicker from '@/components/ThemePicker'
 
 export default {
-  components: { ThemePicker },
   data() {
     return {
       // 左侧面板显示标识

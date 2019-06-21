@@ -121,7 +121,7 @@ export default {
         this.totalNumber = response.data.total
         for (var i = 0; i < this.registrationList.length; ++i) {
           this.registrationList[i].registrationDate = this.registrationList[i].registrationDate.substring(0, 10)
-          this.registrationList[i].valid = this.registrationList[i].valid == 1 ? '正常' : '已退号'
+          this.registrationList[i].valid = this.registrationList[i].valid === 1 ? '正常' : '已退号'
           this.registrationList[i].departmentId = response.data.list[i].reserve1
           this.registrationList[i].doctorId = response.data.list[i].reserve2
           this.registrationList[i].medicalRecordId = response.data.list[i].registrationId

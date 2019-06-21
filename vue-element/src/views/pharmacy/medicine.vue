@@ -118,8 +118,7 @@
 
 <script>
 import {
-  selectMedicine,
-  searchMedicine
+  selectMedicine
 } from '../../api/medicalRecord/prescription'
 
 export default {
@@ -164,21 +163,21 @@ export default {
   methods: {
     // 检索
     searchMedicineWithInfo() {
-      if (this.medicineName == '' && this.medicineFactory == '' && this.medicinePinyin == '') {
+      if (this.medicineName === '' && this.medicineFactory === '' && this.medicinePinyin === '') {
         this.handleTableDataPageChange()
         return
       }
       var tempList = []
       var path = ''
-      if (this.medicineName != '') {
+      if (this.medicineName !== '') {
         path += 'a'
         tempList = this.medicineTotalList.filter(item => {
           return item.nameZh.toLowerCase()
             .indexOf(this.medicineName.toLowerCase()) > -1
         })
       }
-      if (path == '') {
-        if (this.medicineFactory != '') {
+      if (path === '') {
+        if (this.medicineFactory !== '') {
           path += 'b'
           tempList = this.medicineTotalList.filter(item => {
             return item.medicineManufacturer
@@ -186,7 +185,7 @@ export default {
           })
         }
       } else {
-        if (this.medicineFactory != '') {
+        if (this.medicineFactory !== '') {
           path += 'b'
           tempList = tempList.filter(item => {
             return item.medicineManufacturer
@@ -194,8 +193,8 @@ export default {
           })
         }
       }
-      if (path == '') {
-        if (this.medicinePinyin != '') {
+      if (path === '') {
+        if (this.medicinePinyin !== '') {
           path += 'c'
           tempList = this.medicineTotalList.filter(item => {
             return item.namePinyin.toLowerCase()
@@ -203,7 +202,7 @@ export default {
           })
         }
       } else {
-        if (this.medicinePinyin != '') {
+        if (this.medicinePinyin !== '') {
           path += 'c'
           tempList = tempList.filter(item => {
             return item.namePinyin.toLowerCase()

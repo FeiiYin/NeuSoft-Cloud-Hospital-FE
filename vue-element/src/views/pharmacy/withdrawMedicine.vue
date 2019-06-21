@@ -115,8 +115,6 @@ import {
 import {
   selectChargeForm,
   selectChargeItemByDepartmentId,
-  addChargeItemToForm,
-  deleteChargeItemInForm,
   payBill
 } from '../../api/registrationCharge/chargeForm'
 
@@ -301,7 +299,9 @@ export default {
           this.totalListMoney += this.chargeFormTableList[i].totalMoney
           // this.chargeFormTableList[i].chargeItemId = this.chargeFormTableList[i].reserve3
           for (var j = 0; j < this.departmentList.length; ++j) {
-            if (this.departmentList[j].departmentId == this.chargeFormTableList[i].departmentId) { this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName }
+            if (this.departmentList[j].departmentId === this.chargeFormTableList[i].departmentId) {
+              this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName
+            }
           }
         }
         this.totalNumber = response.data.total
@@ -319,7 +319,7 @@ export default {
       this.charge_form.should_charge = this.totalListMoney
     },
     invokeChargeSubmit() {
-      if (this.charge_form.should_charge == 0) {
+      if (this.charge_form.should_charge === 0) {
         this.$message.error('付款金额为 0 ，错误！')
         return
       }
@@ -389,7 +389,6 @@ export default {
         console.log(error)
       })
     }
-
   }
 }
 </script>

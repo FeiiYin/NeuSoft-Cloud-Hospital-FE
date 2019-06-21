@@ -252,7 +252,6 @@
 import 'element-ui/lib/theme-chalk/base.css'
 // collapse 展开折叠
 import Vue from 'vue'
-import ThemePicker from '@/components/ThemePicker'
 // 可编辑table使用
 // table used
 import {
@@ -647,7 +646,8 @@ export default {
         // console.log('selectPatientHistoryMedicalRecords response')
         // console.log(response)
         this.patientHistoryTable = JSON.parse(response.data)
-        for (var i = 0; i < this.patientHistoryTable.length; ++i) {
+        var i
+        for (i = 0; i < this.patientHistoryTable.length; ++i) {
           if (this.patientHistoryTable[i].mainInfo.length > 5) {
             this.patientHistoryTable[i].abstract = this.patientHistoryTable[i].mainInfo.substring(0, 5)
           } else {
@@ -658,8 +658,8 @@ export default {
         console.log(this.patientHistoryTable)
 
         // 将当前的放置到输入框中
-        for (var i = 0; i < this.patientHistoryTable.length; ++i) {
-          if (this.patientHistoryTable[i].registrationId == this.registrationId) {
+        for (i = 0; i < this.patientHistoryTable.length; ++i) {
+          if (this.patientHistoryTable[i].registrationId === this.registrationId) {
             this.medicalRecordForm = this.patientHistoryTable[i]
             this.diseaseEditableTableData = JSON.parse(this.medicalRecordForm.disease)
 

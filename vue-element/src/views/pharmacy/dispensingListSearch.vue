@@ -145,10 +145,6 @@ import {
   selectChargeForm
 } from '../../api/registrationCharge/chargeForm'
 
-import {
-  fetchDepartmentList
-} from '../../api/basicInfo/department'
-
 export default {
   data() {
     return {
@@ -230,7 +226,7 @@ export default {
 
     // 根据 病历号 获取当前所有对应条目
     invokeFetchChargeItemListWithRegistrationId() {
-      if (this.registrationId == '') {
+      if (this.registrationId === '') {
         this.$message.error('未输入病历号，错误！')
         return
       }
@@ -239,6 +235,7 @@ export default {
         return
       }
       this.chargeFormTableLoading = true
+      // eslint-disable-next-line no-extend-native
       Date.prototype.Format = function(fmt) {
         const o = {
           'M+': this.getMonth() + 1, // 月份
@@ -250,11 +247,11 @@ export default {
           'S': this.getMilliseconds() // 毫秒
         }
         if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
-        for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))) }
+        for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))) }
         return fmt
       }
       var query
-      if (this.startDate == '' || this.endDate == '') {
+      if (this.startDate === '' || this.endDate === '' || this.startDate == null || this.endDate == null) {
         query = {
           'currentPage': this.currentPage,
           'pageSize': this.pageSize,
@@ -276,13 +273,13 @@ export default {
         for (var i = 0; i < this.chargeFormTableList.length; ++i) {
           this.chargeFormTableList[i].totalMoney = this.chargeFormTableList[i].itemCount * this.chargeFormTableList[i].reserve2
           this.chargeFormTableList[i].chargeItemId = this.chargeFormTableList[i].reserve3
-          if (this.chargeFormTableList[i].unchargedNums == 0) {
+          if (this.chargeFormTableList[i].unchargedNums === 0) {
             this.chargeFormTableList[i].valid = '已缴费'
           } else {
             this.chargeFormTableList[i].valid = '未缴费'
           }
           for (var j = 0; j < this.departmentList.length; ++j) {
-            if (this.departmentList[j].departmentId == this.chargeFormTableList[i].departmentId) { this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName }
+            if (this.departmentList[j].departmentId === this.chargeFormTableList[i].departmentId) { this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName }
           }
         }
         this.totalNumber = response.data.total
@@ -297,45 +294,45 @@ export default {
     },
     // 检索
     searchPatientWithInfo() {
-      if ((this.registrationId == '' || this.registrationId == null) &&
-          (this.startDate == '' || this.startDate == null) &&
-          (this.endDate == '' || this.endDate == null)) {
+      if ((this.registrationId === '' || this.registrationId == null) &&
+          (this.startDate === '' || this.startDate == null) &&
+          (this.endDate === '' || this.endDate == null)) {
         this.handleTableDataPageChange()
         return
       }
       var tempList = []
       var path = ''
-      if (this.registrationId != '') {
+      if (this.registrationId !== '') {
         path += 'a'
         tempList = this.totalPatientList.filter(item => {
           return item.registrationId.toString()
             .indexOf(this.registrationId.toString()) > -1
         })
       }
-      if (path == '') {
-        if (this.startDate != '') {
+      if (path === '') {
+        if (this.startDate !== '') {
           path += 'b'
           tempList = this.totalPatientList.filter(item => {
             return item.realDate >= this.startDate
           })
         }
       } else {
-        if (this.startDate != '') {
+        if (this.startDate !== '') {
           path += 'b'
           tempList = tempList.filter(item => {
             return item.realDate >= this.startDate
           })
         }
       }
-      if (path == '') {
-        if (this.endDate != '') {
+      if (path === '') {
+        if (this.endDate !== '') {
           path += 'c'
           tempList = this.totalPatientList.filter(item => {
             return item.realDate <= this.endDate
           })
         }
       } else {
-        if (this.endDate != '') {
+        if (this.endDate !== '') {
           path += 'c'
           tempList = tempList.filter(item => {
             return item.realDate <= this.endDate

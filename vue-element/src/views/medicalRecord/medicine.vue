@@ -125,11 +125,8 @@
 
 <script>
 import 'element-ui/lib/theme-chalk/base.css'
-// collapse 展开折叠
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 import Vue from 'vue'
 import { fetchList } from '@/api/article'
-import ThemePicker from '@/components/ThemePicker'
 
 // table used
 import {
@@ -143,7 +140,6 @@ Vue.component('ElxEditable', Editable)
 Vue.component('ElxEditableColumn ', EditableColumn)
 
 export default {
-  components: { ThemePicker },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -218,12 +214,10 @@ export default {
   },
   created() {
     this.getList()
+    this.transfer_data = this.generate_transfer_data()
   },
   mounted() {
     this.restaurants = this.loadAll()
-  },
-  created() {
-    this.transfer_data = this.generate_transfer_data()
   },
   methods: {
     // dialog 插入数据到表格中
@@ -276,7 +270,7 @@ export default {
     // dialog 插入数据到常用药中
     insert_common_medicine() {
       var name = this.medicine_form.medicineName
-      if (name == null || name == '') {
+      if (name == null || name === '') {
         this.$message.error('错误，插入消息为空！')
         return
       }
