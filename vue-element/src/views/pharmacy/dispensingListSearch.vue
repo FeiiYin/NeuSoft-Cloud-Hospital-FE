@@ -143,7 +143,7 @@ import {
 
 import {
   selectChargeForm
-} from '../../api/registrationCharge/chargeForm'
+} from '../../api/registrationCharge/charge'
 
 export default {
   data() {

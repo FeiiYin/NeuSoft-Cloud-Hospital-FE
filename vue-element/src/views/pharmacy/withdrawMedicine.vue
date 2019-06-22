@@ -116,7 +116,7 @@ import {
   selectChargeForm,
   selectChargeItemByDepartmentId,
   payBill
-} from '../../api/registrationCharge/chargeForm'
+} from '../../api/registrationCharge/charge'
 
 import {
   fetchDepartmentList

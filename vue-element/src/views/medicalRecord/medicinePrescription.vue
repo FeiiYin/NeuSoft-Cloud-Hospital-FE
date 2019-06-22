@@ -493,9 +493,7 @@ export default {
           type: 'success',
           message: '提交成功!'
         })
-        if (saveState === 0) {
-          this.invokeSelectHistoryPrescription()
-        }
+        this.invokeSelectHistoryPrescription()
       }).catch(error => {
         console.log('savePrescription error: ')
         console.log(error)

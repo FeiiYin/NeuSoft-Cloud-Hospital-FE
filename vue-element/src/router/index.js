@@ -157,6 +157,12 @@ export const constantRoutes = [
         meta: { title: '收费', noCache: true }
       },
       {
+        path: 'refund',
+        component: () => import('@/views/registration/refund'),
+        name: 'refund',
+        meta: { title: '退费', noCache: true }
+      },
+      {
         path: 'patientChargeSearch',
         component: () => import('@/views/registration/patientChargeSearch'),
         name: 'patientChargeSearch',
@@ -243,7 +249,24 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/techWorkstation',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'techWorkstation',
+    meta: {
+      title: '门诊医技工作站',
+      icon: 'lock'
+    },
+    children: [
+      {
+        path: 'techIndex',
+        component: () => import('@/views/techWorkstation/techIndex'),
+        name: 'techIndex',
+        meta: { title: '检查登记', noCache: true }
+      }
+    ]
+  },
   {
     path: '/pharmacy',
     component: Layout,

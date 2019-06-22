@@ -198,6 +198,12 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6">
+            <h4 style="margin-bottom:2px;">预约日期</h4>
+            <el-form-item>
+              <el-date-picker v-model="registrationForm.visitDate" type="date" placeholder="选择日期" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <h4 style="margin-bottom:2px;">当前收费员Id</h4>
             <el-form-item>
               <el-input v-model="registrationForm.collectorId" :disabled="true" />
@@ -314,6 +320,8 @@ export default {
   },
   created() {
     this.invokeFetchDepartment()
+    this.registrationForm.visitDate = new Date()
+    this.registrationForm.registrationDate = this.registrationForm.visitDate
   },
   methods: {
     // 根据身份证号搜索个人信息
@@ -395,7 +403,7 @@ export default {
             'medicalCategory': this.registrationForm.medicalCategory,
             'identityCardNo': this.registrationForm.identityCardNo,
             'registrationStatus': this.registrationForm.registrationStatus,
-            // 'visitDate': this.registrationForm.visitDate,
+            'visitDate': this.registrationForm.visitDate,
             // 1998-07-29
             'registrationDate': this.registrationForm.registrationDate.Format('yyyy-MM-dd'),
             'departmentId': this.registrationForm.departmentId,

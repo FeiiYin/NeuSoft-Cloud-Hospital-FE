@@ -16,21 +16,35 @@
         <el-table-column prop="identityCardNo" label="身份证号" width="200" />
         <el-table-column prop="departmentId" label="科室" />
         <el-table-column prop="doctorId" label="医生" />
-        <el-table-column prop="isVisited" label="是否已诊" />
+        <el-table-column prop="isVisited" label="是否已诊">
+          <template slot-scope="scope">
+            {{ scope.row.isVisited === '0' ? '未诊' : '已诊' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="totalCharge" label="实收费用" />
+        <el-table-column prop="withdraw" label="退号">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="withdraw(scope.$index, scope.row)"
+            >
+              退号
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="valid"
+          prop="registrationStatus"
           label="状态"
           fixed
-          :filters="[{ text: '正常', value: '正常' }, { text: '已退号', value: '已退号' }]"
+          :filters="[{ text: '待诊', value: '1' }, { text: '已退号', value: '2' }, { text: '诊毕', value: '0' }]"
           :filter-method="filterTag"
           filter-placement="bottom-end"
         >
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.valid === '已退号' ? 'primary' : 'success'"
+              :type="scope.row.registrationStatus === '2' ? 'danger' : (scope.row.registrationStatus === '1' ? 'primary' : 'success')"
               close-transition
-            >{{ scope.row.valid }}
+            >{{ scope.row.registrationStatus === '2' ? '已退号' : (scope.row.registrationStatus === '1' ? '待诊' : '诊毕') }}
             </el-tag>
           </template>
         </el-table-column>
@@ -55,6 +69,10 @@
 import {
   fetchRegistrationList
 } from '../../api/registrationCharge/registrationListSearch'
+
+import {
+  withdrawRegistration
+} from '../../api/registrationCharge/charge'
 
 export default {
   data() {
@@ -93,11 +111,43 @@ export default {
     this.queryRegistrationListWithPage()
   },
   methods: {
+    // 退号
+    withdraw(index, row) {
+      if (row.isVisited === '1') {
+        this.$message.error('医生已经诊断，不能退号，错误！')
+        return
+      }
+      if (row.registrationStatus === '2') {
+        this.$message.error('已经退号，错误！')
+        return
+      }
+      if (row.registrationStatus === '0') {
+        this.$message.error('已经诊断完毕，错误！')
+        return
+      }
+      this.$confirm('退号, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        withdrawRegistration({ 'registrationId': row.registrationId }).then(response => {
+          this.$message({
+            type: 'success',
+            message: '挂号' + row.registrationId + '号退号成功!'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
     formatter(row, column) {
       return row.address
     },
     filterTag(value, row) {
-      return row.valid === value
+      return row.registrationStatus === value
     },
     // 分页
     handleSizeChange(val) {
@@ -124,17 +174,8 @@ export default {
           this.registrationList[i].valid = this.registrationList[i].valid === 1 ? '正常' : '已退号'
           this.registrationList[i].departmentId = response.data.list[i].reserve1
           this.registrationList[i].doctorId = response.data.list[i].reserve2
-          this.registrationList[i].medicalRecordId = response.data.list[i].registrationId
+          this.registrationList[i].registrationId = response.data.list[i].registrationId
         }
-        // for (var i = 0; i < response.data.length; ++i) {
-        //   this.registrationList.registrationDate = response.data[i].registrationDate
-        //   this.registrationList.medicalRecordId = response.data[i].medicalRecordId
-        //   this.registrationList.patientName = response.data[i].patientName
-        //   this.registrationList.identityCardNo = response.data[i].identityCardNo
-        //   this.registrationList.isVisited = response.data[i].isVisited
-        //   this.registrationList.totalCharge = response.data[i].totalCharge
-        //   this.registrationList.valid = response.data[i].valid
-        // }
         this.registrationListLoading = false
       }).catch(error => {
         console.log('fetchRegistrationList error: ')

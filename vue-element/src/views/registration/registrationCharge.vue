@@ -47,12 +47,13 @@
       </el-form>
     </div>
     <aside style="height:50px;">
-      <el-button type="info" style="float:right" @click="invokeDeleteChargeItemInForm">
+      <el-button type="info" style="float:right" @click="invokeDeleteChargeEntry">
         删除
       </el-button>
+      <!--
       <el-button type="primary" style="float:right;margin-right:20px;" @click="addChargeFormVisible = true">
         新增
-      </el-button>
+      </el-button> -->
     </aside>
     <el-table
       v-loading="chargeFormTableLoading"
@@ -61,27 +62,14 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="reserve3" label="名称" sortable />
-      <el-table-column prop="reserve1" label="规格" />
-      <el-table-column prop="reserve2" label="单价" />
+      <el-table-column prop="nameZh" label="名称" sortable />
+      <el-table-column prop="specification" label="规格" />
+      <el-table-column prop="price" label="单价" />
       <el-table-column prop="nums" label="数量" />
-      <el-table-column prop="reserve1" label="单位" />
-      <el-table-column prop="totalPrice" label="金额" />
+      <el-table-column prop="totalPrice" label="总金额" />
       <el-table-column prop="departmentName" label="执行科室" />
     </el-table>
     <!-- 分页 -->
-    <div style="background: #d3dce6;">
-      <el-pagination
-        :current-page="currentPage"
-        :page-sizes="[20, 50, 100, 200]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalNumber"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
-
     <aside style="height:60px;">
       <span>总计金额：
         <svg-icon icon-class="money" />
@@ -161,6 +149,7 @@
               placeholder="请选择"
               width="100%"
               :disabled="addChargeFormDisableBool"
+              value="addChargeForm.name"
             >
               <el-option
                 v-for="item in chargeItemList"
@@ -185,24 +174,40 @@
 
 <script>
 import {
-  selectRegistrationByPrimaryKey
-} from '../../api/registrationCharge/registration'
+  checkout
+} from '../../api/registrationCharge/charge'
 
 import {
-  selectChargeForm,
-  selectChargeItemByDepartmentId,
-  addChargeItemToForm,
-  deleteChargeItemInForm,
-  payBill
-} from '../../api/registrationCharge/chargeEntry'
+  selectRegistrationByPrimaryKey
+} from '../../api/registrationCharge/registration'
 
 import {
   fetchDepartmentList
 } from '../../api/basicInfo/department'
 
+import {
+  selectHistoryDisposal
+} from '../../api/medicalRecord/disposal'
+
+import {
+  selectHistoryExam
+} from '../../api/medicalRecord/examination'
+
+import {
+  selectHistoryPrescription
+} from '../../api/medicalRecord/prescription'
+
+import {
+  selectChargeForm,
+  selectChargeItemByDepartmentId,
+  addChargeItemToForm,
+  deleteChargeItemInForm
+} from '../../api/registrationCharge/chargeEntry'
+
 export default {
   data() {
     return {
+      registrationId: 1,
       // 提交病历号，查询其他字段
       registrationForm: {
         registrationId: '',
@@ -245,7 +250,7 @@ export default {
       multipleSelectionChargeFormTable: [],
       chargeFormTableLoading: false,
       // 总共金额
-      totalListMoney: '0.00',
+      // totalListMoney: '0.00',
       // 充值金额
       charge_form: {
         should_charge: 0,
@@ -307,7 +312,21 @@ export default {
       // 分页
       currentPage: 1,
       pageSize: 50,
-      totalNumber: 0
+      totalNumber: 0,
+      // 表
+      examineTableData: [],
+      examineMoney: 0,
+
+      disposalTableData: [],
+      disposalMoney: 0,
+
+      prescriptionTableData: [],
+      prescriptionMoney: 0
+    }
+  },
+  computed: {
+    totalListMoney: function() {
+      return this.examineMoney + this.disposalMoney + this.prescriptionMoney
     }
   },
   watch: {
@@ -320,9 +339,117 @@ export default {
     }
   },
   created() {
-    this.getDepartmentList()
+    this.registrationId = this.$route.query.registrationId
+    this.invokeFetchDepartmentList()
+    this.invokeSelectHistoryPrescription()
   },
   methods: {
+    // 预处理
+    invokeFetchDepartmentList() {
+      var query = { 'currentPage': 1, 'pageSize': 400 }
+      fetchDepartmentList(query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentList = response.data.list
+        // problem?
+        this.invokeSelectHistoryDisposal()
+        this.invokeSelectHistoryExam()
+      })
+    },
+    invokeSelectHistoryDisposal() {
+      selectHistoryDisposal({ 'registrationId': this.registrationId }).then(response => {
+        console.log('selectHistoryDisposal response')
+        var tempList = JSON.parse(response.data)
+        this.disposalMoney = 0
+        var i
+        for (i = 0; i < tempList.length; ++i) {
+          if (tempList[i].saveState === 1) {
+            for (var j = 0; j < tempList[i].chargeEntryList.length; ++j) {
+              if (tempList[i].chargeEntryList[j].payState === 1) {
+                continue
+              }
+              this.chargeFormTableList.push({
+                'nameZh': tempList[i].chargeEntryList[j].chargeItem.nameZh,
+                'specification': tempList[i].chargeEntryList[j].chargeItem.specification,
+                'price': tempList[i].chargeEntryList[j].chargeItem.price,
+                'nums': tempList[i].chargeEntryList[j].nums,
+                'totalPrice': tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums,
+                'departmentName': this.departmentList[tempList[i].chargeEntryList[j].chargeItem.departmentId - 1].departmentName,
+                'entryId': tempList[i].chargeEntryList[j].chargeEntryId
+              })
+              this.disposalMoney += tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums
+            }
+          }
+        }
+      }).catch(error => {
+        console.log('selectHistoryDisposal error: ')
+        console.log(error)
+      })
+    },
+    invokeSelectHistoryExam() {
+      selectHistoryExam({ 'registrationId': this.registrationId }).then(response => {
+        console.log('selectHistoryExam response')
+        var tempList = JSON.parse(response.data)
+        this.examineMoney = 0
+        var i
+        for (i = 0; i < tempList.length; ++i) {
+          if (tempList[i].saveState === 1) {
+            for (var j = 0; j < tempList[i].chargeEntryList.length; ++j) {
+              if (tempList[i].chargeEntryList[j].payState === 1) {
+                continue
+              }
+              this.chargeFormTableList.push({
+                'nameZh': tempList[i].chargeEntryList[j].chargeItem.nameZh,
+                'specification': tempList[i].chargeEntryList[j].chargeItem.specification,
+                'price': tempList[i].chargeEntryList[j].chargeItem.price,
+                'nums': tempList[i].chargeEntryList[j].nums,
+                'totalPrice': tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums,
+                'departmentName': this.departmentList[tempList[i].chargeEntryList[j].chargeItem.departmentId - 1].departmentName,
+                'entryId': tempList[i].chargeEntryList[j].chargeEntryId
+              })
+              this.examineMoney += tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums
+            }
+          }
+        }
+      }).catch(error => {
+        console.log('selectHistoryExam error: ')
+        console.log(error)
+      })
+    },
+    filterPayState(value, row) {
+      return row.payState === value
+    },
+    invokeSelectHistoryPrescription() {
+      selectHistoryPrescription({ 'registrationId': this.registrationId }).then(response => {
+        var tempList = JSON.parse(response.data)
+        // console.log('selectHistoryPrescription response: ')
+        // console.log(tempList)
+        var i
+        this.prescriptionMoney = 0
+        for (i = 0; i < tempList.length; ++i) {
+          if (tempList[i].saveState === 1) {
+            for (var j = 0; j < tempList[i].prescriptionEntryList.length; ++j) {
+              if (tempList[i].prescriptionEntryList[j].payState === 1) {
+                continue
+              }
+              this.chargeFormTableList.push({
+                'nameZh': tempList[i].prescriptionEntryList[j].medicine.nameZh,
+                'specification': tempList[i].prescriptionEntryList[j].medicine.medicineSpecification,
+                'price': tempList[i].prescriptionEntryList[j].medicine.medicinePrice,
+                'nums': tempList[i].prescriptionEntryList[j].nums,
+                'totalPrice': tempList[i].prescriptionEntryList[j].medicine.medicinePrice * tempList[i].prescriptionEntryList[j].nums,
+                'departmentName': '药房',
+                'entryId': tempList[i].prescriptionEntryList[j].prescriptionEntryId
+              })
+              this.prescriptionMoney += tempList[i].prescriptionEntryList[j].medicine.medicinePrice * tempList[i].prescriptionEntryList[j].nums
+            }
+          }
+        }
+      }).catch(error => {
+        console.log('selectHistoryPrescription error: ')
+        console.log(error)
+      })
+    },
     // 根据病历号 registrationId 返回整条registration记录
     invokeFetchRegistrationRecord() {
       var query = { 'registrationId': this.registrationForm.registrationId }
@@ -331,7 +458,7 @@ export default {
         console.log(response)
         if (response.message === 'not found') {
           this.$message.error('未找到该条记录')
-          return
+          return false
         } else {
           this.$message({
             message: '获取成功',
@@ -340,14 +467,18 @@ export default {
           this.registrationForm = response.data
           this.registrationForm.departmentId = response.data.reserve1
           this.registrationForm.doctorId = response.data.reserve2
-          this.invokeFetchChargeItemListWithRegistrationId()
+          this.registrationId = this.registrationForm.registrationId
+          // this.invokeFetchChargeItemListWithRegistrationId()
+          this.invokeSelectHistoryDisposal()
+          this.invokeSelectHistoryExam()
+          this.invokeSelectHistoryPrescription()
         }
       }).catch(error => {
         console.log('selectRegistrationByPrimaryKey error: ')
         console.log(error)
       })
     },
-    // 根据 病历号 获取当前所有对应条目 所有未交费条目
+    // 根据 病历号 获取当前所有对应条目 所有未交费条目 已弃用
     invokeFetchChargeItemListWithRegistrationId() {
       this.chargeFormTableLoading = true
       var query = {
@@ -413,8 +544,7 @@ export default {
         }
       })
     },
-    // 临时删除一个项目
-    invokeDeleteChargeItemInForm() {
+    invokeDeleteChargeItemInForm_notUse() {
       if (this.multipleSelectionChargeFormTable.length === 0) {
         this.$message.error('当前未选中条目，错误！')
         return
@@ -434,6 +564,30 @@ export default {
         console.log(error)
       })
     },
+    // 临时删除一个项目
+    invokeDeleteChargeEntry() {
+      for (var i = 0; i < this.multipleSelectionChargeFormTable.length; ++i) {
+        for (var j = 0; j < this.chargeFormTableList.length; ++j) {
+          if (this.chargeFormTableList[j].nameZh === this.multipleSelectionChargeFormTable[i].nameZh) {
+            this.chargeFormTableList.splice(j, 1)
+          }
+        }
+      }
+      this.examineMoney = 0
+      this.disposalMoney = 0
+      this.prescriptionMoney = 0
+      for (i = 0; i < this.chargeFormTableList.length; ++i) {
+        if (this.chargeFormTableList[i].departmentName === '药房') {
+          this.prescriptionMoney += this.chargeFormTableList[i].totalPrice
+        } else {
+          this.disposalMoney += this.chargeFormTableList[i].totalPrice
+        }
+      }
+      this.$message({
+        type: 'success',
+        message: '删除成功！'
+      })
+    },
     // 付费
     openChargeFormDialog() {
       this.dialogFormVisible = true
@@ -449,19 +603,26 @@ export default {
         return
       }
       this.dialogFormVisible = false
-      var tempChargeItemIdList = []
+      var tempList = []
       for (var i = 0; i < this.chargeFormTableList.length; ++i) {
-        tempChargeItemIdList.push(this.chargeFormTableList[i].chargeFormId)
+        tempList.push({
+          'entryType': this.chargeFormTableList[i].departmentName === '药房' ? '1' : '0',
+          'entryId': this.chargeFormTableList[i].entryId
+        })
       }
       var query = {
-        'chargeItemIdList': tempChargeItemIdList
+        'checkoutJson': tempList
       }
-      payBill(query).then(response => {
+      console.log('checkout query: ')
+      console.log(query)
+      checkout(query).then(response => {
         this.$message({
           message: '缴费成功！',
           type: 'success'
         })
-        this.invokeFetchChargeItemListWithRegistrationId()
+        this.invokeSelectHistoryDisposal()
+        this.invokeSelectHistoryExam()
+        this.invokeSelectHistoryPrescription()
       }).catch(error => {
         console.log('deleteChargeItemInForm error: ')
         console.log(error)
@@ -487,17 +648,6 @@ export default {
     // 表的多级选择
     handleSelectionChange(val) {
       this.multipleSelectionChargeFormTable = val
-    },
-    getDepartmentList() {
-      var query = { 'currentPage': 1, 'pageSize': 400 }
-      fetchDepartmentList(query).then(response => {
-        console.log('fetchDepartmentList response: ')
-        console.log(response)
-        this.departmentList = response.data.list
-      }).catch(error => {
-        console.log('fetchDepartmentList error: ')
-        console.log(error)
-      })
     },
     // 新增顺序控制
     forceChange() {
