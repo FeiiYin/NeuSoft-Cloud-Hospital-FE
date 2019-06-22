@@ -611,7 +611,7 @@ export default {
         })
       }
       var query = {
-        'checkoutJson': tempList
+        'checkoutJson': JSON.stringify(tempList)
       }
       console.log('checkout query: ')
       console.log(query)

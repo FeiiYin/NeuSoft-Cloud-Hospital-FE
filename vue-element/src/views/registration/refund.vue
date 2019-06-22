@@ -49,13 +49,13 @@
               <el-table-column
                 prop="payState"
                 label="支付状态"
-                :filters="[{ text: '未付款', value: 0 }, { text: '已付款', value: 1 }]"
+                :filters="[{ text: '未付款', value: 0 }, { text: '已付款', value: 1 }, { text: '已退款', value: 2 }]"
                 :filter-method="filterPayState"
                 filter-placement="bottom-end"
               >
                 <template slot-scope="scope">
-                  <el-tag :type="scope.row.payState === 0 ? 'primary' : 'success'" close-transition>
-                    {{ scope.row.payState === 0 ? '未付款' : '已付款' }}
+                  <el-tag :type="scope.row.payState === 0 ? 'primary' : (scope.row.payState === 0 ? 'success' : 'danger')" close-transition>
+                    {{ scope.row.payState === 0 ? '未付款' : (scope.row.payState === 1 ? '已付款' : '已退款') }}
                   </el-tag>
                 </template>
               </el-table-column>
@@ -177,11 +177,11 @@ export default {
     invokeRefund() {
       this.refundDialogVisible = false
       var query = {
-        'refundJson': [{
+        'refundJson': JSON.stringify([{
           'entryType': this.refundForm.prescriptionBool,
           'entryId': this.refundForm.refundEntryId,
           'refundNums': this.refundForm.refundNumber
-        }]
+        }])
       }
       refund(query).then(response => {
         this.$message({
@@ -323,13 +323,15 @@ export default {
           'S': this.getMilliseconds() // 毫秒
         }
         if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
-        for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))) }
+        for (const k in o) {
+          if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+        }
         return fmt
       }
       var query
       if (this.startDate === '' || this.endDate === '' ||
-        this.startDate == null ||
-        this.endDate == null) {
+          this.startDate == null ||
+          this.endDate == null) {
         query = {
           'currentPage': this.currentPage,
           'pageSize': this.pageSize,
@@ -357,7 +359,9 @@ export default {
             this.chargeFormTableList[i].valid = '未缴费'
           }
           for (var j = 0; j < this.departmentList.length; ++j) {
-            if (this.departmentList[j].departmentId === this.chargeFormTableList[i].departmentId) { this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName }
+            if (this.departmentList[j].departmentId === this.chargeFormTableList[i].departmentId) {
+              this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName
+            }
           }
         }
         this.totalNumber = response.data.total
@@ -419,28 +423,36 @@ export default {
       float: right
     }
   }
+
   .el-row {
     margin-bottom: 20px;
+
     &:last-child {
       margin-bottom: 0;
     }
   }
+
   .el-col {
     border-radius: 4px;
   }
+
   .bg-purple-dark {
     background: #99a9bf;
   }
+
   .bg-purple {
     background: #d3dce6;
   }
+
   .bg-purple-light {
     background: #e5e9f2;
   }
+
   .grid-content {
     border-radius: 4px;
     min-height: 36px;
   }
+
   .row-bg {
     padding: 10px 0;
     background-color: #f9fafc;
