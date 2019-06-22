@@ -12,7 +12,6 @@
                 <span>当前患者病历号</span>
                 <el-input
                   v-model="registrationId"
-                  :disabled="true"
                   style="width:350px;margin-left:20px;"
                   prefix-icon="el-icon-document"
                 />

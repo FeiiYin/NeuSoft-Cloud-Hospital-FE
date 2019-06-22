@@ -10,7 +10,7 @@
             <el-row :gutter="10" style="margin-bottom:0px">
               <el-col :span="12">
                 <el-form-item label="患者病历号" prop="registrationId">
-                  <el-input v-model="examForm.registrationId" :disabled="true" prefix-icon="el-icon-document" />
+                  <el-input v-model="examForm.registrationId" prefix-icon="el-icon-document" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">

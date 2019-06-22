@@ -295,6 +295,7 @@ export default {
         this.$message.error('结束日期应当大于开始日期，错误！')
         return
       }
+      this.chargeFormTableList = []
       this.invokeSelectHistoryDisposal()
       this.invokeSelectHistoryExam()
       this.invokeSelectHistoryPrescription()
