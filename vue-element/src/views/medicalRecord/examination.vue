@@ -568,7 +568,11 @@ export default {
         this.tempsaveExamTable = []
         for (var i = 0; i < tempList.length; ++i) {
           tempList[i].departmentName = this.departmentList[tempList[i].departmentId - 1].departmentName
-          if (tempList[i].saveState === 0) { this.tempsaveExamTable.push(tempList[i]) } else if (tempList[i].saveState === 1) { this.historyExamTable.push(tempList[i]) }
+          if (tempList[i].saveState === 0) {
+            this.tempsaveExamTable.push(tempList[i])
+          } else if (tempList[i].saveState === 1) {
+            this.historyExamTable.push(tempList[i])
+          }
         }
         console.log(tempList)
       }).catch(error => {

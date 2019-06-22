@@ -135,6 +135,7 @@ export default {
             type: 'success',
             message: '挂号' + row.registrationId + '号退号成功!'
           })
+          this.queryRegistrationListWithPage()
         })
       }).catch(() => {
         this.$message({
