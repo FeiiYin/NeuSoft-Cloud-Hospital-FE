@@ -19,7 +19,7 @@
                 />
               </el-col>
               <el-col :span="4">
-                <el-button type="primary" style="float:right;" @click="invokeFetchChargeItemListWithRegistrationId">
+                <el-button type="primary" style="float:right;" @click="invokeSelectHistoryExam">
                   <svg-icon icon-class="component" />
                   确认
                 </el-button>
@@ -168,52 +168,36 @@ export default {
       })
     },
     invokeSelectHistoryExam() {
+      if (this.registrationId === '') {
+        this.$message.error('未输入病历号，错误！')
+        return
+      }
       selectHistoryExam({ 'registrationId': this.registrationId }).then(response => {
         console.log('selectHistoryExam response')
         var tempList = JSON.parse(response.data)
-        this.examineMoney = 0
         var i
+        this.historyExamTable = []
         for (i = 0; i < tempList.length; ++i) {
           if (tempList[i].saveState === 1) {
-            for (var j = 0; j < tempList[i].chargeEntryList.length; ++j) {
-              this.chargeFormTableList.push({
-                'nameZh': tempList[i].chargeEntryList[j].chargeItem.nameZh,
-                'specification': tempList[i].chargeEntryList[j].chargeItem.specification,
-                'price': tempList[i].chargeEntryList[j].chargeItem.price,
-                'nums': tempList[i].chargeEntryList[j].nums,
-                'totalPrice': tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums,
-                'departmentName': this.departmentList[tempList[i].chargeEntryList[j].chargeItem.departmentId - 1].departmentName,
-                'payState': tempList[i].chargeEntryList[j].payState,
-                'notGivenNums': tempList[i].chargeEntryList[j].notGivenNums,
-                'entryId': tempList[i].chargeEntryList[j].chargeEntryId
-              })
-              this.examineMoney += tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums
-            }
+            this.historyExamTable.push(tempList[i])
           }
         }
+        console.log(this.historyExamTable)
       }).catch(error => {
         console.log('selectHistoryExam error: ')
         console.log(error)
       })
     },
-    invokeFetchChargeItemListWithRegistrationId() {
-      if (this.registrationId === '') {
-        this.$message.error('未输入病历号，错误！')
-        return
-      }
-      this.chargeFormTableList = []
-      this.invokeSelectHistoryExam()
-    },
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.pageSize = val
-      this.invokeFetchChargeItemListWithRegistrationId()
+      this.invokeSelectHistoryExam()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.currentPage = val
-      this.invokeFetchChargeItemListWithRegistrationId()
+      this.invokeSelectHistoryExam()
     },
     filterTag(value, row) {
       return row.valid === value

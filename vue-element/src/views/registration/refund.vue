@@ -54,7 +54,7 @@
                 filter-placement="bottom-end"
               >
                 <template slot-scope="scope">
-                  <el-tag :type="scope.row.payState === 0 ? 'primary' : (scope.row.payState === 0 ? 'success' : 'danger')" close-transition>
+                  <el-tag :type="scope.row.payState === 0 ? 'primary' : (scope.row.payState === 1 ? 'success' : 'danger')" close-transition>
                     {{ scope.row.payState === 0 ? '未付款' : (scope.row.payState === 1 ? '已付款' : '已退款') }}
                   </el-tag>
                 </template>
