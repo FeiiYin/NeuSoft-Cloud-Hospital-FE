@@ -325,6 +325,9 @@ export default {
       ]
     }
   },
+  created() {
+
+  },
   methods: {
     editChargeItemDataFormFunction(index, row) {
       this.editChargeItemDataDialogVisible = true
@@ -363,6 +366,9 @@ export default {
       this.addChargeItemDataDialogVisible = false
       this.$refs['addChargeItemForm'].resetFields()
     }
+
+
+    // 增删改查
   }
 }
 </script>
