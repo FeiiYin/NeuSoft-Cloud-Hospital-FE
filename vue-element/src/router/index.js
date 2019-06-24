@@ -260,10 +260,22 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'techIndex',
-        component: () => import('@/views/techWorkstation/techIndex'),
-        name: 'techIndex',
+        path: 'examineIndex',
+        component: () => import('@/views/techWorkstation/examineIndex'),
+        name: 'examineIndex',
         meta: { title: '检查登记', noCache: true }
+      },
+      {
+        path: 'examineResult',
+        component: () => import('@/views/techWorkstation/examineResult'),
+        name: 'examineResult',
+        meta: { title: '检查结果录入', noCache: true }
+      },
+      {
+        path: 'disposalIndex',
+        component: () => import('@/views/techWorkstation/disposalIndex'),
+        name: 'disposalIndex',
+        meta: { title: '处置结果登记', noCache: true }
       }
     ]
   },

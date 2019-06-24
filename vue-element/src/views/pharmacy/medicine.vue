@@ -45,6 +45,10 @@
         </el-row>
       </el-header>
       <el-main>
+        <div>
+          <el-button plain type="info" style="float:right" @click="invokeDeleteMedicine">删除</el-button>
+          <el-button type="primary" style="float:right;margin-right:30px;margin-bottom:30px" @click="addMedicineDialogVisible = true">新增</el-button>
+        </div>
         <el-table
           ref="pageMedicineTableData"
           v-loading="pageMedicineTableLoading"
@@ -99,6 +103,16 @@
             prop="namePinyin"
             label="拼音码"
           />
+          <el-table-column
+            prop="edit"
+            label="修改药品"
+          >
+            <template slot-scope="scope">
+              <el-button plain @click="openEditMedicineDialog(scope.$index, scope.row)">
+                <i class="el-icon-edit" />修改
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="block">
           <el-pagination
@@ -113,6 +127,73 @@
         </div>
       </el-main>
     </el-container>
+    <!--新增条目的对话框-->
+    <el-dialog title="新增药品" :visible.sync="addMedicineDialogVisible" width="30%">
+      <el-form ref="medicineForm" :model="medicineForm" label-width="120px">
+        <el-form-item label="药品名称" prop="nameZh">
+          <el-input v-model="medicineForm.nameZh" />
+        </el-form-item>
+        <el-form-item label="药品编码" prop="medicineCode">
+          <el-input v-model="medicineForm.medicineCode" />
+        </el-form-item>
+        <el-form-item label="药品规格" prop="medicineSpecification">
+          <el-input v-model="medicineForm.medicineSpecification" />
+        </el-form-item>
+        <el-form-item label="药品单位" prop="medicineUnit">
+          <el-input v-model="medicineForm.medicineUnit" />
+        </el-form-item>
+        <el-form-item label="生产单位" prop="medicineManufacturer">
+          <el-input v-model="medicineForm.medicineManufacturer" />
+        </el-form-item>
+        <el-form-item label="药品拼音" prop="namePinyin">
+          <el-input v-model="medicineForm.namePinyin" />
+        </el-form-item>
+        <el-form-item label="药品剂量" prop="medicineDosageId">
+          <el-input-number v-model="medicineForm.medicineDosageId" :min="1" />
+        </el-form-item>
+        <el-form-item label="药品单价" prop="medicinePrice">
+          <el-input-number v-model="medicineForm.medicinePrice" :min="1" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addMedicineDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="invokeAddMedicine">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!--修改条目的对话框-->
+    <el-dialog title="修改药品" :visible.sync="editMedicineDialogVisible" width="30%">
+      <el-form ref="medicineForm" :model="medicineForm" label-width="120px">
+        <el-form-item label="药品名称" prop="nameZh">
+          <el-input v-model="medicineForm.nameZh" />
+        </el-form-item>
+        <el-form-item label="药品编码" prop="medicineCode">
+          <el-input v-model="medicineForm.medicineCode" />
+        </el-form-item>
+        <el-form-item label="药品规格" prop="medicineSpecification">
+          <el-input v-model="medicineForm.medicineSpecification" />
+        </el-form-item>
+        <el-form-item label="药品单位" prop="medicineUnit">
+          <el-input v-model="medicineForm.medicineUnit" />
+        </el-form-item>
+        <el-form-item label="生产单位" prop="medicineManufacturer">
+          <el-input v-model="medicineForm.medicineManufacturer" />
+        </el-form-item>
+        <el-form-item label="药品拼音" prop="namePinyin">
+          <el-input v-model="medicineForm.namePinyin" />
+        </el-form-item>
+        <el-form-item label="药品剂量" prop="medicineDosageId">
+          <el-input-number v-model="medicineForm.medicineDosageId" :min="1" />
+        </el-form-item>
+        <el-form-item label="药品单价" prop="medicinePrice">
+          <el-input-number v-model="medicineForm.medicinePrice" :min="1" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editMedicineDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="invokeEditMedicine">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,6 +201,15 @@
 import {
   selectMedicine
 } from '../../api/medicalRecord/prescription'
+
+import {
+  saveMedicine,
+  deleteMedicine
+} from '../../api/pharmacy/medicineCatalog'
+
+import {
+  deepClone
+} from '../../utils'
 
 export default {
   data() {
@@ -130,6 +220,7 @@ export default {
       medicinePinyin: '',
       // 表格
       medicineTotalList: [],
+      medicineTailId: 0,
       pageMedicineTableData: [],
       pageMedicineTableLoading: false,
       // 多选
@@ -140,7 +231,6 @@ export default {
       totalNumber: 0,
       // medicine 属性
       medicineForm: {
-        medicineId: '',
         medicineCode: '',
         nameZh: '',
         medicineSpecification: '',
@@ -154,13 +244,91 @@ export default {
         nums: '',
         nameEn: '',
         valid: ''
-      }
+      },
+      addMedicineDialogVisible: false,
+      editMedicineDialogVisible: false
     }
   },
   created() {
     this.invokeSelectMedicine()
   },
   methods: {
+    // 新增
+    invokeAddMedicine() {
+      this.medicineForm.nums = 10000
+      this.medicineForm.nameEn = ''
+      this.medicineForm.medicineTypeId = 1
+      this.medicineForm.medicineDosageId = 1
+      this.medicineCode = ''
+      var query = {
+        'medicineJson': this.medicineForm
+      }
+      saveMedicine(query).then(response => {
+        this.addMedicineDialogVisible = false
+        // this.totalNumber++
+        // this.medicineForm.medicineId = this.medicineTotalList.length + 1
+        // this.medicineTotalList.push(deepClone(this.medicineForm))
+        this.invokeSelectMedicine()
+        this.medicineForm = {}
+      })
+    },
+    // 删除
+    invokeDeleteMedicine() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('未选中删除药品，错误！')
+        return
+      }
+      console.log(this.multipleSelection)
+      this.$confirm('此操作将永久删除这些药品记录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var tempList = []
+        for (var i = 0; i < this.multipleSelection.length; ++i) {
+          tempList.push(this.multipleSelection[i].medicineId)
+        }
+        deleteMedicine({ 'medicineIdList': tempList }).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.invokeSelectMedicine()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 修改
+    openEditMedicineDialog(event, row) {
+      console.log(row)
+      this.medicineForm = deepClone(row)
+      this.editMedicineDialogVisible = true
+    },
+    invokeEditMedicine() {
+      console.log(this.medicineForm)
+      for (var i = 0; i < this.medicineTotalList.length; ++i) {
+        if (this.medicineTotalList[i].medicineId === this.medicineForm.medicineId) {
+          this.medicineTotalList[i] = deepClone(this.medicineForm)
+          this.handleTableDataPageChange()
+          break
+        }
+      }
+      this.editMedicineDialogVisible = false
+      var query = {
+        'medicineJson': this.medicineForm
+      }
+      saveMedicine(query).then(response => {
+        this.$message({
+          message: '修改成功！',
+          type: 'success'
+        })
+        this.medicineForm = {}
+      })
+    },
     // 检索
     searchMedicineWithInfo() {
       if (this.medicineName === '' && this.medicineFactory === '' && this.medicinePinyin === '') {

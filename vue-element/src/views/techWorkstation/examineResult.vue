@@ -36,106 +36,56 @@
               <el-table-column type="index" />
               <el-table-column prop="examName" label="检查名称" />
               <el-table-column prop="departmentName" label="挂号科室" />
-              <el-table-column prop="requirement" label="要求" />
             </el-table>
-
-            <el-table v-loading="chargeFormTableLoading" :data="chargeFormTableList" style="width: 100%">
-              <el-table-column prop="nameZh" label="消费名称" />
-              <el-table-column prop="specification" label="规格" />
-              <el-table-column prop="price" label="单价" />
-              <el-table-column prop="nums" label="数量" />
-              <el-table-column prop="totalPrice" label="金额" sortable />
-              <el-table-column
-                prop="departmentName"
-                label="执行科室"
-                :filters="[{ text: '药房', value: '药房' }, { text: '项目', value: '项目' }]"
-                :filter-method="filterDepartment"
-                filter-placement="bottom-end"
-              >
-                <template slot-scope="scope">
-                  <el-tag :type="scope.row.departmentName === '药房' ? 'danger' : 'success'" close-transition>
-                    {{ scope.row.departmentName }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="payState"
-                label="支付状态"
-                :filters="[{ text: '未付款', value: 0 }, { text: '已付款', value: 1 }]"
-                :filter-method="filterPayState"
-                filter-placement="bottom-end"
-              >
-                <template slot-scope="scope">
-                  <el-tag :type="scope.row.payState === 0 ? 'primary' : 'success'" close-transition>
-                    {{ scope.row.payState === 0 ? '未付款' : '已付款' }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="notGivenNums" label="未执行次数" />
-              <el-table-column prop="refund" label="退费">
-                <template slot-scope="scope">
-                  <el-button
-                    size="mini"
-                    @click="refund(scope.$index, scope.row)"
-                  >
-                    退费
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <!-- 分页 -->
+            <div style="margin-top:40px">
+              <el-form ref="examForm" :model="examForm" label-width="100px">
+                <el-form-item label="检查申请名称" prop="examinationName">
+                  <el-input v-model="examForm.examName" prefix-icon="el-icon-document" :disabled="true" />
+                </el-form-item>
+                <el-form-item label="检查要求" prop="requirement">
+                  <el-input v-model="examForm.requirement" prefix-icon="el-icon-document" type="textarea" :rows="2" />
+                </el-form-item>
+                <el-form-item label="临床印象" prop="clinicalImpression">
+                  <el-input v-model="examForm.clinicalImpression" prefix-icon="el-icon-document" type="textarea" :rows="2" />
+                </el-form-item>
+                <el-form-item label="检查结果" prop="examResult">
+                  <el-input v-model="examForm.examResult" prefix-icon="el-icon-document" type="textarea" :rows="2" />
+                </el-form-item>
+              </el-form>
+            </div>
+            <div class="editor-container">
+              <dropzone id="myVueDropzone" url="https://httpbin.org/post" @dropzone-removedFile="dropzoneR" @dropzone-success="dropzoneS" />
+            </div>
+            <div>
+              历史图片 TODO！！
+            </div>
           </el-main>
         </el-container>
       </el-main>
     </el-container>
-    <el-dialog
-      title="退费"
-      :visible.sync="refundDialogVisible"
-      width="30%"
-    >
-      <el-form ref="refundForm" :model="refundForm" label-width="100px">
-        <el-form-item label="退号名称">
-          <el-input v-model="refundForm.refundEntryName" :disabled="true" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="退号数量">
-          <el-input-number v-model="refundForm.refundNumber" width="100%" :min="1" :max="refundForm.notGivenNums" />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="refundDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="invokeRefund">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  selectChargeForm
-} from '../../api/registrationCharge/chargeEntry'
-
-import {
   fetchDepartmentList
 } from '../../api/basicInfo/department'
-
-import {
-  selectHistoryDisposal
-} from '../../api/medicalRecord/disposal'
 
 import {
   selectHistoryExam
 } from '../../api/medicalRecord/examination'
 
-import {
-  refund
-} from '../../api/registrationCharge/charge'
+import Dropzone from '@/components/Dropzone'
 
 export default {
+  components: { Dropzone },
   data() {
     return {
       registrationId: '',
       // 歷史
       historyExamTable: [],
+      examForm: {},
+      historyExamItemExample: [],
 
       chargeFormTableList: [],
       chargeFormTableLoading: false,
@@ -145,13 +95,30 @@ export default {
       pageSize: 50,
       totalNumber: 0,
       // 退费
-      refundDialogVisible: false,
-      refundForm: {
-        refundNumber: 1,
-        refundEntryId: 0,
-        refundEntryName: '',
+      excuteDialogVisible: false,
+      excuteForm: {
+        excuteNumber: 1,
+        excuteEntryId: 0,
+        excuteEntryName: '',
         prescriptionBool: 0,
         notGivenNums: 0
+      },
+      // 临时新增
+      chooseBool: false,
+      chargeItemList: [],
+      chargeItemFormVisible: false,
+      chargeItemFormDisable: true,
+      chargeItemForm: {
+        chargeItemId: '',
+        departmentId: '',
+        nums: 1
+      },
+      // 常用药对话框
+      commonExamDialogVisible: false,
+      commonExamListData: [],
+      commonExamListValue: [],
+      transferFilterMethod(query, item) {
+        return item.nameZh.indexOf(query) > -1
       }
     }
   },
@@ -159,6 +126,15 @@ export default {
     this.invokeFetchDepartmentList()
   },
   methods: {
+    // 上传图片
+    dropzoneS(file) {
+      console.log(file)
+      this.$message({ message: 'Upload success', type: 'success' })
+    },
+    dropzoneR(file) {
+      console.log(file)
+      this.$message({ message: 'Delete success', type: 'success' })
+    },
     invokeFetchDepartmentList() {
       var query = { 'currentPage': 1, 'pageSize': 400 }
       fetchDepartmentList(query).then(response => {
@@ -182,11 +158,30 @@ export default {
             this.historyExamTable.push(tempList[i])
           }
         }
+        for (i = 0; i < this.historyExamTable.length; ++i) {
+          this.historyExamTable[i].departmentName = this.departmentList[this.historyExamTable[i].departmentId - 1].departmentName
+        }
         console.log(this.historyExamTable)
       }).catch(error => {
         console.log('selectHistoryExam error: ')
         console.log(error)
       })
+    },
+    showHistoryExamItemExample(row, event) {
+      this.chooseBool = true
+      console.log(row)
+      this.examForm = row
+      this.historyExamItemExample = row.chargeEntryList
+      for (var i = 0; i < this.historyExamItemExample.length; ++i) {
+        this.historyExamItemExample[i].chargeItem.departmentName = this.departmentList[this.historyExamItemExample[i].chargeItem.departmentId - 1].departmentName
+      }
+    },
+    invokeExcute() {
+      if (this.excuteForm.excuteNumber === 0) {
+        this.$message.error('登记数量为0，错误！')
+        return
+      }
+      alert('TODO!')
     },
     // 分页
     handleSizeChange(val) {
