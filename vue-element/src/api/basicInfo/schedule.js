@@ -8,7 +8,6 @@ import request from '@/utils/request'
   * Time:
   */
 export function fetchList(query) {
-  console.log('传到服务器的参数', query)
   return request({
     url: '/scheduling/select_rule',
     method: 'get',

@@ -29,7 +29,7 @@ export function selectDoctorList(query) {
   console.log('selectDoctorList: ')
   console.log(query)
   return request({
-    url: '/select_doctor',
+    url: 'account/select_doctor',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
