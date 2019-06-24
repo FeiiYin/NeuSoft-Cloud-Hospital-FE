@@ -2,11 +2,13 @@
 <template>
   <div style="padding:1%;" class="app-container">
     <aside>医生排班规则维护</aside>
+    <el-row style="margin-bottom: 20px">
     <el-col :span="6">
       <el-button @click="addScheduleVisible = true">新增</el-button>
       <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
-      <el-button @click="toggleSelection()">取消选择</el-button>
+      <el-button @click="toggleSelection()">取消所选</el-button>
     </el-col>
+    </el-row>
     <el-table
       ref="multipleTable"
       v-loading="listLoading"
@@ -41,13 +43,22 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="editAccountDataFormFunction(scope.$index, scope.row)"
+            @click="editScheduleRuleFormDataFunction(scope.$index, scope.row)"
           >
             <i class="el-icon-edit" />
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <div class="block">
+      <el-pagination
+        :current-page="currentPage"
+        :page-sizes="[20, 50, 100, 200]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalNumber"
+      />
+    </div>
 <!--    新增排班规则对话框-->
     <el-dialog titile="新增排班规则" :visible.sync="addScheduleVisible" width="30%">
       <el-form ref="addScheduleRuleForm" :model="addScheduleRuleForm" :rules="rules" label-position="top">
@@ -119,6 +130,86 @@
           <el-button type="primary" @click="saveSchedulingRuleV('addScheduleRuleForm')">确 定</el-button>
         </span>
     </el-dialog>
+<!--    修改排班规则信息-->
+    <el-dialog titile="更新排班规则" :visible.sync="saveScheduleVisible" width="30%">
+      <el-form ref="saveScheduleRuleForm" :model="saveScheduleRuleForm" :rules="rules" label-position="top">
+        <el-form-item lable="星期" prop="weekday" label="星期" v-model="addScheduleRuleForm.weekday">
+          <template>
+            <el-select v-model="SelectValueWeek" filterable placeholder="请选择星期" @change="changeWeek">
+              <el-option
+                v-for="item in weekType"
+                :key="item.weekId"
+                :label="item.weekName"
+                :value="item.weekId"></el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item v-model="saveScheduleRuleForm.departmentId" label="科室" prop="departmentId">
+          <template>
+            <el-select v-model="SelectValueDep" filterable placeholder="请选择科室" @change="changeDep">
+              <el-option
+                v-for="item in departmentList"
+                :key="item.departmentId"
+                :label="item.departmentName"
+                :value="item.departmentId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item v-model="saveScheduleRuleForm.doctorId" label="医生‍" prop="doctorId">
+          <template>
+            <el-select v-model="SelectValueDoc" filterable placeholder="请选择医生" @change="changeDoc">
+              <el-option
+                v-for="item in doctorList"
+                :key="item.doctorId"
+                :label="item.doctorName"
+                :value="item.doctorId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item v-model="saveScheduleRuleForm.registrationCategoryId" label="挂号类别" prop="registrationCategoryId">
+          <template>
+            <el-select v-model="SelectValueRC" filterable placeholder="请选择号别" @change="changeRC">
+              <el-option
+                v-for="item in registrationCategoryType"
+                :key="item.registrationCategoryId"
+                :label="item.registrationCategoryName"
+                :value="item.registrationCategoryId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item v-model="saveScheduleRuleForm.noon" label="午别" prop="noon">
+          <template>
+            <el-select v-model="SelectValueNoonName" filterable placeholder="请选择号别" @change="changeN">
+              <el-option
+                v-for="item in noonList"
+                :key="item.noonId"
+                :label="item.noonName"
+                :value="item.noonId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="排班限额" prop="limitation">
+          <el-input v-model="saveScheduleRuleForm.limitation" auto-complete="off" />
+        </el-form-item>
+        <template>
+          <el-form-item
+            label="是否有效"
+            prop="valid"
+          >
+            <el-radio v-model="schedulingValidRadio" label="1" @change="changeVld">是</el-radio>
+            <el-radio v-model="schedulingValidRadio" label="0" @change="changeVld">否</el-radio>
+          </el-form-item>
+        </template>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="saveScheduleVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveSchedulingRuleV1('saveScheduleRuleForm')">确 定</el-button>
+        </span>
+    </el-dialog>
     <aside>
       医生排班信息
     </aside>
@@ -158,6 +249,15 @@
         <template slot-scope="scope">{{ scope.row.schedulingCode }}</template>
       </el-table-column>
     </el-table>
+    <div class="block">
+      <el-pagination
+        :current-page="currentPage"
+        :page-sizes="[20, 50, 100, 200]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalNumber"
+      />
+    </div>
   </div>
 </template>
 
@@ -170,13 +270,16 @@ import { selectDoctorList } from '../../api/basicInfo/account'
 export default {
   data() {
     return {
+      totalNumber: 0,
       listLoading: false, // 加载表格
       listLoading2: false, // 医生排班信息表
       addScheduleVisible: false,
+      saveScheduleVisible: false,
       SelectValueWeek: '', // 增加排班规则的选择的值
       SelectValueDep: '', // 增加排班规则的选择的值
-      SelectValueDoc: '',// doctor choosing
+      SelectValueDoc: '', // doctor choosing
       SelectValueRC: '',
+      schedulingValidRadio: '', // 单选器
       SelectValueNoonName: '',
       addScheduleRuleForm: {
         schedulingRuleId: null,
@@ -378,8 +481,27 @@ export default {
       this.$set(this.addScheduleRuleForm, 'noon', val)
       this.$set(this.saveScheduleRuleForm, 'noon', val)
     },
+    changeVld(val) {
+      this.$set(this.saveScheduleRuleForm, 'valid', val)
+    },
+    editScheduleRuleFormDataFunction(index, row) {
+      this.saveScheduleVisible = true
+      this.saveScheduleRuleForm.schedulingRuleId = row.schedulingRuleId
+      this.SelectValueWeek = row.weekdayName
+      this.saveScheduleRuleForm.weekday = row.weekday
+      this.SelectValueDep = row.departmentName
+      this.saveScheduleRuleForm.departmentId = row.departmentId
+      this.SelectValueDoc = row.doctorName
+      this.saveScheduleRuleForm.doctorId = row.doctorId
+      this.SelectValueRC = row.registrationCategoryName
+      this.saveScheduleRuleForm.registrationCategoryId = row.registrationCategoryId
+      this.saveScheduleRuleForm.noon = row.noon
+      this.SelectValueNoonName = row.noonName
+      this.saveScheduleRuleForm.limitation = row.limitation + ''
+      this.schedulingValidRadio = row.valid + ''
+    },
     // 全部选择
-    toggleSelection(rows) {
+    toggleSelection(rows) { // 这里的全选有点问题，不能取消
       if (rows) {
         rows.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
@@ -388,7 +510,7 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    // 打开选择框, todo 变量的名字要修改
+    // 打开选择框
     openConfirmDeleteMessageBox() {
       if (this.multipleSelection.length === 0 || this.multipleSelection.length == null) {
         this.$message.error('请选择您要删除的记录。')
@@ -399,22 +521,24 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(response => {
-        this.account_id_list = []
+        this.scheduleRuleList = []
         for (let i = 0; i < this.multipleSelection.length; ++i) {
-          this.account_id_list.push(this.multipleSelection[i].accountId)
+          this.scheduleRuleList.push(this.multipleSelection[i].schedulingRuleId)
         }
-        this.account_id_list = { 'accountIdList': this.account_id_list }
+        this.scheduleRuleList = { 'schedulingRuleIdList': this.scheduleRuleList }
+        console.log('List', this.scheduleRuleList)
         /**
          * 按主键删除用户信息的请求
          */
-        deleteAccount(this.account_id_list).then(response => {
+        deleteSchedulingRule(this.scheduleRuleList).then(response => {
           console.log('deleteDepartmentByPrimaryKey response: ')
           console.log(response)
           this.$message({
             type: 'success',
             message: '已删除'
           })
-          this.invokeSelectAccount()
+          this.schedulingTable = []
+          this.getList()
         }).catch(error => {
           console.log('deleteDepartmentByPrimaryKey error: ')
           console.log(error)
@@ -470,6 +594,7 @@ export default {
       this.listQuery.pageSize = this.pageSize
       fetchList(this.listQuery).then(response => {
         var tableRow = {}
+        this.totalNumber = response.data.list.length
         response.data.list.map((value) => {
           value = JSON.parse(value) // 后端传的是JSON
           tableRow = value
@@ -502,6 +627,7 @@ export default {
           this.addScheduleVisible = false
           saveSchedulingRule(this.addScheduleRuleForm).then(response => {
             console.log('add after return', response)
+            this.addScheduleRuleForm = {}
             this.schedulingTable = []
             this.getList()
           })
@@ -512,7 +638,20 @@ export default {
       })
     },
     saveSchedulingRuleV1(formName) {
-      console.log('edit', this)
+      console.log('edit', this.saveScheduleRuleForm)
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.saveScheduleVisible = false
+          saveSchedulingRule(this.saveScheduleRuleForm).then(response =>{
+            this.schedulingTable = []
+            console.log('update after return', response)
+            this.saveScheduleRuleForm = {}
+            this.getList()
+          })
+        } else {
+          console.log('error save')
+        }
+      })
     },
     deleteSchedulingRuleV() {
 
