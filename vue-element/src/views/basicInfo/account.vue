@@ -41,6 +41,7 @@
         <el-table-column
           prop="userPassword"
           label="密码"
+          v-if="1 === 0"
         />
         <el-table-column
           prop="realName"
@@ -442,6 +443,7 @@ export default {
         console.log(response)
         const responseJsonList = response.data.list
         const len = response.data.list.length
+        this.totalNumber = len
         let respondJson
         for (let i = 0; i < len; ++i) { // 获取所用用户信息表
           respondJson = JSON.parse(responseJsonList[i])

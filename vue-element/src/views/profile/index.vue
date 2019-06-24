@@ -3,22 +3,23 @@
     <div v-if="user">
       <el-row :gutter="20">
 
-        <el-col :span="6" :xs="24">
-          <user-card :user="user" />
-        </el-col>
+        <!--        <el-col :span="6" :xs="24">-->
+        <!--          <user-card :user="user" />-->
+        <!--        </el-col>-->
 
-        <el-col :span="18" :xs="24">
+        <el-col :span="24" :xs="24">
           <el-card>
             <el-tabs v-model="activeTab">
-              <el-tab-pane label="Activity" name="activity">
-                <activity />
-              </el-tab-pane>
-              <el-tab-pane label="Timeline" name="timeline">
-                <timeline />
-              </el-tab-pane>
-              <el-tab-pane label="Account" name="account">
+              <el-tab-pane label="个人信息" name="account">
                 <account :user="user" />
               </el-tab-pane>
+              <el-tab-pane label="帐户安全" name="accountSecurity" />
+              <!--              <el-tab-pane label="Activity" name="activity">-->
+              <!--                <activity />-->
+              <!--              </el-tab-pane>-->
+              <!--              <el-tab-pane label="Timeline" name="timeline">-->
+              <!--                <timeline />-->
+              <!--              </el-tab-pane>-->
             </el-tabs>
           </el-card>
         </el-col>
@@ -41,7 +42,7 @@ export default {
   data() {
     return {
       user: {},
-      activeTab: 'activity'
+      activeTab: 'account'
     }
   },
   computed: {

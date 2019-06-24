@@ -37,7 +37,7 @@
           <aside>疾病目录列表</aside>
 
           <div style="margin-top: 20px; margin-left: 20px;">
-            <el-button @click="toggleSelection()">取消选择</el-button>
+            <el-button @click="toggleSelection()">取消所选</el-button>
             <!--新增疾病信息的按钮-->
             <el-button @click="dialogFormVisible = true">新增</el-button>
             <!--新增疾病信息的对话框-->
