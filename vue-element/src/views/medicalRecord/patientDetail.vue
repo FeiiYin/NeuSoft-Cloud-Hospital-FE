@@ -312,7 +312,8 @@ export default {
     }
   },
   created() {
-    this.registrationId = this.$route.query.registrationId
+    // this.registrationId = this.$route.query.registrationId
+    this.registrationId = 1
     this.invokeSelectPatientHistoryMedicalRecords()
     this.invokeFetchDepartmentList()
     this.invokeSelectHistoryPrescription()
