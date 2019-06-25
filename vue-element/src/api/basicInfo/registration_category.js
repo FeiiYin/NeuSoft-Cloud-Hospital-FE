@@ -1,6 +1,39 @@
 import request from '@/utils/request'
 
 /**
+ * 获取包含所有挂号级别的列表
+ */
+export function selectAllRegistrationCategory(query) {
+  console.log('selectAllRegistrationCategory: ')
+  console.log(query)
+  return request({
+    url: '/registration_category/list_all',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 获取指定挂号类别的费用
+ *
+ * @param registrationCategoryId 挂号类别编号
+ * @return 挂号费
+ */
+export function registrationFee(query) {
+  console.log('registrationFee: ')
+  console.log(query)
+  return request({
+    url: '/registration_category/registration_fee',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
  * 获取挂号级别列表
  * @param query 当前页码，页面大小，选择的挂号类别等
  * @returns 分页的挂号级别列表

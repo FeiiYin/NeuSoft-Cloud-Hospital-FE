@@ -4,6 +4,21 @@
       <el-main>
         <aside>
           <span style="margin-left:30px;">治疗项目申请</span>
+          <el-dropdown style="float:right" @command="handleMenuCommand">
+            <span class="el-dropdown-link">
+              <el-tag type="text">
+                请选择<i class="el-icon-arrow-down el-icon--right" />
+              </el-tag>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="a">病历诊断</el-dropdown-item>
+              <el-dropdown-item command="b">检查申请</el-dropdown-item>
+              <el-dropdown-item command="c">确诊</el-dropdown-item>
+              <el-dropdown-item command="d">处方申请</el-dropdown-item>
+              <el-dropdown-item command="e" disabled>处置申请</el-dropdown-item>
+              <el-dropdown-item command="f" divided>诊断完毕</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </aside>
         <div>
           <el-form ref="disposalForm" :model="disposalForm" label-width="100px">
@@ -14,14 +29,11 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="医生诊断疾病" prop="disease">
-                  <el-input v-model="disposalForm.disease" :disabled="true" prefix-icon="el-icon-document" />
+                <el-form-item label="治疗申请名称" prop="chargeFormName">
+                  <el-input v-model="disposalForm.chargeFormName" prefix-icon="el-icon-document" />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-form-item label="治疗申请名称" prop="chargeFormName">
-              <el-input v-model="disposalForm.chargeFormName" prefix-icon="el-icon-document" />
-            </el-form-item>
           </el-form>
         </div>
 
@@ -280,6 +292,7 @@ export default {
   data() {
     return {
       // 基础前置信息
+      registrationId: 1,
       doctorId: 1,
       totalListMoney: 0,
       // 治疗表单
@@ -371,6 +384,9 @@ export default {
     // this.invokeFetchDepartmentList().then(response => {
     //   this.invokeSelectHistoryDisposal()
     // })
+    this.registrationId = this.$route.query.registrationId
+    this.disposalForm.registrationId = this.$route.query.registrationId
+    this.disposalForm.disease = this.$route.query.disease
     this.invokeFetchDepartmentList()
     this.invokeCommonDisposal()
     // pre
@@ -717,7 +733,64 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
-
+    // 下拉菜单
+    handleMenuCommand(command) {
+      // this.$message('click on item ' + command)
+      if (command === 'a') {
+        // 病历
+        this.$router.push({
+          path: '/medicalRecord/medicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.disposalForm.registrationId
+          }
+        })
+      } else if (command === 'b') {
+        // 检查
+        this.$router.push({
+          path: '/medicalRecord/examination', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.disposalForm.registrationId,
+            disease: this.disposalForm.disease
+          }
+        })
+      } else if (command === 'c') {
+        // 确诊
+        this.$router.push({
+          path: '/medicalRecord/confirmMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.disposalForm.registrationId,
+            disease: this.disposalForm.disease
+          }
+        })
+      } else if (command === 'd') {
+        // 处方
+        this.$router.push({
+          path: '/medicalRecord/medicinePrescription', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.disposalForm.registrationId,
+            disease: this.disposalForm.disease
+          }
+        })
+      } else if (command === 'e') {
+        // 处置
+        this.$router.push({
+          path: '/medicalRecord/disposalApplication', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.disposalForm.registrationId,
+            disease: this.disposalForm.disease
+          }
+        })
+      } else if (command === 'f') {
+        // 诊断完毕
+        this.$router.push({
+          path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.disposalForm.registrationId,
+            disease: this.disposalForm.disease
+          }
+        })
+      }
+    },
     doPrint(e) {
       const subOutputRankPrint = document.getElementById('subOutputRank-print')
       console.log(subOutputRankPrint.innerHTML)

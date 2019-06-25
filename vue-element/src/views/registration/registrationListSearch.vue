@@ -10,10 +10,10 @@
     <div>
       <el-table v-loading="registrationListLoading" :data="registrationList" style="width: 100%">
         <el-table-column prop="registrationDate" label="挂号日期" sortable />
-        <el-table-column prop="medicalRecordId" label="病历号" />
+        <el-table-column prop="registrationId" label="病历号" />
         <el-table-column prop="patientName" label="姓名" />
         <el-table-column prop="gender" label="性别" />
-        <el-table-column prop="identityCardNo" label="身份证号" width="200" />
+        <!-- <el-table-column prop="identityCardNo" label="身份证号" width="200" /> -->
         <el-table-column prop="departmentId" label="科室" />
         <el-table-column prop="doctorId" label="医生" />
         <el-table-column prop="isVisited" label="是否已诊">
@@ -22,13 +22,20 @@
           </template>
         </el-table-column>
         <el-table-column prop="totalCharge" label="实收费用" />
-        <el-table-column prop="withdraw" label="退号">
+        <el-table-column prop="withdraw" label="执行" width="200px">
           <template slot-scope="scope">
             <el-button
               size="mini"
               @click="withdraw(scope.$index, scope.row)"
             >
               退号
+            </el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="toCharge(scope.$index, scope.row)"
+            >
+              收费
             </el-button>
           </template>
         </el-table-column>
@@ -111,6 +118,15 @@ export default {
     this.queryRegistrationListWithPage()
   },
   methods: {
+    // 跳转
+    toCharge(index, row) {
+      this.$router.push({
+        path: '/registration/registrationCharge', // 这个path是在router/index.js里边配置的路径
+        query: {
+          registrationId: row.registrationId
+        }
+      })
+    },
     // 退号
     withdraw(index, row) {
       if (row.isVisited === '1') {

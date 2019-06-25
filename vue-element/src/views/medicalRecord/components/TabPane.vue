@@ -1,6 +1,50 @@
 <template>
   <div>
-    <el-table :data="list" border fit highlight-current-row style="width: 100%">
+    <el-table :data="list" border fit highlight-current-row style="width: 100%" @row-dblclick="toPatientDetail">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="患者名称">
+              <span>{{ props.row.patientName }}</span>
+            </el-form-item>
+            <el-form-item label="患者性别">
+              <span>{{ props.row.gender }}</span>
+            </el-form-item>
+            <el-form-item label="患者住址">
+              <span>{{ props.row.familyAddress }}</span>
+            </el-form-item>
+            <el-form-item label="身份证号">
+              <span>{{ props.row.identityCardNo }}</span>
+            </el-form-item>
+            <el-form-item label="患者生日">
+              <span>{{ props.row.birthday.substring(0, 10) }}</span>
+            </el-form-item>
+            <el-form-item label="挂号日期">
+              <span>{{ props.row.registrationDate.substring(0, 10) }}</span>
+            </el-form-item>
+            <el-form-item label="挂号科室">
+              <span>{{ props.row.reserve1 }}</span>
+            </el-form-item>
+            <el-form-item label="菜    单">
+              <el-dropdown @command="handleMenuCommand" @visible-change="handleRow(props.row)">
+                <span class="el-dropdown-link">
+                  <el-tag type="text">
+                    请选择<i class="el-icon-arrow-down el-icon--right" />
+                  </el-tag>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">病历诊断</el-dropdown-item>
+                  <el-dropdown-item command="b">检查申请</el-dropdown-item>
+                  <el-dropdown-item command="c">确诊</el-dropdown-item>
+                  <el-dropdown-item command="d">处方申请</el-dropdown-item>
+                  <el-dropdown-item command="e">处置申请</el-dropdown-item>
+                  <el-dropdown-item command="f" divided>诊断完毕</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column
         v-loading="loading"
         align="center"
@@ -106,7 +150,8 @@ export default {
       pageSize: 50, // 页码大小
       totalNumber: 0,
 
-      tapRefreshListener: this.refreshListener
+      tapRefreshListener: this.refreshListener,
+      currentRow: null
     }
   },
   watch: {
@@ -121,6 +166,78 @@ export default {
     this.getList()
   },
   methods: {
+    toPatientDetail(row) {
+      this.$router.push({
+        path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径
+        query: {
+          registrationId: row.registrationId,
+          disease: ''
+        }
+      })
+    },
+    handleRow(row) {
+      console.log(row)
+      this.currentRow = row
+    },
+    // 下拉菜单
+    handleMenuCommand(command) {
+      // this.$message('click on item ' + command)
+      console.log(this.currentRow)
+      if (command === 'a') {
+        // 病历
+        this.$router.push({
+          path: '/medicalRecord/medicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.currentRow.registrationId
+          }
+        })
+      } else if (command === 'b') {
+        // 检查
+        this.$router.push({
+          path: '/medicalRecord/examination', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.currentRow.registrationId,
+            disease: ''
+          }
+        })
+      } else if (command === 'c') {
+        // 确诊
+        this.$router.push({
+          path: '/medicalRecord/confirmMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.currentRow.registrationId,
+            disease: ''
+          }
+        })
+      } else if (command === 'd') {
+        // 处方
+        this.$router.push({
+          path: '/medicalRecord/medicinePrescription', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.currentRow.registrationId,
+            disease: ''
+          }
+        })
+      } else if (command === 'e') {
+        // 处置
+        this.$router.push({
+          path: '/medicalRecord/disposalApplication', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.currentRow.registrationId,
+            disease: ''
+          }
+        })
+      } else if (command === 'f') {
+        // 诊断完毕
+        this.$router.push({
+          path: '/medicalRecord/endMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.currentRow.registrationId,
+            disease: ''
+          }
+        })
+      }
+    },
     getList() {
       this.loading = true
       console.log('refreshListener: ' + this.refreshListener)
@@ -166,3 +283,17 @@ export default {
 }
 </script>
 
+<style>
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+</style>

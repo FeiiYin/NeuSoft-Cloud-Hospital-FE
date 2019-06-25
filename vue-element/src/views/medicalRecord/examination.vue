@@ -4,13 +4,28 @@
       <el-main>
         <aside>
           <span style="margin-left:30px;">检查项目申请</span>
+          <el-dropdown style="float:right" @command="handleMenuCommand">
+            <span class="el-dropdown-link">
+              <el-tag type="text">
+                请选择<i class="el-icon-arrow-down el-icon--right" />
+              </el-tag>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="a">病历诊断</el-dropdown-item>
+              <el-dropdown-item command="b" disabled>检查申请</el-dropdown-item>
+              <el-dropdown-item command="c">确诊</el-dropdown-item>
+              <el-dropdown-item command="d">处方申请</el-dropdown-item>
+              <el-dropdown-item command="e">处置申请</el-dropdown-item>
+              <el-dropdown-item command="f" divided>诊断完毕</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </aside>
         <div>
           <el-form ref="examForm" :model="examForm" label-width="100px">
             <el-row :gutter="10" style="margin-bottom:0px">
               <el-col :span="12">
-                <el-form-item label="患者病历号" prop="registrationId">
-                  <el-input v-model="examForm.registrationId" prefix-icon="el-icon-document" />
+                <el-form-item label="患者病历号" prop="registrationId" :disabled="true">
+                  <el-input v-model="examForm.registrationId" :disabled="true" prefix-icon="el-icon-document" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -287,6 +302,7 @@ export default {
   data() {
     return {
       // 基础前置信息
+      registrationId: 1,
       doctorId: 1,
       totalListMoney: 0,
       prescriptionId: '',
@@ -380,6 +396,9 @@ export default {
     // this.invokeFetchDepartmentList().then(response => {
     //   this.invokeSelectHistoryExam()
     // })
+    this.registrationId = this.$route.query.registrationId
+    this.examForm.registrationId = this.$route.query.registrationId
+    this.examForm.disease = this.$route.query.disease
     this.invokeFetchDepartmentList()
     this.invokeCommonExam()
     // pre
@@ -737,7 +756,64 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
-
+    // 下拉菜单
+    handleMenuCommand(command) {
+      // this.$message('click on item ' + command)
+      if (command === 'a') {
+        // 病历
+        this.$router.push({
+          path: '/medicalRecord/medicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId
+          }
+        })
+      } else if (command === 'b') {
+        // 检查
+        this.$router.push({
+          path: '/medicalRecord/examination', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'c') {
+        // 确诊
+        this.$router.push({
+          path: '/medicalRecord/confirmMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'd') {
+        // 处方
+        this.$router.push({
+          path: '/medicalRecord/medicinePrescription', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'e') {
+        // 处置
+        this.$router.push({
+          path: '/medicalRecord/disposalApplication', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'f') {
+        // 诊断完毕
+        this.$router.push({
+          path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      }
+    },
     doPrint(e) {
       const subOutputRankPrint = document.getElementById('subOutputRank-print')
       console.log(subOutputRankPrint.innerHTML)

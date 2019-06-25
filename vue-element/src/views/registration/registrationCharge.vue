@@ -112,7 +112,9 @@
           </el-select>
         </el-form-item>
       </el-form>
-
+      <template v-if="value === '选项1'">
+        <img src="./img/1.jpg" style="width:100px;height:100px">
+      </template>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="invokeChargeSubmit()">确 定</el-button>
@@ -340,6 +342,8 @@ export default {
   },
   created() {
     this.registrationId = this.$route.query.registrationId
+    this.registrationForm.registrationId = this.registrationId
+    this.invokeFetchRegistrationRecord()
     this.invokeFetchDepartmentList()
     this.invokeSelectHistoryPrescription()
   },
@@ -611,7 +615,16 @@ export default {
         })
       }
       var query = {
-        'checkoutJson': JSON.stringify(tempList)
+        'checkoutJson': {
+          'invoiceTitle': this.registrationForm.patientName,
+          'collectorId': this.collectorId,
+          'invoiceAmount': this.charge_form.should_charge,
+          'selfPay': this.charge_form.should_charge,
+          'accountPay': 0,
+          'reimbursementPay': 0,
+          'invoiceState': 1,
+          'entryList': JSON.stringify(tempList)
+        }
       }
       console.log('checkout query: ')
       console.log(query)
