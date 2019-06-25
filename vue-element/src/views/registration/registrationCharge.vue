@@ -632,6 +632,7 @@ export default {
           'invoiceAmount': this.charge_form.should_charge,
           'selfPay': this.charge_form.should_charge,
           'accountPay': 0,
+          'discounted': 0,
           'reimbursementPay': 0,
           'invoiceState': 1,
           'entryList': JSON.stringify(tempList)
