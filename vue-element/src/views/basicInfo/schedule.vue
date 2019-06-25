@@ -213,24 +213,21 @@
     <aside>
       医生排班信息
     </aside>
-
-    <div>
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="活动时间">
-          <el-col :span="11">
-            <el-date-picker v-model="form.date1" type="date" placeholder="选择日期" style="width: 80%;" />
-          </el-col>
-          <el-col class="line" :span="2"><b>结束时间</b></el-col>
-          <el-col :span="11">
-            <el-date-picker v-model="form.date1" type="date" placeholder="选择日期" style="width: 80%;" />
-          </el-col>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="true">立即创建</el-button>
-          <el-button>取消</el-button>
-        </el-form-item>
-      </el-form>
+    <div class="block" :rule="rules" ref="valueDate">
+      <span class="demonstration" style="padding-left: 10px; padding-right: 15px">请选择开始和结束日期</span>
+      <el-date-picker
+        v-model="valueDate"
+        type="daterange"
+        align="right"
+        unlink-panels
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        prop="valueDate"
+        :picker-options="pickerOptions">
+      </el-date-picker>
+        <el-button @click="valueDate = ''">重选日期</el-button>
+        <el-button type="primary" @click="generateSchedulingInfoV()">生成排班信息</el-button>
     </div>
 
     <el-table
@@ -281,6 +278,7 @@ export default {
       SelectValueRC: '',
       schedulingValidRadio: '', // 单选器
       SelectValueNoonName: '',
+      dateValue: '',
       addScheduleRuleForm: {
         schedulingRuleId: null,
         weekday: '', // 排班星期：星期日 0，星期六 6
@@ -369,6 +367,9 @@ export default {
         limitation: [
           { required: true, message: '请输入挂号限制额', trigger: 'blur' },
           { min: 1, max: 2, message: '限制额在 1 到 99', trigger: 'blur' }
+        ],
+        valueDate: [
+          { required: true, message: '请选择日期', trigger: 'blur' }
         ]
       },
       // 一些常量
@@ -426,7 +427,7 @@ export default {
       validType: [{
         validId: 0,
         validName: '无效'
-      },{
+      }, {
         validId: 1,
         validName: '有效'
       }],
@@ -444,13 +445,41 @@ export default {
       }, {
         noonId: 1,
         noonName: '上午'
-      },{
+      }, {
         noonId: 2,
         noonName: '下午'
       }],
       multipleSelection: [],
       scheduleRuleIdList: [],
-      scheduleInfoIdList: []
+      scheduleInfoIdList: [],
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      valueDate: ''
     }
   },
 
@@ -460,6 +489,8 @@ export default {
   },
 
   methods: {
+    // 日期选择
+
     // change函数 series
     changeWeek(val) {
       this.$set(this.addScheduleRuleForm, 'weekday', val)
@@ -642,7 +673,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.saveScheduleVisible = false
-          saveSchedulingRule(this.saveScheduleRuleForm).then(response =>{
+          saveSchedulingRule(this.saveScheduleRuleForm).then(response => {
             this.schedulingTable = []
             console.log('update after return', response)
             this.saveScheduleRuleForm = {}
@@ -653,11 +684,19 @@ export default {
         }
       })
     },
-    deleteSchedulingRuleV() {
-
-    },
     generateSchedulingInfoV() {
+      if (this.valueDate === '') {
+        this.$message({
+          message: '请选择日期',
+          type: 'warning',
+          center: true
+        })
+        return false
+      } else {
+        console.log('dateValue', this.valueDate)
 
+
+      }
     },
     selectSchedulingInfoV() {
 
