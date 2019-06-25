@@ -27,3 +27,14 @@
   [Vue warn]: Error in callback for watcher "data": "RangeError: Maximum call stack size exceeded"
 
   RangeError: Maximum call stack size exceeded
+  
+  
+  小数显示金额 too hard
+  挂号未保定应付金额 done
+  成功改完成 done
+  按时间倒叙显示  done
+  patientListSearch 状态显示错误 done
+  数量非正数的检测 done
+  registrationCharge 挂号类别不能正常显示 done
+  检查项目插入出现更多的 done
+  checkOut少传参数

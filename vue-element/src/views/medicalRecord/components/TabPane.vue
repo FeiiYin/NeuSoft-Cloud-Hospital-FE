@@ -1,6 +1,14 @@
 <template>
   <div>
-    <el-table :data="list" border fit highlight-current-row style="width: 100%" @row-dblclick="toPatientDetail">
+    <el-table
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+      @row-dblclick="toPatientDetail"
+      :default-sort = "{prop: 'registrationId', order: 'descending'}"
+    >
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -50,6 +58,8 @@
         align="center"
         label="ID"
         width="65"
+        sortable
+        prop="registrationId"
       >
         <template slot-scope="scope">
           <span>{{ scope.row.registrationId }}</span>
@@ -88,8 +98,8 @@
 
       <el-table-column class-name="status-col" label="状态" width="110">
         <template slot-scope="{row}">
-          <el-tag :type="row.registrationCategory == '急诊挂号' ? 'danger' : 'primary'">
-            {{ row.registrationCategory }}
+          <el-tag :type="row.registrationCategoryId === 1 ? 'primary' : (row.registrationCategoryId === 2 ? 'danger' : 'success')">
+            {{ row.registrationCategoryId === 1 ? '普通号' : (row.registrationCategoryId === 2 ? '急诊号' : (row.registrationCategoryId === 3 ? '专家号' : '其他')) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -113,6 +123,10 @@ import {
   waitingRegistrationList,
   visitedRegistrationList
 } from '../../../api/medicalRecord/medicalRecord'
+
+import {
+  selectAllRegistrationCategory
+} from '../../../api/basicInfo/registration_category'
 
 export default {
   filters: {
@@ -151,7 +165,9 @@ export default {
       totalNumber: 0,
 
       tapRefreshListener: this.refreshListener,
-      currentRow: null
+      currentRow: null,
+
+      registrationCategoryList: []
     }
   },
   watch: {
@@ -166,6 +182,13 @@ export default {
     this.getList()
   },
   methods: {
+    invokeSelectAllRegistrationCategory() {
+      selectAllRegistrationCategory().then(response => {
+        console.log('selectAllRegistrationCategory response')
+        console.log(response)
+        this.registrationCategoryList = response.data
+      })
+    },
     toPatientDetail(row) {
       this.$router.push({
         path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径

@@ -8,7 +8,12 @@
       </el-button>
     </aside>
     <div>
-      <el-table v-loading="registrationListLoading" :data="registrationList" style="width: 100%">
+      <el-table
+        v-loading="registrationListLoading"
+        :data="registrationList"
+        style="width: 100%"
+        :default-sort="{prop: 'registrationDate', order: 'descending'}"
+      >
         <el-table-column prop="registrationDate" label="挂号日期" sortable />
         <el-table-column prop="registrationId" label="病历号" />
         <el-table-column prop="patientName" label="姓名" />

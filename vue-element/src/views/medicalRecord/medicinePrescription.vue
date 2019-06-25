@@ -470,8 +470,11 @@ export default {
           this.prescriptionItemEditableTableData[i].medicineDosage == null ||
           this.prescriptionItemEditableTableData[i].medicineFrequency == null ||
           this.prescriptionItemEditableTableData[i].medicineNumberDay == null ||
-          this.prescriptionItemEditableTableData[i].medicineQuantity == null) {
-          this.$message.error('药品信息缺失，错误！')
+          this.prescriptionItemEditableTableData[i].medicineQuantity == null ||
+          this.prescriptionItemEditableTableData[i].medicineQuantity <= 0 ||
+          this.prescriptionItemEditableTableData[i].medicineDosage <= 0 ||
+          this.prescriptionItemEditableTableData[i].medicineNumberDay <= 0) {
+          this.$message.error('药品信息缺失或错误，错误！')
           return false
         }
       }

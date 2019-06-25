@@ -448,7 +448,7 @@ export default {
       for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
         if (this.chargeItemEditableTableData[i].nums == null ||
           this.chargeItemEditableTableData[i].nums === '' ||
-          this.chargeItemEditableTableData[i].nums < 0
+          this.chargeItemEditableTableData[i].nums <= 0
         ) {
           this.$message.error('项目信息缺失或错误，错误！')
           return false

@@ -204,7 +204,7 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">应收金额</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.totalCharge" :disabled="true" />
+              <el-input v-model="charge_form.should_charge" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -307,8 +307,8 @@ export default {
       // 交费
       chargeDialogVisible: false,
       charge_form: {
-        should_charge: 0,
-        actual_charge: 0
+        should_charge: 0.00,
+        actual_charge: 0.00
       },
       value: '',
       // 选择支付方式
@@ -367,7 +367,7 @@ export default {
   computed: {
     actual_exchange: function() {
       if (this.charge_form.actual_charge - this.charge_form.should_charge > 0) {
-        return this.charge_form.actual_charge - this.charge_form.should_charge
+        return parseFloat(this.charge_form.actual_charge - this.charge_form.should_charge).toFixed(2)
       } else {
         return 0
       }
@@ -503,8 +503,8 @@ export default {
             console.log('register response: ')
             console.log(response)
             this.$notify({
-              title: '成功',
-              message: '挂号成功',
+              title: '完成',
+              message: '挂号完成',
               type: 'success'
             })
             this.resetForm()
@@ -533,8 +533,8 @@ export default {
       }
       registrationFee({ 'registrationCategoryId': this.registrationForm.registrationCategoryId }).then(response => {
         // console.log(response)
-        this.charge_form.should_charge = response.data
-        this.charge_form.actual_charge = 0
+        this.charge_form.should_charge = parseFloat(response.data)
+        this.charge_form.actual_charge = 0.00
         this.chargeDialogVisible = true
       })
     },

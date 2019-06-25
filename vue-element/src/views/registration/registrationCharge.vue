@@ -24,7 +24,11 @@
               <el-input v-model="registrationForm.patientName" :disabled="true" />
             </el-form-item>
             <el-form-item label="挂号类别">
-              <el-input v-model="registrationForm.registrationCategory" :disabled="true" />
+              <el-input v-model="registrationForm.registrationCategory" :disabled="true">
+                <template slot-scope="scope">
+                  {{ scope.registrationCategoryId === 1 ? '普通号' : (scope.registrationCategoryId === 2 ? '急诊号' : (scope.registrationCategoryId === 3 ? '专家号' : '其他')) }}
+                </template>
+              </el-input>
             </el-form-item>
           </div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light">
@@ -255,9 +259,9 @@ export default {
       // totalListMoney: '0.00',
       // 充值金额
       charge_form: {
-        should_charge: 0,
-        actual_charge: 0,
-        actual_exchange: 0
+        should_charge: 0.00,
+        actual_charge: 0.00,
+        actual_exchange: 0.00
       },
       // 选择支付方式
       options: [{
@@ -328,15 +332,15 @@ export default {
   },
   computed: {
     totalListMoney: function() {
-      return this.examineMoney + this.disposalMoney + this.prescriptionMoney
+      return parseFloat(this.examineMoney + this.disposalMoney + this.prescriptionMoney).toFixed(2)
     }
   },
   watch: {
     'charge_form.actual_charge': function() {
       if (this.charge_form.actual_charge > this.charge_form.should_charge) {
-        this.charge_form.actual_exchange = this.charge_form.actual_charge - this.charge_form.should_charge
+        this.charge_form.actual_exchange = parseFloat(this.charge_form.actual_charge - this.charge_form.should_charge).toFixed(2)
       } else {
-        this.charge_form.actual_exchange = 0
+        this.charge_form.actual_exchange = 0.00
       }
     }
   },
@@ -473,6 +477,15 @@ export default {
           this.registrationForm.departmentId = response.data.reserve1
           this.registrationForm.doctorId = response.data.reserve2
           this.registrationId = this.registrationForm.registrationId
+          if (this.registrationForm.registrationCategoryId === 1) {
+            this.registrationForm.registrationCategory = '普通号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '急诊号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '专家号'
+          } else {
+            this.registrationForm.registrationCategory = '其他号'
+          }
           // this.invokeFetchChargeItemListWithRegistrationId()
         }
       }).catch(error => {
@@ -593,10 +606,10 @@ export default {
     // 付费
     openChargeFormDialog() {
       this.dialogFormVisible = true
-      this.charge_form.should_charge = this.totalListMoney
+      this.charge_form.should_charge = parseFloat(this.totalListMoney).toFixed(2)
     },
     invokeChargeSubmit() {
-      if (this.charge_form.should_charge === 0) {
+      if (this.charge_form.should_charge <= 0.0) {
         this.$message.error('付款金额为 0 ，错误！')
         return
       }
@@ -631,6 +644,7 @@ export default {
           message: '缴费成功！',
           type: 'success'
         })
+        this.chargeFormTableList = []
         this.invokeSelectHistoryDisposal()
         this.invokeSelectHistoryExam()
         this.invokeSelectHistoryPrescription()
