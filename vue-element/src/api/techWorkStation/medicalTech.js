@@ -39,8 +39,11 @@ export function selectChargeEntryList(query) {
 /**
  * 应用收费项目
  *
- * @param chargeEntryIdList 收费项目编号列表
+ * @param chargeEntryListJson 收费项目信息，json 数组
  * @return 操作结果
+ * chargeEntryListJson 数组中每个元素包含的属性：
+ * - chargeEntryId 收费项目编号
+ * - executionNums 此次消耗的项目数
  */
 export function chargeEntryListApply(query) {
   console.log('chargeEntryListApply query')

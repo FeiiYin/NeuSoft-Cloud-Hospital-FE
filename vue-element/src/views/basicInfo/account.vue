@@ -15,7 +15,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="6">
-        <el-button @click="toggleSelection()">取消</el-button>
+        <el-button @click="toggleSelection()">取消所选</el-button>
         <el-button @click="addAccountDataDialogVisible = true">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>
@@ -32,10 +32,8 @@
           type="selection"
           width="34px"
         />
-        <el-table-column prop="accountId" label="id" v-if="1 === 0">
-        </el-table-column>
-        <el-table-column prop="departmentId" label="id" v-if="1 === 0">
-        </el-table-column>
+        <el-table-column v-if="1 === 0" prop="accountId" label="id" />
+        <el-table-column v-if="1 === 0" prop="departmentId" label="id" />
         <el-table-column
           prop="userName"
           label="用户名"
@@ -43,6 +41,7 @@
         <el-table-column
           prop="userPassword"
           label="密码"
+          v-if="1 === 0"
         />
         <el-table-column
           prop="realName"
@@ -75,7 +74,7 @@
               size="mini"
               @click="editAccountDataFormFunction(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit" ></i>
+              <i class="el-icon-edit" />
             </el-button>
           </template>
         </el-table-column>
@@ -168,10 +167,8 @@
         width="30%"
       >
         <el-form ref="editAccountForm" :model="editAccountForm" :rules="rules" label-position="top">
-          <el-form-item label="id" prop="accountId" v-if="1 === 0">
-          </el-form-item>
-          <el-form-item label="id" prop="departmentId" v-if="1 === 0">
-          </el-form-item>
+          <el-form-item v-if="1 === 0" label="id" prop="accountId" />
+          <el-form-item v-if="1 === 0" label="id" prop="departmentId" />
           <el-form-item label="用户名" prop="userName">
             <el-input v-model="editAccountForm.userName" auto-complete="off" />
           </el-form-item>
@@ -446,6 +443,7 @@ export default {
         console.log(response)
         const responseJsonList = response.data.list
         const len = response.data.list.length
+        this.totalNumber = len
         let respondJson
         for (let i = 0; i < len; ++i) { // 获取所用用户信息表
           respondJson = JSON.parse(responseJsonList[i])

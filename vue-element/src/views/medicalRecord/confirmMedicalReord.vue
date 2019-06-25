@@ -21,13 +21,11 @@
             <el-collapse-item title="历史病历" name="2">
               <div>
                 <el-button type="primary" plain size="mini" style="float:right" @click="invokeSelectPatientHistoryMedicalRecords">
-                   <i class="el-icon-refresh" />
+                  <i class="el-icon-refresh" />
                 </el-button>
                 <el-table :data="patientHistoryTable" @row-click="openPatientHistoryDialog">
-                  <el-table-column label="历史病历" prop="medicalRecordsId">
-                  </el-table-column>
-                  <el-table-column label="摘要" prop="abstract">
-                  </el-table-column>
+                  <el-table-column label="历史病历" prop="medicalRecordsId" />
+                  <el-table-column label="摘要" prop="abstract" />
                 </el-table>
               </div>
             </el-collapse-item>
@@ -40,8 +38,9 @@
                   :type="tag.type"
                   :model="tag"
                   style="margin:20px"
-                  @click="insertCommonDisease(tag)">
-                  {{tag.name}}
+                  @click="insertCommonDisease(tag)"
+                >
+                  {{ tag.name }}
                 </el-tag>
               </div>
             </el-collapse-item>
@@ -58,8 +57,8 @@
       <el-main>
         <aside>
           <el-button id="show_button" type="primary" @click="openModelPanel()">
-            <i v-show="model_panel_show" class="el-icon-caret-left"/>
-            <i v-show="!model_panel_show" class="el-icon-caret-right"/>
+            <i v-show="model_panel_show" class="el-icon-caret-left" />
+            <i v-show="!model_panel_show" class="el-icon-caret-right" />
           </el-button>
           <span style="margin-left:30px;">门诊病历消息</span>
         </aside>
@@ -77,22 +76,22 @@
             </h3>
             <el-form ref="medicalRecordForm" :model="medicalRecordForm" :rules="rules" label-width="100px">
               <el-form-item label="主诉" prop="mainInfo">
-                <el-input v-model="medicalRecordForm.mainInfo"/>
+                <el-input v-model="medicalRecordForm.mainInfo" />
               </el-form-item>
               <el-form-item label="现病史" prop="currentDisease">
-                <el-input v-model="medicalRecordForm.currentDisease"/>
+                <el-input v-model="medicalRecordForm.currentDisease" />
               </el-form-item>
               <el-form-item label="既往史" prop="pastDisease">
-                <el-input v-model="medicalRecordForm.pastDisease" type="textarea" :rows="4"/>
+                <el-input v-model="medicalRecordForm.pastDisease" type="textarea" :rows="4" />
               </el-form-item>
               <el-form-item label="体格检查" prop="physicalExam">
-                <el-input v-model="medicalRecordForm.physicalExam" type="textarea" :rows="4"/>
+                <el-input v-model="medicalRecordForm.physicalExam" type="textarea" :rows="4" />
               </el-form-item>
               <el-form-item label="辅助检查" prop="auxiliaryExam">
-                <el-input v-model="medicalRecordForm.auxiliaryExam" type="textarea" :rows="4"/>
+                <el-input v-model="medicalRecordForm.auxiliaryExam" type="textarea" :rows="4" />
               </el-form-item>
               <el-form-item label="处理意见" prop="opinion">
-                <el-input v-model="medicalRecordForm.opinion"/>
+                <el-input v-model="medicalRecordForm.opinion" />
               </el-form-item>
             </el-form>
             <!-- 诊断疾病列表，可动态新增和删除 -->
@@ -102,22 +101,25 @@
               <el-button @click="$refs.diseaseEditableTable.clear()">清空</el-button>
 
               <elx-editable ref="diseaseEditableTable" :data.sync="diseaseEditableTableData">
-                <elx-editable-column type="selection" width="55"/>
-                <elx-editable-column type="index" width="55"/>
+                <elx-editable-column type="selection" width="55" />
+                <elx-editable-column type="index" width="55" />
 
-                <elx-editable-column prop="disease.diseaseName" label="疾病名称"/>
-                <elx-editable-column prop="disease.diseaseIcd" label="疾病ICD编码"/>
+                <elx-editable-column prop="disease.diseaseName" label="疾病名称" />
+                <elx-editable-column prop="disease.diseaseIcd" label="疾病ICD编码" />
                 <!-- 需求太难，放弃主诊 -->
                 <!-- <elx-editable-column prop="mainDisease" label="主诊" :edit-render="{name: 'ElSelect', options: yesOrNoList}"></elx-editable-column> -->
                 <!-- <elx-editable-column prop="suspect" label="疑似" :edit-render="{name: 'ElSelect', options: yesOrNoList}"></elx-editable-column> -->
-                <elx-editable-column prop="suspect" label="疑似" :edit-render="{name: 'ElSwitch', type: 'visible'}"/>
-                <elx-editable-column prop="incidenceDate" label="发病日期"
-                                     :edit-render="{name: 'ElDatePicker', props: {type: 'date', format: 'yyyy/MM/dd'}}"/>
+                <elx-editable-column prop="suspect" label="疑似" :edit-render="{name: 'ElSwitch', type: 'visible'}" />
+                <elx-editable-column
+                  prop="incidenceDate"
+                  label="发病日期"
+                  :edit-render="{name: 'ElDatePicker', props: {type: 'date', format: 'yyyy/MM/dd'}}"
+                />
               </elx-editable>
             </div>
             <!-- 全局按钮 -->
             <div style="text-align:center;margin-top:40px;">
-              <el-button type="primary" @click="submitMedicalRecordForm('medicalRecordForm', 1)">提交</el-button>
+              <el-button type="primary" @click="submitMedicalRecordForm('medicalRecordForm', 5)">确诊</el-button>
               <el-button @click="resetForm('medicalRecordForm')">重置</el-button>
               <el-button @click="submitMedicalRecordForm('medicalRecordForm', 0)">暂存</el-button>
               <el-button @click="doPrint('medicalRecordForm')">预览</el-button>
@@ -130,25 +132,25 @@
       <el-dialog title="模板预览" :visible.sync="modelDialogVisible" width="30%">
         <el-form ref="modelForm" :model="modelForm" :rules="templateRules">
           <el-form-item label="模板名称" prop="templateName">
-            <el-input v-model="modelForm.templateName" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.templateName" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="主诉" prop="mainInfo">
-            <el-input v-model="modelForm.mainInfo" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.mainInfo" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="现病史" prop="currentDisease">
-            <el-input v-model="modelForm.currentDisease" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.currentDisease" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="既往史" prop="pastDisease">
-            <el-input v-model="modelForm.pastDisease" type="textarea" :rows="2" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.pastDisease" type="textarea" :rows="2" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="体格检查" prop="physicalExam">
-            <el-input v-model="modelForm.physicalExam" type="textarea" :rows="2" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.physicalExam" type="textarea" :rows="2" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="辅助检查" prop="auxiliaryExam">
-            <el-input v-model="modelForm.auxiliaryExam" type="textarea" :rows="2" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.auxiliaryExam" type="textarea" :rows="2" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="处理意见" prop="opinion">
-            <el-input v-model="modelForm.opinion" :disabled="modelDialogEditable"/>
+            <el-input v-model="modelForm.opinion" :disabled="modelDialogEditable" />
           </el-form-item>
           <el-form-item label="模板类别" prop="saveState">
             <el-select v-model="modelForm.saveState" placeholder="请选择" :disabled="modelDialogEditable">
@@ -156,8 +158,8 @@
                 v-for="item in templateCategory"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
-              </el-option>
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
         </el-form>
@@ -172,22 +174,22 @@
       <el-dialog title="历史病历" :visible.sync="patientHistoryDialogVisible" width="30%">
         <el-form ref="modelForm" :model="patientHistoryForm">
           <el-form-item label="主诉" prop="mainInfo">
-            <el-input v-model="patientHistoryForm.mainInfo" :disabled="true"/>
+            <el-input v-model="patientHistoryForm.mainInfo" :disabled="true" />
           </el-form-item>
           <el-form-item label="现病史" prop="currentDisease">
-            <el-input v-model="patientHistoryForm.currentDisease" :disabled="true"/>
+            <el-input v-model="patientHistoryForm.currentDisease" :disabled="true" />
           </el-form-item>
           <el-form-item label="既往史" prop="pastDisease">
-            <el-input v-model="patientHistoryForm.pastDisease" type="textarea" :rows="2" :disabled="true"/>
+            <el-input v-model="patientHistoryForm.pastDisease" type="textarea" :rows="2" :disabled="true" />
           </el-form-item>
           <el-form-item label="体格检查" prop="physicalExam">
-            <el-input v-model="patientHistoryForm.physicalExam" type="textarea" :rows="2" :disabled="true"/>
+            <el-input v-model="patientHistoryForm.physicalExam" type="textarea" :rows="2" :disabled="true" />
           </el-form-item>
           <el-form-item label="辅助检查" prop="auxiliaryExam">
-            <el-input v-model="patientHistoryForm.auxiliaryExam" type="textarea" :rows="2" :disabled="true"/>
+            <el-input v-model="patientHistoryForm.auxiliaryExam" type="textarea" :rows="2" :disabled="true" />
           </el-form-item>
           <el-form-item label="处理意见" prop="opinion">
-            <el-input v-model="patientHistoryForm.opinion" :disabled="true"/>
+            <el-input v-model="patientHistoryForm.opinion" :disabled="true" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -244,34 +246,38 @@
       </el-dialog>
     </el-container>
   </div>
-
 </template>
 
 <script>
-  import 'element-ui/lib/theme-chalk/base.css'
-  // collapse 展开折叠
-  import Vue from 'vue'
-  import ThemePicker from '@/components/ThemePicker'
-  // 可编辑table使用
-  // table used
-  import {Editable, EditableColumn} from 'vue-element-extends'
-  import 'vue-element-extends/lib/index.css'
-  import {fetchDiseaseCategory, fetchDiseaseList} from '../../api/basicInfo/diagnosis'
+import 'element-ui/lib/theme-chalk/base.css'
+// collapse 展开折叠
+import Vue from 'vue'
+// 可编辑table使用
+// table used
+import {
+  Editable,
+  EditableColumn
+} from 'vue-element-extends'
 
-  import {
-    saveMedicalRecord,
-    saveMedicalRecordAsTemplate,
-    selectMedicalRecordsTemplateList,
-    selectPatientHistoryMedicalRecords
-  } from '../../api/medicalRecord/medicalRecord'
+import 'vue-element-extends/lib/index.css'
+import {
+  fetchDiseaseCategory,
+  fetchDiseaseList
+} from '../../api/basicInfo/diagnosis'
+
+import {
+  saveMedicalRecord,
+  saveMedicalRecordAsTemplate,
+  selectMedicalRecordsTemplateList,
+  selectPatientHistoryMedicalRecords
+} from '../../api/medicalRecord/medicalRecord'
 
 Vue.use(Editable)
 Vue.use(EditableColumn)
 Vue.component('ElxEditable', Editable)
 Vue.component('ElxEditableColumn', EditableColumn)
 
-  export default {
-  components: { ThemePicker },
+export default {
   data() {
     return {
       // 当前医生Id
@@ -298,16 +304,16 @@ Vue.component('ElxEditableColumn', EditableColumn)
       },
       rules: {
         mainInfo: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ]
       },
       templateRules: {
         templateName: [
-          {required: true, message: '请输入', trigger: 'blur'}
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
         saveState: [
-          {required: true, message: '请选择', trigger: 'blur'}
-        ],
+          { required: true, message: '请选择', trigger: 'blur' }
+        ]
       },
       // 疾病 列表
       diseaseEditableTableData: [],
@@ -368,14 +374,14 @@ Vue.component('ElxEditableColumn', EditableColumn)
         saveState: ''
       },
       templateCategory: [{
-          value: '2',
-          label: '全院模板'
-        }, {
-          value: '3',
-          label: '科室模板'
-        }, {
-          value: '4',
-          label: '个人模板'
+        value: '2',
+        label: '全院模板'
+      }, {
+        value: '3',
+        label: '科室模板'
+      }, {
+        value: '4',
+        label: '个人模板'
       }],
       // 历史病历部分
       patientHistoryTable: [{}],
@@ -385,45 +391,45 @@ Vue.component('ElxEditableColumn', EditableColumn)
       commonDiseaseTags: [
         { name: '急性扁桃体炎', type: '', disease: {
           diseaseCategory: 18,
-          diseaseCode: "JXBTTY",
-          diseaseIcd: "J03.903",
+          diseaseCode: 'JXBTTY',
+          diseaseIcd: 'J03.903',
           diseaseId: 9018,
-          diseaseName: "急性扁桃体炎",
+          diseaseName: '急性扁桃体炎',
           valid: 1
-        } },
+        }},
         { name: '脓疱性痤疮', type: 'success', disease: {
           diseaseCategory: 48,
-          diseaseCode: "NPXCC",
-          diseaseIcd: "L70.002",
+          diseaseCode: 'NPXCC',
+          diseaseIcd: 'L70.002',
           diseaseId: 11609,
-          diseaseName: "脓疱性痤疮",
+          diseaseName: '脓疱性痤疮',
           valid: 1
-        } },
+        }},
         { name: '局部肥胖', type: 'info', disease: {
           diseaseCategory: 77,
-          diseaseCode: "JBFP",
-          diseaseIcd: "E65.X52",
+          diseaseCode: 'JBFP',
+          diseaseIcd: 'E65.X52',
           diseaseId: 5023,
-          diseaseName: "局部肥胖",
+          diseaseName: '局部肥胖',
           valid: 1
-        } },
+        }},
         { name: '发热，伴有寒战', type: 'warning', disease: {
           diseaseCategory: 73,
-          diseaseCode: "FRBYHZ",
-          diseaseIcd: "R50.051",
+          diseaseCode: 'FRBYHZ',
+          diseaseIcd: 'R50.051',
           diseaseId: 16325,
-          diseaseName: "发热，伴有寒战",
+          diseaseName: '发热，伴有寒战',
           valid: 1
-        } },
+        }},
         { name: '急性气管炎', type: 'danger', disease: {
           diseaseCategory: 283,
-          diseaseCode: "JXQGY",
-          diseaseIcd: "J04.101",
+          diseaseCode: 'JXQGY',
+          diseaseIcd: 'J04.101',
           diseaseId: 9032,
-          diseaseName: "急性气管炎",
+          diseaseName: '急性气管炎',
           valid: 1
-        } }
-      ],
+        }}
+      ]
     }
   },
   created() {
@@ -449,15 +455,21 @@ Vue.component('ElxEditableColumn', EditableColumn)
             this.medicalRecordForm.disease.push({
               'diseaseId': this.diseaseEditableTableData[i].disease.diseaseId,
               'mainDisease': 0,
-              'suspect': this.diseaseEditableTableData[i].suspect == true ? 1 : 0,
+              'suspect': this.diseaseEditableTableData[i].suspect === true ? 1 : 0,
               'incidenceDate': this.diseaseEditableTableData[i].incidenceDate
             })
           }
           console.log(this.medicalRecordForm)
-          saveMedicalRecord({'medicalRecordJson': this.medicalRecordForm}).then(response => {
-            if (choose == 1) {
+          saveMedicalRecord({ 'medicalRecordJson': this.medicalRecordForm }).then(response => {
+            if (choose === 1) {
               this.$message({
                 message: '提交数据成功！',
+                type: 'success'
+              })
+              // 跳转
+            } else if (choose === 5) {
+              this.$message({
+                message: '确诊数据成功！',
                 type: 'success'
               })
               // 跳转
@@ -491,15 +503,15 @@ Vue.component('ElxEditableColumn', EditableColumn)
     // 树形目录检测
     handleNodeClick(data) {
       console.log(data)
-      if (data.label == '全院') {
+      if (data.label === '全院') {
         this.medicalRecordTemplateTreeDirectory = 0
         return
       }
-      if (data.label == '科室') {
+      if (data.label === '科室') {
         this.medicalRecordTemplateTreeDirectory = 1
         return
       }
-      if (data.label == '个人') {
+      if (data.label === '个人') {
         this.medicalRecordTemplateTreeDirectory = 2
         return
       }
@@ -508,7 +520,7 @@ Vue.component('ElxEditableColumn', EditableColumn)
       // console.log(data.label)
       for (var i = 0; i < this.medicalRecordTemplateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
-        if (this.medicalRecordTemplateData[now][i].templateName == data.label) {
+        if (this.medicalRecordTemplateData[now][i].templateName === data.label) {
           this.modelDialogVisible = true
           this.modelDialogEditable = true
           this.modelForm = this.medicalRecordTemplateData[now][i]
@@ -540,7 +552,7 @@ Vue.component('ElxEditableColumn', EditableColumn)
         // console.log(response)
         this.medicalRecordTemplateData.push(response.data)
         for (var i = 0; i < response.data.length; ++i) {
-          this.medicalRecordTemplateTreeData[0].children.push({'label': response.data[i].templateName})
+          this.medicalRecordTemplateTreeData[0].children.push({ 'label': response.data[i].templateName })
         }
         // 科室
         query.templateScope = 3
@@ -548,7 +560,7 @@ Vue.component('ElxEditableColumn', EditableColumn)
           // console.log(response)
           this.medicalRecordTemplateData.push(response.data)
           for (var i = 0; i < response.data.length; ++i) {
-            this.medicalRecordTemplateTreeData[1].children.push({'label': response.data[i].templateName})
+            this.medicalRecordTemplateTreeData[1].children.push({ 'label': response.data[i].templateName })
           }
           // 个人
           query.templateScope = 4
@@ -556,7 +568,7 @@ Vue.component('ElxEditableColumn', EditableColumn)
             console.log(response)
             this.medicalRecordTemplateData.push(response.data)
             for (var i = 0; i < response.data.length; ++i) {
-              this.medicalRecordTemplateTreeData[2].children.push({'label': response.data[i].templateName})
+              this.medicalRecordTemplateTreeData[2].children.push({ 'label': response.data[i].templateName })
             }
           })
         })
@@ -628,19 +640,44 @@ Vue.component('ElxEditableColumn', EditableColumn)
     // 获取历史病历
     invokeSelectPatientHistoryMedicalRecords() {
       var query = {
-        'registrationId': this.registrationId,
+        'registrationId': this.registrationId
       }
       selectPatientHistoryMedicalRecords(query).then(response => {
         // console.log('selectPatientHistoryMedicalRecords response')
         // console.log(response)
         this.patientHistoryTable = JSON.parse(response.data)
-        for (var i = 0; i < this.patientHistoryTable.length; ++i) {
-          if (this.patientHistoryTable[i].mainInfo.length > 5) 
+        var i
+        for (i = 0; i < this.patientHistoryTable.length; ++i) {
+          if (this.patientHistoryTable[i].mainInfo.length > 5) {
             this.patientHistoryTable[i].abstract = this.patientHistoryTable[i].mainInfo.substring(0, 5)
-          else
+          } else {
             this.patientHistoryTable[i].abstract = this.patientHistoryTable[i].mainInfo
+          }
         }
+        console.log('selectPatientHistoryMedicalRecords response')
         console.log(this.patientHistoryTable)
+
+        // 将当前的放置到输入框中
+        for (i = 0; i < this.patientHistoryTable.length; ++i) {
+          if (this.patientHistoryTable[i].registrationId === this.registrationId) {
+            this.medicalRecordForm = this.patientHistoryTable[i]
+            this.diseaseEditableTableData = JSON.parse(this.medicalRecordForm.disease)
+
+            for (var j = 0; j < this.diseaseEditableTableData.length; ++j) {
+              // this.diseaseEditableTableData[j].disease = this.diseaseEditableTableData[j]
+              this.diseaseEditableTableData[j].disease = {
+                'diseaseId': this.diseaseEditableTableData[j].diseaseId,
+                'diseaseName': this.diseaseEditableTableData[j].diseaseName,
+                'diseaseIcd': this.diseaseEditableTableData[j].diseaseIcd
+              }
+              this.diseaseEditableTableData[j].suspect = this.diseaseEditableTableData[j].suspect === 1
+              this.diseaseEditableTableData[j].incidenceDate = new Date(this.diseaseEditableTableData[j].incidenceDate)
+            }
+            console.log('this disease table now : ')
+            console.log(this.diseaseEditableTableData)
+            break
+          }
+        }
       }).catch(error => {
         console.log('selectPatientHistoryMedicalRecords error: ')
         console.log(error)

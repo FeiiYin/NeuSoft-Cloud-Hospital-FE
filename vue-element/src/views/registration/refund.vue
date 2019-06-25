@@ -20,30 +20,10 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="2.2" style="padding:10px;">
-                统计时间从
-              </el-col>
-              <el-col :span="9" style="padding:5px;">
-                <el-date-picker v-model="startDate" type="date" placeholder="选择日期" style="width: 100%;" />
-              </el-col>
-              <!-- <el-col :span="4.5" style="padding:5px;">
-                <el-time-picker type="fixed-time" placeholder="选择时间" v-model="startTime" style="width: 100%;" ></el-time-picker>
-            </el-col> -->
-              <el-col :span="0.8" style="padding:10px;">
-                <span>到</span>
-              </el-col>
-              <el-col :span="9" style="padding:5px;">
-                <el-date-picker v-model="endDate" type="date" placeholder="选择日期" style="width: 100%;" />
-              </el-col>
-              <!-- <el-col :span="4.5" style="padding:5px;">
-                <el-time-picker type="fixed-time" placeholder="选择时间" v-model="startTime" style="width: 100%;"></el-time-picker>
-            </el-col> -->
-              <el-col :span="3" style="padding-left:30px;padding-top:5px;">
-                <el-button type="primary" style="float:right;" @click="invokeFetchChargeItemListWithRegistrationId">
-                  <svg-icon icon-class="component" />
-                  确认
-                </el-button>
-              </el-col>
+              <el-button type="primary" style="float:right;" @click="invokeFetchChargeItemListWithRegistrationId">
+                <svg-icon icon-class="component" />
+                确认
+              </el-button>
             </el-row>
           </el-header>
           <el-main style="margin-top:60px;">
@@ -69,23 +49,51 @@
               <el-table-column
                 prop="payState"
                 label="支付状态"
-                :filters="[{ text: '未付款', value: 0 }, { text: '已付款', value: 1 }]"
+                :filters="[{ text: '未付款', value: 0 }, { text: '已付款', value: 1 }, { text: '已退款', value: 2 }]"
                 :filter-method="filterPayState"
                 filter-placement="bottom-end"
               >
                 <template slot-scope="scope">
-                  <el-tag :type="scope.row.payState === 0 ? 'primary' : 'success'" close-transition>
-                    {{ scope.row.payState === 0 ? '未付款' : '已付款' }}
+                  <el-tag :type="scope.row.payState === 0 ? 'primary' : (scope.row.payState === 1 ? 'success' : 'danger')" close-transition>
+                    {{ scope.row.payState === 0 ? '未付款' : (scope.row.payState === 1 ? '已付款' : '已退款') }}
                   </el-tag>
                 </template>
               </el-table-column>
               <el-table-column prop="notGivenNums" label="未执行次数" />
+              <el-table-column prop="refund" label="退费">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    @click="refund(scope.$index, scope.row)"
+                  >
+                    退费
+                  </el-button>
+                </template>
+              </el-table-column>
             </el-table>
             <!-- 分页 -->
           </el-main>
         </el-container>
       </el-main>
     </el-container>
+    <el-dialog
+      title="退费"
+      :visible.sync="refundDialogVisible"
+      width="30%"
+    >
+      <el-form ref="refundForm" :model="refundForm" label-width="100px">
+        <el-form-item label="退号名称">
+          <el-input v-model="refundForm.refundEntryName" :disabled="true" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="退号数量">
+          <el-input-number v-model="refundForm.refundNumber" width="100%" :min="1" :max="refundForm.notGivenNums" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="refundDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="invokeRefund">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -110,6 +118,10 @@ import {
   selectHistoryPrescription
 } from '../../api/medicalRecord/prescription'
 
+import {
+  refund
+} from '../../api/registrationCharge/charge'
+
 export default {
   data() {
     return {
@@ -124,7 +136,16 @@ export default {
       // 分页
       currentPage: 1,
       pageSize: 50,
-      totalNumber: 0
+      totalNumber: 0,
+      // 退费
+      refundDialogVisible: false,
+      refundForm: {
+        refundNumber: 1,
+        refundEntryId: 0,
+        refundEntryName: '',
+        prescriptionBool: 0,
+        notGivenNums: 0
+      }
     }
   },
   created() {
@@ -133,15 +154,42 @@ export default {
   methods: {
     // 退费
     refund(index, row) {
+      if (row.payState === 0) {
+        this.$message.error('未付款，不能退费，错误！')
+        return
+      }
       if (row.notGivenNums === 0) {
         this.$message.error('无可退费数量，错误！')
         return
       }
-      alert('退费 TODO')
-      return
+      console.log(row)
+      this.refundDialogVisible = true
+      this.refundForm = {
+        'refundNumber': row.notGivenNums,
+        'refundEntryId': row.entryId,
+        'refundEntryName': row.nameZh,
+        'prescriptionBool': row.departmentName === '药房' ? 1 : 0,
+        'notGivenNums': row.notGivenNums
+      }
       // console.log('>>>>>>')
       // console.log(row)
       // console.log(index)
+    },
+    invokeRefund() {
+      this.refundDialogVisible = false
+      var query = {
+        'refundJson': JSON.stringify([{
+          'entryType': this.refundForm.prescriptionBool,
+          'entryId': this.refundForm.refundEntryId,
+          'refundNums': this.refundForm.refundNumber
+        }])
+      }
+      refund(query).then(response => {
+        this.$message({
+          message: this.refundForm.refundEntryName + '退费成功!',
+          type: 'success'
+        })
+      })
     },
     invokeFetchDepartmentList() {
       var query = { 'currentPage': 1, 'pageSize': 400 }
@@ -168,7 +216,8 @@ export default {
                 'totalPrice': tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums,
                 'departmentName': this.departmentList[tempList[i].chargeEntryList[j].chargeItem.departmentId - 1].departmentName,
                 'payState': tempList[i].chargeEntryList[j].payState,
-                'notGivenNums': tempList[i].chargeEntryList[j].notGivenNums
+                'notGivenNums': tempList[i].chargeEntryList[j].notGivenNums,
+                'entryId': tempList[i].chargeEntryList[j].chargeEntryId
               })
               this.disposalMoney += tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums
             }
@@ -196,7 +245,8 @@ export default {
                 'totalPrice': tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums,
                 'departmentName': this.departmentList[tempList[i].chargeEntryList[j].chargeItem.departmentId - 1].departmentName,
                 'payState': tempList[i].chargeEntryList[j].payState,
-                'notGivenNums': tempList[i].chargeEntryList[j].notGivenNums
+                'notGivenNums': tempList[i].chargeEntryList[j].notGivenNums,
+                'entryId': tempList[i].chargeEntryList[j].chargeEntryId
               })
               this.examineMoney += tempList[i].chargeEntryList[j].chargeItem.price * tempList[i].chargeEntryList[j].nums
             }
@@ -225,7 +275,8 @@ export default {
                 'totalPrice': tempList[i].prescriptionEntryList[j].medicine.medicinePrice * tempList[i].prescriptionEntryList[j].nums,
                 'departmentName': '药房',
                 'payState': tempList[i].prescriptionEntryList[j].payState,
-                'notGivenNums': tempList[i].prescriptionEntryList[j].notGivenNums
+                'notGivenNums': tempList[i].prescriptionEntryList[j].notGivenNums,
+                'entryId': tempList[i].prescriptionEntryList[j].prescriptionEntryId
               })
               this.prescriptionMoney += tempList[i].prescriptionEntryList[j].medicine.medicinePrice * tempList[i].prescriptionEntryList[j].nums
             }
@@ -245,6 +296,7 @@ export default {
         this.$message.error('结束日期应当大于开始日期，错误！')
         return
       }
+      this.chargeFormTableList = []
       this.invokeSelectHistoryDisposal()
       this.invokeSelectHistoryExam()
       this.invokeSelectHistoryPrescription()
@@ -272,13 +324,15 @@ export default {
           'S': this.getMilliseconds() // 毫秒
         }
         if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
-        for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))) }
+        for (const k in o) {
+          if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+        }
         return fmt
       }
       var query
       if (this.startDate === '' || this.endDate === '' ||
-        this.startDate == null ||
-        this.endDate == null) {
+          this.startDate == null ||
+          this.endDate == null) {
         query = {
           'currentPage': this.currentPage,
           'pageSize': this.pageSize,
@@ -306,7 +360,9 @@ export default {
             this.chargeFormTableList[i].valid = '未缴费'
           }
           for (var j = 0; j < this.departmentList.length; ++j) {
-            if (this.departmentList[j].departmentId === this.chargeFormTableList[i].departmentId) { this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName }
+            if (this.departmentList[j].departmentId === this.chargeFormTableList[i].departmentId) {
+              this.chargeFormTableList[i].departmentName = this.departmentList[j].departmentName
+            }
           }
         }
         this.totalNumber = response.data.total
@@ -345,51 +401,59 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.drawer-container {
-  padding: 24px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-wrap: break-word;
-
-  .drawer-title {
-    margin-bottom: 12px;
-    color: rgba(0, 0, 0, .85);
+  .drawer-container {
+    padding: 24px;
     font-size: 14px;
-    line-height: 22px;
+    line-height: 1.5;
+    word-wrap: break-word;
+
+    .drawer-title {
+      margin-bottom: 12px;
+      color: rgba(0, 0, 0, .85);
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .drawer-item {
+      color: rgba(0, 0, 0, .65);
+      font-size: 14px;
+      padding: 12px 0;
+    }
+
+    .drawer-switch {
+      float: right
+    }
   }
 
-  .drawer-item {
-    color: rgba(0, 0, 0, .65);
-    font-size: 14px;
-    padding: 12px 0;
-  }
-
-  .drawer-switch {
-    float: right
-  }
-}
-.el-row {
+  .el-row {
     margin-bottom: 20px;
+
     &:last-child {
       margin-bottom: 0;
     }
   }
+
   .el-col {
     border-radius: 4px;
   }
+
   .bg-purple-dark {
     background: #99a9bf;
   }
+
   .bg-purple {
     background: #d3dce6;
   }
+
   .bg-purple-light {
     background: #e5e9f2;
   }
+
   .grid-content {
     border-radius: 4px;
     min-height: 36px;
   }
+
   .row-bg {
     padding: 10px 0;
     background-color: #f9fafc;

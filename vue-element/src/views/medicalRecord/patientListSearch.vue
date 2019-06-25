@@ -7,13 +7,12 @@
         刷新
       </el-button>
     </aside>
-    
+
     <div class="tab-container">
       <el-tabs v-model="activeName" style="margin-top:15px;" type="border-card">
         <el-tab-pane v-for="item in tabMapOptions" :key="item.key" :label="item.label" :name="item.key">
           <keep-alive>
-            <tabPane ref="tabPane" v-if="activeName==item.key" :type="item.key">
-            </tabPane>
+            <tabPane v-if="activeName==item.key" ref="tabPane" :type="item.key" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
@@ -27,23 +26,20 @@ import tabPane from './components/TabPane'
 export default {
   components: { tabPane },
   data() {
-    return {      
+    return {
       tabMapOptions: [
         { label: '全部患者', key: '0' },
         { label: '个人患者', key: '1' },
         { label: '科室患者', key: '2' },
-        { label: '个人已诊患者', key: '3' },
+        { label: '个人已诊患者', key: '3' }
       ],
       activeName: '1',
-      refreshListener: false,
+      refreshListener: false
     }
   },
-  methods: {
-    refreshTabTable() {
-      console.log(this.$refs.tabPane)
-      this.$refs.tabPane[0].getList()
-      // this.refreshListener = true
-      // this.$router.push(`${this.$route.path}?tab=${this.activeName}&refreshListener=true`)
+  watch: {
+    activeName(val) {
+      this.$router.push(`${this.$route.path}?tab=${val}`)
     }
   },
   created() {
@@ -53,11 +49,14 @@ export default {
       this.activeName = tab
     }
   },
-  watch: {
-    activeName(val) {
-      this.$router.push(`${this.$route.path}?tab=${val}`)
+  methods: {
+    refreshTabTable() {
+      console.log(this.$refs.tabPane)
+      this.$refs.tabPane[0].getList()
+      // this.refreshListener = true
+      // this.$router.push(`${this.$route.path}?tab=${this.activeName}&refreshListener=true`)
     }
-  },
+  }
 }
 </script>
 

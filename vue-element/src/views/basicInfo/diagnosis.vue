@@ -25,7 +25,7 @@
                 <el-table-column
                   prop="diseaseName"
                   label="疾病目录表"
-                ></el-table-column>
+                />
               </el-table>
             </template>
           </template>
@@ -37,7 +37,7 @@
           <aside>疾病目录列表</aside>
 
           <div style="margin-top: 20px; margin-left: 20px;">
-            <el-button @click="toggleSelection()">取消选择</el-button>
+            <el-button @click="toggleSelection()">取消所选</el-button>
             <!--新增疾病信息的按钮-->
             <el-button @click="dialogFormVisible = true">新增</el-button>
             <!--新增疾病信息的对话框-->
@@ -73,10 +73,10 @@
             </el-dialog>
 
             <!--编辑疾病信息框-->
-            <el-dialog title="编辑" :visible.sync="editDialogFormVisible" >
+            <el-dialog title="编辑" :visible.sync="editDialogFormVisible">
 
               <!-- 编辑疾病信息的表单 -->
-              <el-form :model="editDiseaseForm" :rules="rules" ref="editDiseaseForm">
+              <el-form ref="editDiseaseForm" :model="editDiseaseForm" :rules="rules">
                 <el-form-item label="疾病编码" :label-width="formLabelWidth" prop="diseaseIcd">
                   <el-input v-model="editDiseaseForm.diseaseIcd" auto-complete="off" />
                 </el-form-item>
@@ -118,12 +118,12 @@
           >
 
             <el-table-column type="selection" width="55" />
-            <el-table-colimn prop="diseaseId" v-if="1 === 0">
+            <el-table-colimn v-if="1 === 0" prop="diseaseId">
               <template slot-scope="scope">
                 {{ scope.row.diseaseId }}
               </template>
             </el-table-colimn>
-            <el-table-colimn prop="diseaseCategory" v-if="1 === 0">
+            <el-table-colimn v-if="1 === 0" prop="diseaseCategory">
               <template slot-scope="scope">
                 {{ scope.row.diseaseCategory }}
               </template>

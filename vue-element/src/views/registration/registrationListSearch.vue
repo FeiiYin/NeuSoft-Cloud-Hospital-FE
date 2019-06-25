@@ -8,33 +8,43 @@
       </el-button>
     </aside>
     <div>
-      <el-table :data="registrationList" style="width: 100%" v-loading="registrationListLoading">
-        <el-table-column prop="registrationDate" label="挂号日期" sortable>
-        </el-table-column>
-        <el-table-column prop="medicalRecordId" label="病历号">
-        </el-table-column>
-        <el-table-column prop="patientName" label="姓名">
-        </el-table-column>
-        <el-table-column prop="gender" label="性别">
-        </el-table-column>
-        <el-table-column prop="identityCardNo" label="身份证号" width="200">
-        </el-table-column>
-        <el-table-column prop="departmentId" label="科室">
-        </el-table-column>
-        <el-table-column prop="doctorId" label="医生">
-        </el-table-column>
+      <el-table v-loading="registrationListLoading" :data="registrationList" style="width: 100%">
+        <el-table-column prop="registrationDate" label="挂号日期" sortable />
+        <el-table-column prop="medicalRecordId" label="病历号" />
+        <el-table-column prop="patientName" label="姓名" />
+        <el-table-column prop="gender" label="性别" />
+        <el-table-column prop="identityCardNo" label="身份证号" width="200" />
+        <el-table-column prop="departmentId" label="科室" />
+        <el-table-column prop="doctorId" label="医生" />
         <el-table-column prop="isVisited" label="是否已诊">
+          <template slot-scope="scope">
+            {{ scope.row.isVisited === '0' ? '未诊' : '已诊' }}
+          </template>
         </el-table-column>
-        <el-table-column prop="totalCharge" label="实收费用">
+        <el-table-column prop="totalCharge" label="实收费用" />
+        <el-table-column prop="withdraw" label="退号">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="withdraw(scope.$index, scope.row)"
+            >
+              退号
+            </el-button>
+          </template>
         </el-table-column>
-        <el-table-column prop="valid" label="状态" fixed
-          :filters="[{ text: '正常', value: '正常' }, { text: '已退号', value: '已退号' }]"
+        <el-table-column
+          prop="registrationStatus"
+          label="状态"
+          fixed
+          :filters="[{ text: '待诊', value: '1' }, { text: '已退号', value: '2' }, { text: '诊毕', value: '0' }]"
           :filter-method="filterTag"
-          filter-placement="bottom-end">
+          filter-placement="bottom-end"
+        >
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.valid === '已退号' ? 'primary' : 'success'"
-              close-transition>{{scope.row.valid}}
+              :type="scope.row.registrationStatus === '2' ? 'danger' : (scope.row.registrationStatus === '1' ? 'primary' : 'success')"
+              close-transition
+            >{{ scope.row.registrationStatus === '2' ? '已退号' : (scope.row.registrationStatus === '1' ? '待诊' : '诊毕') }}
             </el-tag>
           </template>
         </el-table-column>
@@ -57,8 +67,12 @@
 <script>
 
 import {
-  fetchRegistrationList,
+  fetchRegistrationList
 } from '../../api/registrationCharge/registrationListSearch'
+
+import {
+  withdrawRegistration
+} from '../../api/registrationCharge/charge'
 
 export default {
   data() {
@@ -73,7 +87,7 @@ export default {
           isVisited: '1',
           totalCharge: '1',
           valid: '正常',
-          gender: '',
+          gender: ''
 
         },
         {
@@ -84,21 +98,57 @@ export default {
           isVisited: '1',
           totalCharge: '1',
           valid: '已退号'
-        },
+        }
       ],
       registrationListLoading: false,
       // 分页
       currentPage: 1, // 当前页码
       pageSize: 50, // 页码大小
-      totalNumber: 0,
+      totalNumber: 0
     }
   },
+  created() {
+    this.queryRegistrationListWithPage()
+  },
   methods: {
+    // 退号
+    withdraw(index, row) {
+      if (row.isVisited === '1') {
+        this.$message.error('医生已经诊断，不能退号，错误！')
+        return
+      }
+      if (row.registrationStatus === '2') {
+        this.$message.error('已经退号，错误！')
+        return
+      }
+      if (row.registrationStatus === '0') {
+        this.$message.error('已经诊断完毕，错误！')
+        return
+      }
+      this.$confirm('退号, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        withdrawRegistration({ 'registrationId': row.registrationId }).then(response => {
+          this.$message({
+            type: 'success',
+            message: '挂号' + row.registrationId + '号退号成功!'
+          })
+          this.queryRegistrationListWithPage()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
     formatter(row, column) {
-      return row.address;
+      return row.address
     },
     filterTag(value, row) {
-      return row.valid === value;
+      return row.registrationStatus === value
     },
     // 分页
     handleSizeChange(val) {
@@ -112,7 +162,7 @@ export default {
       this.queryRegistrationListWithPage()
     },
     queryRegistrationListWithPage() {
-      this.registrationListLoading = true;
+      this.registrationListLoading = true
       var query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
       console.log(query)
       fetchRegistrationList(query).then(response => { // 然后获取科室信息列表
@@ -122,29 +172,17 @@ export default {
         this.totalNumber = response.data.total
         for (var i = 0; i < this.registrationList.length; ++i) {
           this.registrationList[i].registrationDate = this.registrationList[i].registrationDate.substring(0, 10)
-          this.registrationList[i].valid = this.registrationList[i].valid == 1 ? "正常" : "已退号"
+          this.registrationList[i].valid = this.registrationList[i].valid === 1 ? '正常' : '已退号'
           this.registrationList[i].departmentId = response.data.list[i].reserve1
           this.registrationList[i].doctorId = response.data.list[i].reserve2
-          this.registrationList[i].medicalRecordId = response.data.list[i].registrationId
+          this.registrationList[i].registrationId = response.data.list[i].registrationId
         }
-        // for (var i = 0; i < response.data.length; ++i) {
-        //   this.registrationList.registrationDate = response.data[i].registrationDate
-        //   this.registrationList.medicalRecordId = response.data[i].medicalRecordId
-        //   this.registrationList.patientName = response.data[i].patientName
-        //   this.registrationList.identityCardNo = response.data[i].identityCardNo
-        //   this.registrationList.isVisited = response.data[i].isVisited
-        //   this.registrationList.totalCharge = response.data[i].totalCharge
-        //   this.registrationList.valid = response.data[i].valid
-        // }
         this.registrationListLoading = false
       }).catch(error => {
         console.log('fetchRegistrationList error: ')
         console.log(error)
       })
-    },
-  },
-  created() {
-    this.queryRegistrationListWithPage()
-  },
+    }
+  }
 }
 </script>

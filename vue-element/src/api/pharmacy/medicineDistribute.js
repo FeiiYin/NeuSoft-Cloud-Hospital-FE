@@ -23,7 +23,7 @@ export function selectPatient(query) {
  * @param registrationId 挂号单编号
  * @return 药品列表，json 字符串
  */
-export function selectChargeFormList(query) {
+export function selectChargeEntryList(query) {
   return request({
     url: '/medicine_distribute/list_medicine',
     method: 'get',
@@ -36,7 +36,7 @@ export function selectChargeFormList(query) {
 /**
  * 发放药品
  *
- * @param chargeFormIdList 被发放药品的编号列表
+ * @param chargeEntryIdList 被发放药品的编号列表
  * @return 操作结果
  */
 export function medicineDistribute(query) {
@@ -63,6 +63,41 @@ export function medicineDistribute(query) {
 export function medicineReturn(query) {
   return request({
     url: '/medicine_distribute/return',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 按挂号单编号获取药品项列表
+ *
+ * @param registrationId 挂号单编号
+ * @return 药品项列表，json 字符串
+ */
+export function selectPrescriptionEntryList(query) {
+  return request({
+    url: '/medicine_distribute/list_prescription_entry',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 交付药品项目
+ *
+ * @param prescriptionEntryListJson 药品项目信息，json 数组
+ * @return 操作结果
+ * prescriptionEntryListJson 数组中每个元素包含的属性：
+ * - prescriptionEntryId 药品项编号
+ * - executionNums       此次消耗的药品数
+ */
+export function prescriptionEntryDelivery(query) {
+  return request({
+    url: '/medicine_distribute/apply',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',

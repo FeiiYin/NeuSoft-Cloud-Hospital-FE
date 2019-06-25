@@ -41,9 +41,16 @@ export function selectChargeItemByDepartmentId(departmentId) {
  * @param registrationId 挂号编号
  * @param itemCount      收费项目计数
  * @param collectorId    收费员编号
- * @param unitPrice    收费员编号
- * @param doctorAdvice    收费员编号
+ * @param doctorAdvice   医嘱
  * @return 添加成功 true；添加失败 false
+ *
+ * @RequestParam("chargeItemId") Integer chargeItemId,
+ * @RequestParam("registrationId") Integer registrationId,
+ * @RequestParam("itemCount") Integer itemCount,
+ * @RequestParam("collectorId") Integer collectorId,
+ * @RequestParam("doctorAdvice") String doctorAdvice,
+ * @RequestParam(value = "examinationId", required = false) Integer examinationId,
+ * @RequestParam(value = "chargeFormId", required = false) Integer chargeFormId
  */
 export function addChargeItemToForm(query) {
   console.log('addChargeItemToForm')

@@ -43,3 +43,59 @@ export function selectExaminationItemListInChargeItemByDepartmentId(query) {
   })
 }
 
+/**
+ * 按挂号单编号获取历史检查项目（所有检查状态）
+ *
+ * @param registrationId 挂号单编号
+ * @return 历史检查项目，json 数组
+ */
+export function selectHistoryExam(query) {
+  console.log('selectHistoryExam query: ')
+  console.log(query)
+  return request({
+    url: '/exam/history_exam',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 删除检查项目
+ * 由医生执行
+ * 只有未支付的项目可删除
+ *
+ * @param chargeEntryIdList 删除的检查项目编号列表
+ * @return 操作结果
+ */
+export function deleteUnpaidChargeEntry(query) {
+  console.log('deleteUnpaidChargeEntry query: ')
+  console.log(query)
+  return request({
+    url: '/exam/delete_exam_entry',
+    method: 'delete',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 删除检查单
+ * 这将删除检查单上的所有检查项目
+ *
+ * @param examinationIdList 检查单编号列表
+ * @return 操作结果
+ */
+export function deleteExam(query) {
+  console.log('deleteExam query: ')
+  console.log(query)
+  return request({
+    url: '/exam/delete_exam',
+    method: 'delete',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}

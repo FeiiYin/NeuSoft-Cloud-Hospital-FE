@@ -157,6 +157,12 @@ export const constantRoutes = [
         meta: { title: '收费', noCache: true }
       },
       {
+        path: 'refund',
+        component: () => import('@/views/registration/refund'),
+        name: 'refund',
+        meta: { title: '退费', noCache: true }
+      },
+      {
         path: 'patientChargeSearch',
         component: () => import('@/views/registration/patientChargeSearch'),
         name: 'patientChargeSearch',
@@ -218,18 +224,6 @@ export const constantRoutes = [
         meta: { title: '处置管理', noCache: true }
       },
       {
-        path: 'medicine',
-        component: () => import('@/views/medicalRecord/medicine'),
-        name: 'medicalMedicine',
-        meta: { title: '门诊诊断药品处理', noCache: true }
-      },
-      {
-        path: 'test',
-        component: () => import('@/views/medicalRecord/test'),
-        name: 'medicalTest',
-        meta: { title: '测试', noCache: true }
-      },
-      {
         path: 'patientDetail',
         component: () => import('@/views/medicalRecord/patientDetail'),
         name: 'patientDetail',
@@ -255,7 +249,36 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/techWorkstation',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'techWorkstation',
+    meta: {
+      title: '门诊医技工作站',
+      icon: 'lock'
+    },
+    children: [
+      {
+        path: 'examineIndex',
+        component: () => import('@/views/techWorkstation/examineIndex'),
+        name: 'examineIndex',
+        meta: { title: '检查登记', noCache: true }
+      },
+      {
+        path: 'examineResult',
+        component: () => import('@/views/techWorkstation/examineResult'),
+        name: 'examineResult',
+        meta: { title: '检查结果录入', noCache: true }
+      },
+      {
+        path: 'disposalIndex',
+        component: () => import('@/views/techWorkstation/disposalIndex'),
+        name: 'disposalIndex',
+        meta: { title: '处置结果登记', noCache: true }
+      }
+    ]
+  },
   {
     path: '/pharmacy',
     component: Layout,

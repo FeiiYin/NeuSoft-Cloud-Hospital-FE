@@ -198,6 +198,12 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6">
+            <h4 style="margin-bottom:2px;">预约日期</h4>
+            <el-form-item>
+              <el-date-picker v-model="registrationForm.visitDate" type="date" placeholder="选择日期" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <h4 style="margin-bottom:2px;">当前收费员Id</h4>
             <el-form-item>
               <el-input v-model="registrationForm.collectorId" :disabled="true" />
@@ -206,7 +212,7 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">应收金额</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.totalCharge" :disabled="true"/>
+              <el-input v-model="registrationForm.totalCharge" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -221,14 +227,14 @@
 </template>
 
 <script>
-  import {
-    fetchCurrentAvailableDoctor,
-    fetchDepartment,
-    fetchPatientInfoByIdentityCardNo,
-    register
-  } from '../../api/registrationCharge/registration'
+import {
+  fetchCurrentAvailableDoctor,
+  fetchDepartment,
+  fetchPatientInfoByIdentityCardNo,
+  register
+} from '../../api/registrationCharge/registration'
 
-  export default {
+export default {
   data() {
     return {
       // 病历本是否需要
@@ -275,31 +281,31 @@
           { min: 18, max: 18, message: '长度应为 18 个字符', trigger: 'blur' }
         ],
         patientName: [
-          {required: true, message: '请输入用户姓名', trigger: 'blur'}
+          { required: true, message: '请输入用户姓名', trigger: 'blur' }
         ],
         registrationCategory: [
-          {required: true, message: '请输入挂号类型', trigger: 'blur'}
+          { required: true, message: '请输入挂号类型', trigger: 'blur' }
         ],
         medicalCategory: [
-          {required: true, message: '请输入医疗类别', trigger: 'blur'}
+          { required: true, message: '请输入医疗类别', trigger: 'blur' }
         ],
         settleAccountsCategory: [
-          {required: true, message: '请输入结算类别', trigger: 'blur'}
+          { required: true, message: '请输入结算类别', trigger: 'blur' }
         ],
         registrationDate: [
-          {required: true, message: '请输入挂号日期', trigger: 'blur'}
+          { required: true, message: '请输入挂号日期', trigger: 'blur' }
         ],
         registrationSource: [
-          {required: true, message: '请输入挂号来源', trigger: 'blur'}
+          { required: true, message: '请输入挂号来源', trigger: 'blur' }
         ],
         departmentId: [
-          {required: true, message: '请输入挂号科室', trigger: 'blur'}
+          { required: true, message: '请输入挂号科室', trigger: 'blur' }
         ],
         doctorId: [
-          {required: true, message: '请输入看诊医生', trigger: 'blur'}
+          { required: true, message: '请输入看诊医生', trigger: 'blur' }
         ],
         age: [
-          {required: true, message: '请输入年龄', trigger: 'blur'}
+          { required: true, message: '请输入年龄', trigger: 'blur' }
         ]
       }
     }
@@ -314,6 +320,8 @@
   },
   created() {
     this.invokeFetchDepartment()
+    this.registrationForm.visitDate = new Date()
+    this.registrationForm.registrationDate = this.registrationForm.visitDate
   },
   methods: {
     // 根据身份证号搜索个人信息
@@ -350,7 +358,7 @@
     // 科室选择改变，医生列表改变，可以选择
     departmentSelectionChange(departmentIdOfDoctor) {
       this.boolDepartmentSelectionChange = false
-      this.query = {'departmentId': departmentIdOfDoctor}
+      this.query = { 'departmentId': departmentIdOfDoctor }
       fetchCurrentAvailableDoctor(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchCurrentAvailableDoctor response: ')
         console.log(response)
@@ -366,7 +374,8 @@
         if (valid) {
           console.log('register valid passed ')
           // date 格式化
-          Date.prototype.Format = function (fmt) {
+          // eslint-disable-next-line no-extend-native
+          Date.prototype.Format = function(fmt) {
             const o = {
               'M+': this.getMonth() + 1, // 月份
               'd+': this.getDate(), // 日
@@ -378,7 +387,7 @@
             }
             if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
             for (const k in o) {
-              if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+              if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
             }
             return fmt
           }
@@ -394,7 +403,7 @@
             'medicalCategory': this.registrationForm.medicalCategory,
             'identityCardNo': this.registrationForm.identityCardNo,
             'registrationStatus': this.registrationForm.registrationStatus,
-            // 'visitDate': this.registrationForm.visitDate,
+            'visitDate': this.registrationForm.visitDate,
             // 1998-07-29
             'registrationDate': this.registrationForm.registrationDate.Format('yyyy-MM-dd'),
             'departmentId': this.registrationForm.departmentId,
@@ -415,7 +424,7 @@
               type: 'success'
             })
             this.resetForm()
-            const { fullPath } = this.$route
+            // const { fullPath } = this.$route
             this.$router.replace({
               path: '/redirect' + '/registration/registrationListSearch'
             })
