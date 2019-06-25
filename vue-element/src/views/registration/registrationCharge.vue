@@ -332,13 +332,13 @@ export default {
   },
   computed: {
     totalListMoney: function() {
-      return parseFloat(this.examineMoney + this.disposalMoney + this.prescriptionMoney).toFixed(2)
+      return this.examineMoney + this.disposalMoney + this.prescriptionMoney
     }
   },
   watch: {
     'charge_form.actual_charge': function() {
       if (this.charge_form.actual_charge > this.charge_form.should_charge) {
-        this.charge_form.actual_exchange = parseFloat(this.charge_form.actual_charge - this.charge_form.should_charge).toFixed(2)
+        this.charge_form.actual_exchange = this.charge_form.actual_charge - this.charge_form.should_charge
       } else {
         this.charge_form.actual_exchange = 0.00
       }
@@ -606,7 +606,7 @@ export default {
     // 付费
     openChargeFormDialog() {
       this.dialogFormVisible = true
-      this.charge_form.should_charge = parseFloat(this.totalListMoney).toFixed(2)
+      this.charge_form.should_charge = this.totalListMoney
     },
     invokeChargeSubmit() {
       if (this.charge_form.should_charge <= 0.0) {

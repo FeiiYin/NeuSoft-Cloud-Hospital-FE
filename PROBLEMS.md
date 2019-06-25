@@ -28,7 +28,8 @@
 
   RangeError: Maximum call stack size exceeded
   
-  
++ 测试遇到的问题
+ 
   小数显示金额 too hard
   挂号未保定应付金额 done
   成功改完成 done
@@ -37,4 +38,9 @@
   数量非正数的检测 done
   registrationCharge 挂号类别不能正常显示 done
   检查项目插入出现更多的 done
-  checkOut少传参数
+  checkOut少传参数 done
+ 
+  选择挂号类型 快速计算金额
+  模板类别错误
+  添加时去除重复元素
+  实际找零错误
