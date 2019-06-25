@@ -394,6 +394,7 @@ export default {
       selectHistoryExam({ 'registrationId': this.registrationId }).then(response => {
         console.log('selectHistoryExam response')
         var tempList = JSON.parse(response.data)
+        console.log(tempList)
         this.examineMoney = 0
         var i
         for (i = 0; i < tempList.length; ++i) {
@@ -473,9 +474,6 @@ export default {
           this.registrationForm.doctorId = response.data.reserve2
           this.registrationId = this.registrationForm.registrationId
           // this.invokeFetchChargeItemListWithRegistrationId()
-          this.invokeSelectHistoryDisposal()
-          this.invokeSelectHistoryExam()
-          this.invokeSelectHistoryPrescription()
         }
       }).catch(error => {
         console.log('selectRegistrationByPrimaryKey error: ')

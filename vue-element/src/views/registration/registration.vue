@@ -196,7 +196,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <h4 style="margin-bottom:2px;">当前收费员Id</h4>
+            <h4 style="margin-bottom:2px;">当前收费员ID</h4>
             <el-form-item>
               <el-input v-model="registrationForm.collectorId" :disabled="true" />
             </el-form-item>

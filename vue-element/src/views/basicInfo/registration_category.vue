@@ -108,8 +108,8 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="editRegistrationCategoryDataDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitUpdate('editRegistrationCategoryForm')">确定修改</el-button>
+          <el-button @click="editRegistrationCategoryDataDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitUpdate('editRegistrationCategoryForm')">提交</el-button>
         </span>
       </el-dialog>
     </div>
