@@ -307,8 +307,8 @@ export default {
       // 交费
       chargeDialogVisible: false,
       charge_form: {
-        should_charge: 0.00,
-        actual_charge: 0.00
+        should_charge: 0,
+        actual_charge: 0
       },
       value: '',
       // 选择支付方式
@@ -367,7 +367,7 @@ export default {
   computed: {
     actual_exchange: function() {
       if (this.charge_form.actual_charge - this.charge_form.should_charge > 0) {
-        return parseFloat(this.charge_form.actual_charge - this.charge_form.should_charge).toFixed(2)
+        return this.charge_form.actual_charge - this.charge_form.should_charge
       } else {
         return 0
       }
@@ -533,8 +533,8 @@ export default {
       }
       registrationFee({ 'registrationCategoryId': this.registrationForm.registrationCategoryId }).then(response => {
         // console.log(response)
-        this.charge_form.should_charge = parseFloat(response.data)
-        this.charge_form.actual_charge = 0.00
+        this.charge_form.should_charge = response.data
+        this.charge_form.actual_charge = 0
         this.chargeDialogVisible = true
       })
     },
