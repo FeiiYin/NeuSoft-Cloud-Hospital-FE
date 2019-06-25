@@ -15,7 +15,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="6">
-        <el-button @click="toggleSelection()">取消</el-button>
+        <el-button @click="toggleSelection()">取消所选</el-button>
         <el-button @click="addAccountDataDialogVisible = true">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>

@@ -6,7 +6,7 @@
 
     <el-row style="margin-bottom: 20px">
       <el-col :span="6">
-        <el-button @click="toggleSelection()">取消</el-button>
+        <el-button @click="toggleSelection()">取消所选</el-button>
         <el-button @click="addSettlementCategoryDataDialogVisible = true">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox">删除</el-button>
       </el-col>
