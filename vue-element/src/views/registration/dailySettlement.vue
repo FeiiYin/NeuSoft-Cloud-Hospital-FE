@@ -116,10 +116,11 @@
 
 <script>
 import {
-  selectDailySettlementList,
+  selectAllDailySettlementList,
   generateDailySettlement,
   selectDailySettlementDetail,
-  dailySettlementDocument
+  dailySettlementDocument,
+  selectAllDailySettlementList
 } from '../../api/registrationCharge/dailySettlement'
 
 export default {
@@ -192,14 +193,14 @@ export default {
       this.historyDailyCheckTableCurrentPage = val
       this.invokeSelectHistory()
     },
-    // selectDailySettlementList
+    // selectAllDailySettlementList
     invokeSelectHistory() {
       var query = {
         'currentPage': this.historyDailyCheckTableCurrentPage,
         'pageSize': this.historyDailyCheckTablePageSize
       }
-      selectDailySettlementList(query).then(response => {
-        console.log('selectDailySettlementList response: ')
+      selectAllDailySettlementList(query).then(response => {
+        console.log('selectAllDailySettlementList response: ')
         console.log(response)
         this.historyDailyCheckTable = response.data.list
       })
