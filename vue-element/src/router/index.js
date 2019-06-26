@@ -344,9 +344,9 @@ export const constantRoutes = [
         meta: { title: '费用科目管理', noCache: true }
       },
       {
-        path: 'financeDailyCheck',
-        component: () => import('@/views/finance/dailyCheck'),
-        name: 'financeDailyCheck',
+        path: 'financeDailySettlement',
+        component: () => import('@/views/finance/financeDailySettlement'),
+        name: 'financeDailySettlement',
         meta: { title: '门诊日结核对', noCache: true }
       }
     ]

@@ -20,6 +20,13 @@
             :default-sort="{prop: 'dailySettlementDate', order: 'descending'}"
             @current-change="historyDailyCheckTableSelectChange"
           >
+            <el-table-column label="状态">
+              <template slot-scope="{row}">
+                <el-tag :type="row.checked === 1 ? 'success' : 'primary'">
+                  {{ row.checked === 1 ? '已核对' : '未核对' }}
+                </el-tag>
+              </template>
+            </el-table-column>
             <el-table-column property="dailySettlementDate" label="日结日期" sortable />
             <el-table-column property="collectorRealName" label="收款员" />
             <el-table-column label="日结明细" width="95px">
@@ -128,7 +135,8 @@
     >
       <statement ref="statement" />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="documentVisible = false">确 定</el-button>
+        <el-button @click="documentVisible = false">取 消</el-button>
+        <el-button type="primary" :disabled="currentRow == null || currentRow.checked === 1" @click="invokeCheckDailySettlement">核对通过</el-button>
       </span>
     </el-dialog>
   </div>
@@ -139,10 +147,11 @@ import {
   selectAllDailySettlementList,
   generateDailySettlement,
   selectDailySettlementDetail,
-  dailySettlementDocument
+  dailySettlementDocument,
+  checkDailySettlement
 } from '../../api/registrationCharge/dailySettlement'
 
-import statement from './components/statement'
+import statement from '../registration/components/statement'
 
 export default {
   components: { statement },
@@ -205,6 +214,23 @@ export default {
     this.invokeSelectHistory()
   },
   methods: {
+    // 核对通过
+    invokeCheckDailySettlement() {
+      var query = {
+        'dailySettlementId': this.currentRow.dailySettlementId
+      }
+      checkDailySettlement(query).then(response => {
+        this.$message({
+          message: '核对通过完成！',
+          type: 'success'
+        })
+        this.documentVisible = false
+        this.currentRow.checked = 1
+      }).catch(error => {
+        console.log('checkDailySettlement error')
+        console.log(error)
+      })
+    },
     // 历史分页
     historyHandleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -286,6 +312,7 @@ export default {
       dailySettlementDocument({ 'dailySettlementId': row.dailySettlementId }).then(response => {
         console.log('dailySettlementDocument response: ')
         console.log(response)
+        this.currentRow = row
         this.documentVisible = true
       })
     },
@@ -345,30 +372,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.drawer-container {
-  padding: 24px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-wrap: break-word;
-
-  .drawer-title {
-    margin-bottom: 12px;
-    color: rgba(0, 0, 0, .85);
+  .drawer-container {
+    padding: 24px;
     font-size: 14px;
-    line-height: 22px;
-  }
+    line-height: 1.5;
+    word-wrap: break-word;
 
-  .drawer-item {
-    color: rgba(0, 0, 0, .65);
-    font-size: 14px;
-    padding: 12px 0;
-  }
+    .drawer-title {
+      margin-bottom: 12px;
+      color: rgba(0, 0, 0, .85);
+      font-size: 14px;
+      line-height: 22px;
+    }
 
-  .drawer-switch {
-    float: right
+    .drawer-item {
+      color: rgba(0, 0, 0, .65);
+      font-size: 14px;
+      padding: 12px 0;
+    }
+
+    .drawer-switch {
+      float: right
+    }
   }
-}
-.el-row {
+  .el-row {
     margin-bottom: 20px;
     &:last-child {
       margin-bottom: 0;

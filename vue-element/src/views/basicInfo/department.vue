@@ -4,7 +4,7 @@
 
     <el-row>
       <el-col :span="18">
-        <el-radio-group v-model="radioSelect" size="medium" @change="radioChangeGetList()">
+        <el-radio-group v-model="departmentCategory" size="medium" @change="radioChangeGetList()">
           <el-radio-button label="所有科室" />
           <el-radio-button label="临床科室" />
           <el-radio-button label="医技科室" />
@@ -163,7 +163,11 @@ export default {
   data() {
     return {
       // 单选框
-      radioSelect: '所有科室',
+      departmentCategory: '所有科室',
+      alls: [11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+      fronts: [11, 12, 14, 15, 16, 17, 18, 19],
+      techs: [27],
+      others: [29],
 
       clinical_department_checked: true, // 临床科室多选框
       technology_department_checked: true, // 医技科室多选框
@@ -226,11 +230,8 @@ export default {
 
   methods: {
     radioChangeGetList() {
-      // this.$notify({
-      //   title: '成功',
-      //   message: this.radioSelect,
-      //   type: 'success'
-      // });
+      // this.$message(this.departmentCategory)
+      this.queryDepartmentListWithPage()
     },
     forceChange(val) {
       this.$set(this.departmentForm, 'category', val)
@@ -244,7 +245,11 @@ export default {
         this.departmentConstant = response.data
 
         this.listLoading = true // 列表开始加载
-        this.query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
+        this.query = {
+          'currentPage': this.currentPage,
+          'pageSize': this.pageSize,
+          'departmentCategory': this.alls
+        }
         fetchDepartmentList(this.query).then(response => { // 然后获取科室信息列表
           console.log('fetchDepartmentList response: ')
           console.log(response)
@@ -286,7 +291,22 @@ export default {
     // 分页
     queryDepartmentListWithPage() {
       this.listLoading = true // 列表开始加载
-      this.query = { 'currentPage': this.currentPage, 'pageSize': this.pageSize }
+      var list
+      if (this.departmentCategory === '所有科室') {
+        list = this.alls
+      } else if (this.departmentCategory === '临床科室') {
+        list = this.fronts
+      } else if (this.departmentCategory === '医技科室') {
+        list = this.techs
+      } else if (this.departmentCategory === '其他科室') {
+        list = this.others
+      }
+      console.log(list)
+      this.query = {
+        'currentPage': this.currentPage,
+        'pageSize': this.pageSize,
+        'departmentCategory': list
+      }
       fetchDepartmentList(this.query).then(response => { // 然后获取科室信息列表
         console.log('fetchDepartmentList response: ')
         console.log(response)
