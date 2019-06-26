@@ -102,7 +102,7 @@
       }
     },
     created() {
-      var temp = new Date()
+      const temp = new Date();
       this.todayDate = temp.getFullYear() + '-' + (temp.getMonth() + 1) + '-' + temp.getDate()
     },
     methods: {
