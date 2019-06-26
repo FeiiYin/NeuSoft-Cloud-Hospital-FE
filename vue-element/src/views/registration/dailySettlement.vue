@@ -6,6 +6,10 @@
         <el-aside v-show="modelPanelShow" width="400px" style="padding:0">
           <aside>
             日结信息列表
+            <el-button @click="invokeSelectHistory()" style="float:right">
+              <svg-icon icon-class="eye-open" />
+              刷新
+            </el-button>
           </aside>
           <!-- 单选表格 -->
           <el-table
@@ -14,7 +18,7 @@
             highlight-current-row
             style="width: 100%"
             @current-change="historyDailyCheckTableSelectChange"
-            :default-sort = "{prop: 'date', order: 'descending'}"
+            :default-sort = "{prop: 'dailySettlementDate', order: 'descending'}"
           >
             <el-table-column type="index" />
             <el-table-column property="dailySettlementDate" label="日结日期" sortable />
@@ -32,10 +36,6 @@
             />
           </div>
           <div style="margin-top:20px;margin-bottom:20px;float:right;padding:1%;">
-            <el-button @click="true">
-              <svg-icon icon-class="eye-open" />
-              刷新
-            </el-button>
           </div>
         </el-aside>
       </transition>
@@ -111,6 +111,9 @@
         </el-container>
       </el-main>
     </el-container>
+    <div>
+      <tabPane v-if="activeName==item.key" ref="tabPane" :type="item.key" />
+    </div>
   </div>
 </template>
 
@@ -122,7 +125,10 @@ import {
   dailySettlementDocument
 } from '../../api/registrationCharge/dailySettlement'
 
+import statement from './components/statement'
+
 export default {
+  components: { statement },
   data() {
     return {
       // 前置
