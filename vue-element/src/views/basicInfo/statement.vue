@@ -73,52 +73,52 @@
   </div>
 </template>
 <script>
-  export default {
-    data() {
-      return {
-        beforeDate: '2019-01-01 09:15:49',
-        afterDate: '2019-02-02 09:15:49',
-        receiptNumber: '123456789',
-        paperNumber: '1',
-        lister: '印飞',
-        cashier: '印飞',
-        sumMoney: '120.97',
-        personalPay: '41.76',
-        selfPay: '0.00',
-        Reimbursement: '0.00',
-        discountedPrice: '79.21',
-        medicineSumMoney: '30.74',
-        westernMedicineFee: '22.02',
-        chineseHerbalMedicineFee: '8.72',
-        retain1: '0.00',
-        retain2: '0.00',
-        checkSumMoney: '49.21',
-        bloodTestFee: '19.74',
-        urineTestFee: '29.47',
-        medicalSumMoney: '3.00',
-        registrationFee: '3.00',
-        chineseMoney: '捌拾贰点玖伍元',
-        lowerCase: '82.95'
-      }
-    },
-    created() {
-      const temp = new Date();
-      this.todayDate = temp.getFullYear() + '-' + (temp.getMonth() + 1) + '-' + temp.getDate()
-    },
-    methods: {
-      doPrint(e) {
-        const subOutputRankPrint = document.getElementById('subOutputRank-print')
-        console.log(subOutputRankPrint.innerHTML)
-        const newContent = subOutputRankPrint.innerHTML
-        const oldContent = document.body.innerHTML
-        document.body.innerHTML = newContent
-        window.print()
-        window.location.reload()
-        document.body.innerHTML = oldContent
-        return false
-      }
+export default {
+  data() {
+    return {
+      beforeDate: '2019-01-01 09:15:49',
+      afterDate: '2019-02-02 09:15:49',
+      receiptNumber: '123456789',
+      paperNumber: '1',
+      lister: '印飞',
+      cashier: '印飞',
+      sumMoney: '120.97',
+      personalPay: '41.76',
+      selfPay: '0.00',
+      Reimbursement: '0.00',
+      discountedPrice: '79.21',
+      medicineSumMoney: '30.74',
+      westernMedicineFee: '22.02',
+      chineseHerbalMedicineFee: '8.72',
+      retain1: '0.00',
+      retain2: '0.00',
+      checkSumMoney: '49.21',
+      bloodTestFee: '19.74',
+      urineTestFee: '29.47',
+      medicalSumMoney: '3.00',
+      registrationFee: '3.00',
+      chineseMoney: '捌拾贰点玖伍元',
+      lowerCase: '82.95'
+    }
+  },
+  created() {
+    const temp = new Date();
+    this.todayDate = temp.getFullYear() + '-' + (temp.getMonth() + 1) + '-' + temp.getDate()
+  },
+  methods: {
+    doPrint(e) {
+      const subOutputRankPrint = document.getElementById('subOutputRank-print')
+      console.log(subOutputRankPrint.innerHTML)
+      const newContent = subOutputRankPrint.innerHTML
+      const oldContent = document.body.innerHTML
+      document.body.innerHTML = newContent
+      window.print()
+      window.location.reload()
+      document.body.innerHTML = oldContent
+      return false
     }
   }
+}
 </script>
 <style>
   .src_b{

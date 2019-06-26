@@ -17,8 +17,8 @@
             :default-sort = "{prop: 'date', order: 'descending'}"
           >
             <el-table-column type="index" />
-            <el-table-column property="date" label="日结日期" sortable />
-            <el-table-column property="name" label="收款员" />
+            <el-table-column property="dailySettlementDate" label="日结日期" sortable />
+            <el-table-column property="collectorRealName" label="收款员" />
           </el-table>
           <div class="block">
             <el-pagination
@@ -194,6 +194,21 @@ export default {
     },
     // selectAllDailySettlementList
     invokeSelectHistory() {
+      // eslint-disable-next-line no-extend-native
+      Date.prototype.Format = function(fmt) {
+        const o = {
+          'M+': this.getMonth() + 1, // 月份
+          'd+': this.getDate(), // 日
+          'h+': this.getHours(), // 小时
+          'm+': this.getMinutes(), // 分
+          's+': this.getSeconds(), // 秒
+          'q+': Math.floor((this.getMonth() + 3) / 3), // 季度
+          'S': this.getMilliseconds() // 毫秒
+        }
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
+        for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))) }
+        return fmt
+      }
       var query = {
         'currentPage': this.historyDailyCheckTableCurrentPage,
         'pageSize': this.historyDailyCheckTablePageSize
@@ -202,6 +217,10 @@ export default {
         console.log('selectAllDailySettlementList response: ')
         console.log(response)
         this.historyDailyCheckTable = response.data.list
+        this.historyDailyCheckTableTotalNumber = response.data.total
+        for (var i = 0; i < this.historyDailyCheckTable.length; ++i) {
+          this.historyDailyCheckTable[i].dailySettlementDate = new Date(this.historyDailyCheckTable[i].dailySettlementDate).Format('yyyy-MM-dd hh:mm:ss')
+        }
       })
     },
     // 实例分页
@@ -215,17 +234,35 @@ export default {
       this.exampleDailyCheckTableCurrentPage = val
       this.invokeSelectDailySettlementDetail()
     },
-    invokeSelectDailySettlementDetail() {
-      alert('TODO!')
-      selectDailySettlementDetail().then(response => {
+    invokeSelectDailySettlementDetail(id) {
+      this.exampleDailyCheckTableLoading = true
+      var query = {
+        'dailySettlementId': id,
+        'currentPage': this.exampleDailyCheckTableCurrentPage,
+        'pageSize': this.exampleDailyCheckTablePageSize
+      }
+      selectDailySettlementDetail(query).then(response => {
         console.log('selectDailySettlementDetail response: ')
+        console.log(response)
+        if (response.data == null) {
+          this.exampleDailyCheckTable = []
+          this.exampleDailyCheckTableLoading = false
+          this.exampleDailyCheckTableTotalNumber = 0
+        } else {
+          this.exampleDailyCheckTable = response.data.list
+          this.exampleDailyCheckTableLoading = false
+          this.exampleDailyCheckTableTotalNumber = response.data.total
+        }
+      })
+      dailySettlementDocument({ 'dailySettlementId': id }).then(response => {
+        console.log('dailySettlementDocument response: ')
         console.log(response)
       })
     },
     // 新建日结记录
     invokeGenerateDailySettlement() {
       if (this.endDatetime === '' || this.endDatetime == null) {
-        this.$message.error('为选择日结时间，错误！')
+        this.$message.error('未选择日结时间，错误！')
         return
       }
       // yyyy-MM-dd HH:mm:ss
@@ -257,6 +294,7 @@ export default {
           message: '生成日结记录完成!',
           type: 'success'
         })
+        this.invokeSelectHistory()
       })
     },
     // 前置
@@ -265,6 +303,7 @@ export default {
     },
     historyDailyCheckTableSelectChange(val) {
       this.currentRow = val
+      this.invokeSelectDailySettlementDetail(val.dailySettlementId)
     }
   }
 }
