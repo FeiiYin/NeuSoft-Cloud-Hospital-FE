@@ -35,7 +35,7 @@
       <el-table-column prop="limitation" label="排班限额" width="120"></el-table-column>
       <el-table-column prop="operationAccountName" label="操作员" width="120"></el-table-column>
       <el-table-column prop="operationAccountId" label="操作员id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="operationDate1" label="操作日期" width="120"></el-table-column>
+      <el-table-column prop="operationDate1" label="操作日期" width="120" :formatter="dateFormat"></el-table-column>
       <el-table-column
         prop="edit"
         label="编辑"
@@ -224,35 +224,155 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         prop="valueDate"
+        value-format="yyyy-MM-dd"
         :picker-options="pickerOptions">
       </el-date-picker>
         <el-button @click="valueDate = ''">重选日期</el-button>
         <el-button type="primary" @click="generateSchedulingInfoV()">生成排班信息</el-button>
     </div>
 
+    <el-row style="margin-bottom: 20px">
+      <el-col :span="6">
+<!--        <el-button @click="openConfirmDeleteMessageBox1()">删除</el-button> // 修改一下 方法-->
+<!--        <el-button @click="toggleSelection1()">取消所选</el-button>-->
+      </el-col>
+    </el-row>
+<!--    下面的表格：医生排班信息表-->
     <el-table
       ref="multipleTable"
-      v-loading="listLoading2"
+      v-loading="listLoading1"
       highlight-current-row
-      :data="schedulingTable"
+      :data="schedulingTable1"
       tooltip-effect="dark"
       style="width: 100%"
       @selection-change="handleSelectionChange"
+      :default-sort = "{prop: 'schedulingTime', order: 'descending'}"
     >
-
-      <el-table-column type="selection" width="55" />
-
-      <el-table-column prop="schedulingCode" label="疾病编码" width="120">
-        <template slot-scope="scope">{{ scope.row.schedulingCode }}</template>
+      <el-table-column prop="schedulingRuleId" label="规则id" width="120" v-if="1 === 0" />
+      <el-table-column prop="schedulingRuleInfoId" label="信息id" width="120" v-if="1 === 0"></el-table-column>
+      <el-table-column prop="schedulingTime" label="排班时间" width="120" :formatter="dateFormat" sortable></el-table-column>
+      <el-table-column prop="departmentName" label="科室" width="120"></el-table-column>
+      <el-table-column prop="departmentId" label="科室id" width="120" v-if="1 === 0"></el-table-column>
+      <el-table-column prop="doctorName" label="排班医生" width="120"></el-table-column>
+      <el-table-column prop="doctorId" label="排班医生id" width="120" v-if="1 === 0"></el-table-column>
+      <el-table-column prop="registrationCategoryName" label="挂号类别" width="120"></el-table-column>
+      <el-table-column prop="registrationCategoryId" label="挂号类别id" width="120" v-if="1 === 0"></el-table-column>
+      <el-table-column prop="validName" label="有效状态" width="120"></el-table-column>
+      <el-table-column prop="valid" label="有效状态 数字" width="120" v-if="1 === 0"></el-table-column>
+      <el-table-column prop="noonName" label="午别" width="120"></el-table-column>
+      <el-table-column prop="noon" label="午别 数字" width="120" v-if="1 === 0"></el-table-column>
+      <el-table-column prop="limitation" label="排班限额" width="120"></el-table-column>
+      <el-table-column prop="remainNums" label="剩余号数" width="120"></el-table-column>
+      <el-table-column prop="dis" label="设置是否可以编辑" v-if="1 === 0"></el-table-column>
+      <el-table-column
+        prop="edit"
+        label="编辑"
+      >
+        <template slot-scope="scope">
+<!--          <div v-if="moment(scope.row.schedulingTime).format('YYYY-MM-DD') < Date.now()">-->
+            <el-button
+              disabled:this.dis
+              size="mini"
+              @click="editScheduleRuleInfoDataFunction(scope.$index, scope.row)"
+            >
+              <i class="el-icon-edit" />
+            </el-button>
+<!--          </div>-->
+        </template>
       </el-table-column>
     </el-table>
+    <!--    修改排班信息-->
+    <el-dialog titile="更新排班信息" :visible.sync="saveScheduleInfoVisible" width="30%">
+      <el-form ref="saveSchedulingInfoForm" :model="saveSchedulingInfoForm" :rules="rules" label-position="top">
+        <el-form-item v-model="saveSchedulingInfoForm.departmentId" label="科室" prop="departmentId">
+          <template>
+            <el-select v-model="SelectValueDep" filterable placeholder="请选择科室" @change="changeDep">
+              <el-option
+                v-for="item in departmentList"
+                :key="item.departmentId"
+                :label="item.departmentName"
+                :value="item.departmentId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item v-model="saveSchedulingInfoForm.doctorId" label="医生‍" prop="doctorId">
+          <template>
+            <el-select v-model="SelectValueDoc" filterable placeholder="请选择医生" @change="changeDoc">
+              <el-option
+                v-for="item in doctorList"
+                :key="item.doctorId"
+                :label="item.doctorName"
+                :value="item.doctorId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item v-model="saveSchedulingInfoForm.registrationCategoryId" label="挂号类别" prop="registrationCategoryId">
+          <template>
+            <el-select v-model="SelectValueRC" filterable placeholder="请选择号别" @change="changeRC">
+              <el-option
+                v-for="item in registrationCategoryType"
+                :key="item.registrationCategoryId"
+                :label="item.registrationCategoryName"
+                :value="item.registrationCategoryId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item v-model="saveSchedulingInfoForm.noon" label="午别" prop="noon">
+          <template>
+            <el-select v-model="SelectValueNoonName" filterable placeholder="请选择号别" @change="changeN">
+              <el-option
+                v-for="item in noonList"
+                :key="item.noonId"
+                :label="item.noonName"
+                :value="item.noonId"
+              />
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="排班限额" prop="limitation">
+          <el-input v-model="saveSchedulingInfoForm.limitation" auto-complete="off" />
+        </el-form-item>
+        <el-form-item label="剩余号数" prop="remainNums">
+          <el-input v-model="saveSchedulingInfoForm.remainNums" auto-complete="off" />
+        </el-form-item>
+        <el-form-item label="修改日期" prop="schedulingTime">
+          <div class="block">
+            <span class="demonstration"></span>
+            <el-date-picker
+              v-model="saveSchedulingInfoForm.schedulingTime"
+              align="right"
+              type="date"
+              placeholder="选择日期"
+              format="yyyy-MM-dd"
+              :picker-options="pickerOptions1">
+            </el-date-picker>
+          </div>
+        </el-form-item>
+        <template>
+          <el-form-item
+            label="是否有效"
+            prop="valid"
+          >
+            <el-radio v-model="schedulingValidRadio" label="1" @change="changeVld">是</el-radio>
+            <el-radio v-model="schedulingValidRadio" label="0" @change="changeVld">否</el-radio>
+          </el-form-item>
+        </template>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="saveScheduleInfoVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveSchedulingInfoV('saveSchedulingInfoForm')">确 定</el-button>
+        </span>
+    </el-dialog>
     <div class="block">
       <el-pagination
         :current-page="currentPage"
         :page-sizes="[20, 50, 100, 200]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="totalNumber"
+        :total="totalNumber1"
       />
     </div>
   </div>
@@ -263,13 +383,16 @@ import { fetchList, saveSchedulingRule, deleteSchedulingRule, generateScheduling
 import { fetchDepartmentList } from '../../api/basicInfo/department'
 import { selectRegistration_categoryList } from '../../api/basicInfo/registration_category'
 import { selectDoctorList } from '../../api/basicInfo/account'
+import moment from 'moment'
 
 export default {
   data() {
     return {
+      // 日期修改
+      dis: [],
       totalNumber: 0,
       listLoading: false, // 加载表格
-      listLoading2: false, // 医生排班信息表
+      listLoading1: false, // 下面的信息表的loading
       addScheduleVisible: false,
       saveScheduleVisible: false,
       SelectValueWeek: '', // 增加排班规则的选择的值
@@ -278,6 +401,7 @@ export default {
       SelectValueRC: '',
       schedulingValidRadio: '', // 单选器
       SelectValueNoonName: '',
+      value2: '',
       dateValue: '',
       addScheduleRuleForm: {
         schedulingRuleId: null,
@@ -334,7 +458,7 @@ export default {
         currentPage: -1,
         pageSize: -1
       },
-      saveSchedulingInfoParam: {
+      saveSchedulingInfoForm: {
         schedulingInfoId: -1,
         schedulingTime: '',
         departmentId: -1,
@@ -370,6 +494,10 @@ export default {
         ],
         valueDate: [
           { required: true, message: '请选择日期', trigger: 'blur' }
+        ],
+        remainNums: [
+          { required: true, message: '请输入剩余号数', trigger: 'blur' },
+          { min: 1, max: 2, message: '输入值必须小于限制额', trigger: 'blur' }
         ]
       },
       // 一些常量
@@ -479,18 +607,58 @@ export default {
           }
         }]
       },
-      valueDate: ''
+      pickerOptions1: {
+        disabledDate(time) {
+          return time.getTime() < Date.now();
+        },
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date());
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() - 3600 * 1000 * 24);
+            picker.$emit('pick', date);
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', date);
+          }
+        }]
+      },
+      valueDate: '',
+      // 接下来是下面所有表格的数据，一般是+1
+      schedulingTable1: [],
+      totalNumber1: 0,
+      saveScheduleInfoVisible: false,
+      today: null
     }
   },
 
   created() {
+    this.today = new Date()
     this.getList()
+    this.selectSchedulingInfoV()
     this.getDropDown()
   },
 
   methods: {
     // 日期选择
-
+    // # 编写日期格式化方法
+    dateFormat: function(row, column) {
+      const date = row[column.property]
+      if (date === undefined) {
+        return ''
+      }
+      // # 这里的格式根据需求修改
+      return moment(date).format('YYYY-MM-DD')
+    },
     // change函数 series
     changeWeek(val) {
       this.$set(this.addScheduleRuleForm, 'weekday', val)
@@ -514,6 +682,7 @@ export default {
     },
     changeVld(val) {
       this.$set(this.saveScheduleRuleForm, 'valid', val)
+      this.saveSchedulingInfoForm.valid = val
     },
     editScheduleRuleFormDataFunction(index, row) {
       this.saveScheduleVisible = true
@@ -531,8 +700,39 @@ export default {
       this.saveScheduleRuleForm.limitation = row.limitation + ''
       this.schedulingValidRadio = row.valid + ''
     },
+    editScheduleRuleInfoDataFunction(index, row) {
+      if (this.today > new Date(row.schedulingTime)) {
+        this.$message.error('时间已过期，无法修改！')
+        return
+      }
+      this.saveScheduleInfoVisible = true
+      this.saveSchedulingInfoForm.schedulingInfoId = row.schedulingInfoId
+      this.saveSchedulingInfoForm.schedulingRuleId = row.schedulingRuleId
+      this.SelectValueDep = row.departmentName
+      this.saveSchedulingInfoForm.departmentId = row.departmentId
+      this.SelectValueDoc = row.doctorName
+      this.saveSchedulingInfoForm.doctorId = row.doctorId
+      this.SelectValueRC = row.registrationCategoryName
+      this.saveSchedulingInfoForm.registrationCategoryId = row.registrationCategoryId
+      this.saveSchedulingInfoForm.noon = row.noon
+      this.SelectValueNoonName = row.noonName
+      this.saveSchedulingInfoForm.limitation = row.limitation + ''
+      this.saveSchedulingInfoForm.remainNums = row.remainNums + ''
+      this.schedulingValidRadio = row.valid + ''
+      this.saveSchedulingInfoForm.valid = row.valid
+      this.saveSchedulingInfoForm.schedulingTime = moment(row.schedulingTime).format('YYYY-MM-DD')
+    },
     // 全部选择
     toggleSelection(rows) { // 这里的全选有点问题，不能取消
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
+    },
+    toggleSelection1(rows) { // 这里的全选有点问题，不能取消
       if (rows) {
         rows.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
@@ -562,8 +762,45 @@ export default {
          * 按主键删除用户信息的请求
          */
         deleteSchedulingRule(this.scheduleRuleList).then(response => {
-          console.log('deleteDepartmentByPrimaryKey response: ')
-          console.log(response)
+          this.$message({
+            type: 'success',
+            message: '已删除'
+          })
+          this.schedulingTable = []
+          this.getList()
+        }).catch(error => {
+          console.log('deleteDepartmentByPrimaryKey error: ')
+          console.log(error)
+          this.$message.error('删除失败')
+        })
+        this.currentPage = 1
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    openConfirmDeleteMessageBox1() {
+      if (this.multipleSelection.length === 0 || this.multipleSelection.length == null) {
+        this.$message.error('请选择您要删除的记录。')
+        return
+      }
+      this.$confirm('这将永久删除这些记录, 是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(response => {
+        this.scheduleRuleList = []
+        for (let i = 0; i < this.multipleSelection.length; ++i) {
+          this.scheduleRuleList.push(this.multipleSelection[i].schedulingRuleId)
+        }
+        this.scheduleRuleList = { 'schedulingRuleIdList': this.scheduleRuleList }
+        console.log('List', this.scheduleRuleList)
+        /**
+         * 按主键删除用户信息的请求
+         */
+        deleteSchedulingRule(this.scheduleRuleList).then(response => {
           this.$message({
             type: 'success',
             message: '已删除'
@@ -642,40 +879,37 @@ export default {
           } else {
             tableRow.validName = '无效'
           }
+          var date = new Date(value.schedulingTime)
+          console.log('date', date)
           tableRow.operationDate1 = value.operationDate
           this.schedulingTable.push(tableRow)
         })
-        console.log('查询成功后的response', response)
         this.listLoading = false // 列表加载完成
       }).catch(error => {
         console.log('在返回之后出现的问题', error)
       })
     },
     saveSchedulingRuleV(formName) {
-      console.log('add rule', this.addScheduleRuleForm)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addScheduleVisible = false
           saveSchedulingRule(this.addScheduleRuleForm).then(response => {
-            console.log('add after return', response)
             this.addScheduleRuleForm = {}
             this.schedulingTable = []
             this.getList()
           })
         } else {
-          console.log('error add')
+          console.log('error add sche rule')
           return false
         }
       })
     },
     saveSchedulingRuleV1(formName) {
-      console.log('edit', this.saveScheduleRuleForm)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.saveScheduleVisible = false
           saveSchedulingRule(this.saveScheduleRuleForm).then(response => {
             this.schedulingTable = []
-            console.log('update after return', response)
             this.saveScheduleRuleForm = {}
             this.getList()
           })
@@ -693,16 +927,67 @@ export default {
         })
         return false
       } else {
-        console.log('dateValue', this.valueDate)
-
-
+        var query = {
+          'startDate': this.valueDate[0],
+          'endDate': this.valueDate[1]
+        }
+        console.log('query', query)
+        generateSchedulingInfo(query).then(response => {
+          console.log('gene resp:  ', response)
+          // todo 补上刷新列表
+        })
       }
     },
     selectSchedulingInfoV() {
-
+      var query = {
+        'currentPage': this.currentPage,
+        'pageSize': this.pageSize
+      }
+      console.log('读取下表的数据')
+      selectSchedulingInfo(query).then(response => {
+        console.log('response ', response)
+        var tableRow = {}
+        this.totalNumber1 = response.data.list.length
+        response.data.list.map((value) => {
+          value = JSON.parse(value)
+          tableRow = value
+          if (value.noon === 0) {
+            tableRow.noonName = '全天'
+          } else if (value.noon === 1) {
+            tableRow.noonName = '上午'
+          } else {
+            tableRow.noonName = '下午'
+          }
+          tableRow.weekdayName = this.aWeek[value.weekday]
+          if (value.valid === 1) {
+            tableRow.validName = '有效'
+          } else {
+            tableRow.validName = '无效'
+          }
+          if (value.schedulingTime < Date.now()) {
+            tableRow.dis = true
+          }
+          this.schedulingTable1.push(tableRow)
+        })
+        this.listLoading1 = false // 下面的列表加载完成
+      }).catch(error => {
+        console.log('下面的表格返回 出现的问题', error)
+      })
     },
-    saveSchedulingInfoV() {
-
+    saveSchedulingInfoV(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.saveScheduleInfoVisible = false
+          saveSchedulingInfo(this.saveSchedulingInfoForm).then(response => {
+            this.schedulingTable1 = []
+            this.saveSchedulingInfoForm = {}
+            this.selectSchedulingInfoV()
+            console.log('response up', response)
+          })
+        } else {
+          console.log('error save')
+        }
+      })
     },
     deleteSchedulingInfoV() {
 
