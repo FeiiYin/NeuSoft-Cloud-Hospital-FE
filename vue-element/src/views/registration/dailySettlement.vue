@@ -2,11 +2,11 @@
   <div class="app-container">
     <el-container>
       <transition name="el-zoom-in-left">
-<!-- 左侧列表 -->
+        <!-- 左侧列表 -->
         <el-aside v-show="modelPanelShow" width="400px" style="padding:0">
           <aside>
             日结信息列表
-            <el-button @click="invokeSelectHistory()" style="float:right">
+            <el-button style="float:right" @click="invokeSelectHistory()">
               <svg-icon icon-class="eye-open" />
               刷新
             </el-button>
@@ -17,12 +17,18 @@
             :data="historyDailyCheckTable"
             highlight-current-row
             style="width: 100%"
+            :default-sort="{prop: 'dailySettlementDate', order: 'descending'}"
             @current-change="historyDailyCheckTableSelectChange"
-            :default-sort = "{prop: 'dailySettlementDate', order: 'descending'}"
           >
-            <el-table-column type="index" />
             <el-table-column property="dailySettlementDate" label="日结日期" sortable />
             <el-table-column property="collectorRealName" label="收款员" />
+            <el-table-column label="日结明细" width="95px">
+              <template slot-scope="scope">
+                <el-button size="mini" plain @click="invokeDailySettlementDocument(scope.row)">
+                  <span>明细</span>
+                </el-button>
+              </template>
+            </el-table-column>
           </el-table>
           <div class="block">
             <el-pagination
@@ -35,8 +41,7 @@
               @current-change="historyHandleCurrentChange"
             />
           </div>
-          <div style="margin-top:20px;margin-bottom:20px;float:right;padding:1%;">
-          </div>
+          <div style="margin-top:20px;margin-bottom:20px;float:right;padding:1%;" />
         </el-aside>
       </transition>
 
@@ -91,10 +96,15 @@
               :data="exampleDailyCheckTable"
               border
             >
-              <el-table-column prop="date" label="单据号" />
-              <el-table-column prop="name" label="姓名" />
-              <el-table-column prop="name" label="病历号" />
-              <el-table-column prop="name" label="结算类别" />
+              <el-table-column prop="dailySettlementDetailId" label="单据号" />
+              <el-table-column prop="invoiceNums" label="发票数量" />
+              <el-table-column prop="patientName" label="患者名称" />
+              <el-table-column prop="registrationId" label="挂号号" />
+              <el-table-column prop="invoiceTotalAmount" label="总共金额" />
+              <el-table-column prop="selfPay" label="个人支付金额" />
+              <el-table-column prop="accountPay" label="医保金额" />
+              <el-table-column prop="reimbursementPay" label="补偿金额" />
+              <el-table-column prop="settlementCategoryName" label="类别" />
             </el-table>
             <div class="block">
               <el-pagination
@@ -111,10 +121,17 @@
         </el-container>
       </el-main>
     </el-container>
-    <div>
-      asdf
+    <el-dialog
+      title="日结"
+      :visible.sync="documentVisible"
+      width="80%"
+    >
       <statement ref="statement" />
-    </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="documentVisible = false">确 定</el-button>
+        <el-button type="primary" @click="documentVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -159,6 +176,7 @@ export default {
       exampleDailyCheckTableTotalNumber: 0,
       exampleDailyCheckTablePageSize: 50,
 
+      documentVisible: false,
       // 日期选择建议
       datePickerOptions: {
         shortcuts: [{
@@ -234,12 +252,12 @@ export default {
     exampleHandleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.exampleDailyCheckTablePageSize = val
-      this.invokeSelectDailySettlementDetail()
+      this.invokeSelectDailySettlementDetail(this.currentRow.dailySettlementId)
     },
     exampleHandleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.exampleDailyCheckTableCurrentPage = val
-      this.invokeSelectDailySettlementDetail()
+      this.invokeSelectDailySettlementDetail(this.currentRow.dailySettlementId)
     },
     invokeSelectDailySettlementDetail(id) {
       this.exampleDailyCheckTableLoading = true
@@ -257,13 +275,19 @@ export default {
           this.exampleDailyCheckTableTotalNumber = 0
         } else {
           this.exampleDailyCheckTable = response.data.list
+          for (var i = 0; i < this.exampleDailyCheckTable.length; ++i) {
+            this.exampleDailyCheckTable[i] = JSON.parse(this.exampleDailyCheckTable[i])
+          }
           this.exampleDailyCheckTableLoading = false
           this.exampleDailyCheckTableTotalNumber = response.data.total
         }
       })
-      dailySettlementDocument({ 'dailySettlementId': id }).then(response => {
+    },
+    invokeDailySettlementDocument(row) {
+      dailySettlementDocument({ 'dailySettlementId': row.dailySettlementId }).then(response => {
         console.log('dailySettlementDocument response: ')
         console.log(response)
+        this.documentVisible = true
       })
     },
     // 新建日结记录
@@ -302,6 +326,8 @@ export default {
           type: 'success'
         })
         this.invokeSelectHistory()
+        this.currentRow = this.historyDailyCheckTable[0]
+        this.invokeSelectDailySettlementDetail(this.currentRow.dailySettlementId)
       })
     },
     // 前置
@@ -310,6 +336,9 @@ export default {
     },
     historyDailyCheckTableSelectChange(val) {
       this.currentRow = val
+      if (val == null) {
+        return
+      }
       this.invokeSelectDailySettlementDetail(val.dailySettlementId)
     }
   }
