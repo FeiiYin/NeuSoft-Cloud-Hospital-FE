@@ -379,6 +379,14 @@ export default {
       historyDisposalItemExample: []
     }
   },
+  watch: {
+    chargeItemEditableTableData: function() {
+      this.totalListMoney = 0
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        this.totalListMoney += this.chargeItemEditableTableData[i].price * this.chargeItemEditableTableData[i].nums
+      }
+    }
+  },
   created() {
     // not defined like below, 我把获取历史列表写在了获取部门列表里
     // this.invokeFetchDepartmentList().then(response => {
@@ -427,6 +435,15 @@ export default {
       this.chargeItemForm.nums = 1
       this.chargeItemForm.doctorAdvice = '无'
       this.chargeItemForm.departmentName = this.departmentList[this.chargeItemForm.departmentId - 1].departmentName
+      for (i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        if (this.chargeItemEditableTableData[i].chargeItemId === this.chargeItemForm.chargeItemId) {
+          this.$message.error('列表中有重复元素，错误！')
+          this.chargeItemFormVisible = false
+          this.chargeItemFormDisable = true
+          this.chargeItemForm = {}
+          return
+        }
+      }
       this.$refs.chargeItemEditableTableData.insert(this.chargeItemForm)
       this.$message({
         message: '插入数据成功！',
@@ -547,20 +564,36 @@ export default {
         this.commonDisposalDialogVisible = false
         return
       }
+      var abool
       for (var i = 0; i < this.commonDisposalListValue.length; ++i) {
         var id = this.commonDisposalListValue[i]
         for (var j = 0; j < this.commonDisposalListData.length; ++j) {
           if (id === this.commonDisposalListData[j].chargeItemId) {
+            var bool = false
+            for (var k = 0; k < this.chargeItemEditableTableData.length; ++k) {
+              if (this.chargeItemEditableTableData[k].chargeItemId === id) {
+                bool = true
+                abool = true
+                break
+              }
+            }
+            if (bool) {
+              break
+            }
             this.$refs.chargeItemEditableTableData.insert(this.commonDisposalListData[j])
             break
           }
         }
       }
       this.commonDisposalListValue = []
-      this.$message({
-        message: '插入数据成功！',
-        type: 'success'
-      })
+      if (abool) {
+        this.$message('已去除重复条目')
+      } else {
+        this.$message({
+          message: '插入数据成功！',
+          type: 'success'
+        })
+      }
       this.commonDisposalDialogVisible = false
     },
     // 历史
@@ -609,6 +642,14 @@ export default {
         })
       })
     },
+    checkIfNotIn(id) {
+      for (var j = 0; j < this.chargeItemEditableTableData.length; ++j) {
+        if (this.chargeItemEditableTableData[j].chargeItemId === id) {
+          return false
+        }
+      }
+      return true
+    },
     applyTempsave() {
       if (this.tempsaveDisposalItemExample.length === 0 || this.tempsaveDisposalItemExample.length == null) {
         this.$message.error('当前未选中暂存，错误！')
@@ -623,7 +664,11 @@ export default {
 
         this.tempsaveDisposalItemExample[i].departmentName =
           this.departmentList[this.tempsaveDisposalItemExample[i].chargeItem.departmentId - 1].departmentName
-        this.$refs.chargeItemEditableTableData.insert(this.tempsaveDisposalItemExample[i])
+        if (this.checkIfNotIn(this.tempsaveDisposalItemExample[i].chargeItemId)) {
+          this.$refs.chargeItemEditableTableData.insert(this.tempsaveDisposalItemExample[i])
+        } else {
+          continue
+        }
       }
       this.$message({
         message: '应用暂存成功！',
@@ -632,6 +677,7 @@ export default {
     },
     // 模板
     applyTemplate() {
+      alert('TODO')
       if (this.prescriptionTemplateMedicineExample.length === 0 || this.prescriptionTemplateMedicineExample.length == null) {
         this.$message.error('当前未选中模板，错误！')
         return

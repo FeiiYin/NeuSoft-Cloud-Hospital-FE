@@ -106,15 +106,18 @@
               </el-table-column>
 
               <el-table-column align="center" label="诊断完毕" width="95">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.reserve2 }}</span>
+                <template slot-scope="{ row }">
+                  <!-- 这里后台 用的字符串 :( -->
+                  <el-tag :type="row.registrationStatus === '0' ? 'success' : (row.registrationStatus === '2' ? 'danger' : 'primary')">
+                    {{ row.registrationStatus === '0' ? '诊毕' : (row.registrationStatus === '2' ? '退号' : (row.registrationStatus === '1' ? '待诊' : '其他')) }}
+                  </el-tag>
                 </template>
               </el-table-column>
 
               <el-table-column class-name="status-col" label="状态" width="110">
-                <template slot-scope="{row}">
-                  <el-tag :type="row.registrationCategory == '急诊挂号' ? 'danger' : 'primary'">
-                    {{ row.registrationCategory }}
+                <template slot-scope="{ row }">
+                  <el-tag :type="row.registrationCategoryId === 1 ? 'primary' : (row.registrationCategoryId === 2 ? 'danger' : 'success')">
+                    {{ row.registrationCategoryId === 1 ? '普通号' : (row.registrationCategoryId === 2 ? '急诊号' : (row.registrationCategoryId === 3 ? '专家号' : '其他')) }}
                   </el-tag>
                 </template>
               </el-table-column>

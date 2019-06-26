@@ -4,6 +4,10 @@
       <el-main>
         <aside>
           <span>发药患者列表查询</span>
+          <el-button type="info" style="float:right" @click="invokeWaitingRegistrationList()">
+            <i class="el-icon-refresh" />
+            刷新
+          </el-button>
         </aside>
         <el-container>
           <el-header>
@@ -81,7 +85,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column min-width="300px" label="身份证号">
+              <el-table-column min-width="220px" label="身份证号">
                 <template slot-scope="scope">
                   <span>{{ scope.row.identityCardNo }}</span>
                 </template>
@@ -110,6 +114,24 @@
                   <el-tag :type="row.registrationCategoryId === 1 ? 'primary' : (row.registrationCategoryId === 2 ? 'danger' : 'success')">
                     {{ row.registrationCategoryId === 1 ? '普通号' : (row.registrationCategoryId === 2 ? '急诊号' : (row.registrationCategoryId === 3 ? '专家号' : '其他')) }}
                   </el-tag>
+                </template>
+              </el-table-column>
+
+              <el-table-column prop="withdraw" align="center" label="执行" width="200px">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    @click="routerToWithdraw(scope.row)"
+                  >
+                    退药
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    @click="routerToDispensing(scope.row)"
+                  >
+                    发药
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -170,13 +192,37 @@ export default {
   created() {
     // this.getDepartmentList()
     this.invokeWaitingRegistrationList()
+    // 绑定回车
+    var _self = this
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      if (key === 13) {
+        _self.searchPatientWithInfo()
+      }
+    }
+  },
+  beforeDestroy() {
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      // eslint-disable-next-line no-empty
+      if (key === 13) {
+      }
+    }
   },
   methods: {
     // 双击跳转
-    routerToDispensing(row, event) {
+    routerToDispensing(row) {
       // console.log(row)
       this.$router.push({
         path: '/pharmacy/dispensing', // 这个path是在router/index.js里边配置的路径
+        query: {
+          registrationId: row.registrationId
+        }
+      })
+    },
+    routerToWithdraw(row) {
+      this.$router.push({
+        path: '/pharmacy/withdrawMedicine', // 这个path是在router/index.js里边配置的路径
         query: {
           registrationId: row.registrationId
         }

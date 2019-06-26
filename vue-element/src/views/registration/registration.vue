@@ -79,6 +79,7 @@
                 filterable
                 placeholder="请选择"
                 style="width:100%;"
+                @change="invokeRegistrationMoney"
               >
                 <el-option
                   v-for="item in registrationCategoryList"
@@ -112,13 +113,16 @@
             <h4 style="margin-bottom:2px;">结算类别</h4>
             <el-form-item>
               <el-select
-                v-model="registrationForm.settleAccountsCategory"
+                v-model="registrationForm.settlementCategoryId"
                 placeholder="请选择结算类别"
                 style="width:100%"
               >
-                <el-option label="自费" value="自费" />
-                <el-option label="医保" value="医保" />
-                <el-option label="新农合" value="新农合" />
+                <el-option
+                  v-for="item in settlementCategoryList"
+                  :key="item.settlementCategoryId"
+                  :label="item.settlementCategoryName"
+                  :value="item.settlementCategoryId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -262,6 +266,10 @@ import {
   registrationFee
 } from '../../api/basicInfo/registration_category'
 
+import {
+  selectAllSettlementCategory
+} from '../../api/basicInfo/settlement_category'
+
 export default {
   data() {
     return {
@@ -284,7 +292,7 @@ export default {
         departmentId: '',
         doctorId: '',
         registrationSource: '',
-        settleAccountsCategory: '',
+        settlementCategoryId: '',
         isVisited: '',
         valid: '',
         familyAddress: '',
@@ -304,6 +312,8 @@ export default {
       }],
       // 搜索挂号种类
       registrationCategoryList: [],
+      // 挂号种类
+      settlementCategoryList: [],
       // 交费
       chargeDialogVisible: false,
       charge_form: {
@@ -343,7 +353,7 @@ export default {
         medicalCategory: [
           { required: true, message: '请输入医疗类别', trigger: 'blur' }
         ],
-        settleAccountsCategory: [
+        settlementCategoryId: [
           { required: true, message: '请输入结算类别', trigger: 'blur' }
         ],
         registrationDate: [
@@ -386,6 +396,7 @@ export default {
     this.registrationForm.visitDate = new Date()
     this.invokeSelectAllRegistrationCategory()
     this.registrationForm.registrationDate = this.registrationForm.visitDate
+    this.invokeSelectAllSettlementCategory()
   },
   methods: {
     // 根据身份证号搜索个人信息
@@ -494,7 +505,7 @@ export default {
             'departmentId': this.registrationForm.departmentId,
             'doctorId': this.registrationForm.doctorId,
             'registrationSource': this.registrationForm.registrationSource,
-            'settleAccountsCategory': this.registrationForm.settleAccountsCategory,
+            'settlementCategoryId': this.registrationForm.settlementCategoryId,
             'isVisited': this.registrationForm.isVisited,
             'familyAddress': this.registrationForm.familyAddress,
             'collectorId': this.registrationForm.collectorId
@@ -526,16 +537,25 @@ export default {
         }
       })
     },
+    invokeRegistrationMoney() {
+      registrationFee({ 'registrationCategoryId': this.registrationForm.registrationCategoryId }).then(response => {
+        // console.log(response)
+        this.charge_form.should_charge = response.data
+        this.charge_form.actual_charge = 0
+      })
+    },
     invokeCharge() {
       if (this.registrationForm.registrationCategoryId === '') {
         this.$message.error('未选择挂号类别，错误！')
         return
       }
-      registrationFee({ 'registrationCategoryId': this.registrationForm.registrationCategoryId }).then(response => {
-        // console.log(response)
-        this.charge_form.should_charge = response.data
-        this.charge_form.actual_charge = 0
-        this.chargeDialogVisible = true
+      this.chargeDialogVisible = true
+    },
+    invokeSelectAllSettlementCategory() {
+      selectAllSettlementCategory().then(response => {
+        console.log('selectAllSettlementCategory response: ')
+        console.log(response)
+        this.settlementCategoryList = response.data
       })
     },
     // 清空表单
@@ -554,7 +574,7 @@ export default {
       this.registrationForm.departmentId = ''
       this.registrationForm.doctorId = ''
       this.registrationForm.registrationSource = ''
-      this.registrationForm.settleAccountsCategory = ''
+      this.registrationForm.settlementCategoryId = ''
       this.registrationForm.familyAddress = ''
       // this.registrationForm.collectorId = ''
       // this.registrationForm.totalCharge = ''

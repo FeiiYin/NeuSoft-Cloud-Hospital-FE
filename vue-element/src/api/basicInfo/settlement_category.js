@@ -21,6 +21,21 @@ export function fecthSettlementCategory(query) {
 }
 
 /**
+ * 获取所有结算类别
+ *
+ * @return 所有结算类别信息
+ */
+export function selectAllSettlementCategory(query) {
+  return request({
+    url: '/settlement_category/list_all',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
  * 增加结算类别
  */
 

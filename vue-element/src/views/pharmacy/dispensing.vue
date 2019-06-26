@@ -24,7 +24,11 @@
               <el-input v-model="registrationForm.patientName" :disabled="true" />
             </el-form-item>
             <el-form-item label="挂号类别">
-              <el-input v-model="registrationForm.registrationCategory" :disabled="true" />
+              <el-input v-model="registrationForm.registrationCategory" :disabled="true">
+                <template slot-scope="scope">
+                  {{ scope.registrationCategoryId === 1 ? '普通号' : (scope.registrationCategoryId === 2 ? '急诊号' : (scope.registrationCategoryId === 3 ? '专家号' : '其他')) }}
+                </template>
+              </el-input>
             </el-form-item>
           </div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light">
@@ -269,8 +273,10 @@ export default {
   },
   created() {
     this.registrationId = this.$route.query.registrationId
+    this.registrationForm.registrationId = this.registrationId
     this.invokeFetchDepartmentList()
-    this.invokeSelectHistoryPrescription()
+    // this.invokeSelectHistoryPrescription()
+    this.invokeFetchRegistrationRecord()
   },
   methods: {
     // 预处理
@@ -416,7 +422,15 @@ export default {
           this.registrationForm.departmentId = response.data.reserve1
           this.registrationForm.doctorId = response.data.reserve2
           this.registrationId = this.registrationForm.registrationId
-          // this.invokeFetchChargeItemListWithRegistrationId()
+          if (this.registrationForm.registrationCategoryId === 1) {
+            this.registrationForm.registrationCategory = '普通号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '急诊号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '专家号'
+          } else {
+            this.registrationForm.registrationCategory = '其他号'
+          }
           this.invokeSelectHistoryPrescription()
         }
       }).catch(error => {

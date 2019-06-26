@@ -125,6 +125,18 @@ export const constantRoutes = [
         component: () => import('@/views/basicInfo/cost'),
         name: 'cost',
         meta: { title: '收据', noCache: true }
+      },
+      {
+        path: 'registered_receipt',
+        component: () => import('@/views/basicInfo/registered_receipt'),
+        name: 'registered_receipt',
+        meta: { title: '挂号发票', noCache: true }
+      },
+      {
+        path: 'statement',
+        component: () => import('@/views/basicInfo/statement'),
+        name: 'statement',
+        meta: { title: '收费日结单', noCache: true }
       }
     ]
   },
@@ -169,9 +181,9 @@ export const constantRoutes = [
         meta: { title: '患者费用查询', noCache: true }
       },
       {
-        path: 'dailyCheck',
-        component: () => import('@/views/registration/dailyCheck'),
-        name: 'dailyCheck',
+        path: 'dailySettlement',
+        component: () => import('@/views/registration/dailySettlement'),
+        name: 'dailySettlement',
         meta: { title: '日结', noCache: true }
       }
     ]

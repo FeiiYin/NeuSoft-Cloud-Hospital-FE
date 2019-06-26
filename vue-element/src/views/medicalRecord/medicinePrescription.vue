@@ -277,6 +277,7 @@ import {
   selectHistoryPrescription,
   selectPrescriptionTemplate
 } from '../../api/medicalRecord/prescription'
+import {deepClone} from "../../utils";
 
 Vue.use(Editable)
 Vue.use(EditableColumn)
@@ -412,18 +413,39 @@ export default {
     this.invokeSelectPrescriptionTemplate()
     this.invokeSelectHistoryPrescription()
   },
+  watch: {
+    prescriptionItemEditableTableData: function () {
+      this.totalListMoney = 0
+      for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
+        this.totalListMoney += this.prescriptionItemEditableTableData[i].medicinePrice * this.prescriptionItemEditableTableData[i].medicineQuantity
+      }
+    }
+  },
   methods: {
     // 疾病对话框处理
     insertMedicineTable() {
       // console.log(this.medicineForm)
       var id = this.medicineForm.medicineId - 1
       this.prescriptionItem = this.medicineTotalList[id]
+      this.prescriptionItem.medicineUsage = '请填写'
+      this.prescriptionItem.medicineDosage = 1
+      this.prescriptionItem.medicineFrequency = '一天一次'
+      this.prescriptionItem.medicineNumberDay = 1
+      this.prescriptionItem.medicineQuantity = 1
+
+      this.medicineDialogVisible = false
+      for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
+        if (this.prescriptionItemEditableTableData[i].medicineId === this.prescriptionItem.medicineId) {
+          this.$message.error('列表中有重复元素，错误！')
+          return
+        }
+      }
+
       this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
       this.$message({
         message: '插入数据成功！',
         type: 'success'
       })
-      this.medicineDialogVisible = false
     },
     // 获取药品列表
     invokeSelectMedicine() {
@@ -559,17 +581,39 @@ export default {
         this.commonMedicineDialogVisible = false
         return
       }
+      var insertNumber = 0
       for (var i = 0; i < this.commonMedicineListValue.length; ++i) {
         var id = this.commonMedicineListValue[i] - 1
         this.prescriptionItem = this.medicineTotalList[id]
+        var bool = false
+        for (var j = 0; j < this.prescriptionItemEditableTableData.length; ++j) {
+          if (this.prescriptionItemEditableTableData[j].medicineId === this.prescriptionItem.medicineId) {
+            bool = true
+            break
+          }
+        }
+        if (bool) {
+          continue
+        }
+        insertNumber++
+        this.prescriptionItem.medicineUsage = '请填写'
+        this.prescriptionItem.medicineDosage = 1
+        this.prescriptionItem.medicineFrequency = '一天一次'
+        this.prescriptionItem.medicineNumberDay = 1
+        this.prescriptionItem.medicineQuantity = 1
         this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
+      }
+      this.commonMedicineDialogVisible = false
+      if (insertNumber < this.commonMedicineListValue.length) {
+        this.commonMedicineListValue = []
+        this.$message('已去除重复的药品条目。')
+        return
       }
       this.commonMedicineListValue = []
       this.$message({
         message: '插入数据成功！',
         type: 'success'
       })
-      this.commonMedicineDialogVisible = false
     },
     // 模板
     applyTemplate() {
@@ -579,7 +623,17 @@ export default {
       }
       for (var i = 0; i < this.prescriptionTemplateMedicineExample.length; ++i) {
         var id = this.prescriptionTemplateMedicineExample[i].medicineId - 1
-        this.prescriptionItem = this.medicineTotalList[id]
+        this.prescriptionItem = deepClone(this.medicineTotalList[id])
+        var bool = false
+        for (var j = 0; j < this.prescriptionItemEditableTableData.length; ++j) {
+          if (this.prescriptionItemEditableTableData[j].medicineId === this.prescriptionItem.medicineId) {
+            bool = true
+            break
+          }
+        }
+        if (bool) {
+          continue
+        }
         this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
       }
       this.$message({
