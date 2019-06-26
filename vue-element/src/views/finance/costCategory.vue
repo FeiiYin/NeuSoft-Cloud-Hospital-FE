@@ -19,8 +19,8 @@
       >
         <el-table-column type="selection" />
         <el-table-column prop="expenseCategoryId" label="费用科目编号" />
-        <el-table-column prop="expenseCode" label="科目编码" />
-        <el-table-column prop="expenseName" label="科目名称" />
+        <el-table-column prop="expenseCategoryCode" label="科目编码" />
+        <el-table-column prop="expenseCategoryName" label="科目名称" />
         <el-table-column prop="edit" label="编辑">
           <template slot-scope="scope">
             <el-button
@@ -40,11 +40,11 @@
       width="30%"
     >
       <el-form ref="expenseCategoryForm" :model="expenseCategoryForm" :rules="rules">
-        <el-form-item label="科目编码" prop="expenseCode">
-          <el-input v-model="expenseCategoryForm.expenseCode" />
+        <el-form-item label="科目编码" prop="expenseCategoryCode">
+          <el-input v-model="expenseCategoryForm.expenseCategoryCode" />
         </el-form-item>
-        <el-form-item label="科室名称" prop="expenseName">
-          <el-input v-model="expenseCategoryForm.expenseName" />
+        <el-form-item label="科室名称" prop="expenseCategoryName">
+          <el-input v-model="expenseCategoryForm.expenseCategoryName" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -60,11 +60,11 @@
       width="30%"
     >
       <el-form ref="expenseCategoryForm" :model="expenseCategoryForm" :rules="rules">
-        <el-form-item label="科目编码" prop="expenseCode">
-          <el-input v-model="expenseCategoryForm.expenseCode" />
+        <el-form-item label="科目编码" prop="expenseCategoryCode">
+          <el-input v-model="expenseCategoryForm.expenseCategoryCode" />
         </el-form-item>
-        <el-form-item label="科室名称" prop="expenseName">
-          <el-input v-model="expenseCategoryForm.expenseName" />
+        <el-form-item label="科室名称" prop="expenseCategoryName">
+          <el-input v-model="expenseCategoryForm.expenseCategoryName" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -91,8 +91,8 @@ export default {
     return {
       expenseCategoryForm: {
         'expenseCategoryId': '',
-        'expenseCode': '',
-        'expenseName': '',
+        'expenseCategoryCode': '',
+        'expenseCategoryName': '',
         'valid': ''
       },
       // 查询
@@ -108,10 +108,10 @@ export default {
       department_id: [],
       // 提交验证
       rules: {
-        expenseCode: [
+        expenseCategoryCode: [
           { required: true, message: '请输入科室编码', trigger: 'blur' }
         ],
-        expenseName: [
+        expenseCategoryName: [
           { required: true, message: '请输入科室名称', trigger: 'blur' }
         ]
       },
@@ -160,8 +160,8 @@ export default {
           var query = {
             'expenseCategoryJson': {
               // 'expenseCategoryId': 新增 不填
-              'expenseCategoryCode': this.expenseCategoryForm.expenseCode,
-              'expenseCategoryName': this.expenseCategoryForm.expenseName
+              'expenseCategoryCode': this.expenseCategoryForm.expenseCategoryCode,
+              'expenseCategoryName': this.expenseCategoryForm.expenseCategoryName
             }
           }
           saveExpenseCategory(query).then(response => {
@@ -231,8 +231,8 @@ export default {
           var query = {
             'expenseCategoryJson': {
               'expenseCategoryId': this.expenseCategoryForm.expenseCategoryId,
-              'expenseCategoryCode': this.expenseCategoryForm.expenseCode,
-              'expenseCategoryName': this.expenseCategoryForm.expenseName
+              'expenseCategoryCode': this.expenseCategoryForm.expenseCategoryCode,
+              'expenseCategoryName': this.expenseCategoryForm.expenseCategoryName
             }
           }
           saveExpenseCategory(query).then(response => {

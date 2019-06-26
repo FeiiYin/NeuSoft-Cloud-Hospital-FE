@@ -56,16 +56,28 @@
                 <span>统计时间从</span>
               </div></el-col>
               <el-col :sm="5" :md="7" :lg="8" :xl="11"><div class="grid-content bg-purple-light">
-                <el-date-picker v-model="startDate" type="date" placeholder="选择日期" style="width: 100%;" :disabled="true" />
+                <el-date-picker
+                  v-model="startDatetime"
+                  type="datetime"
+                  placeholder="选择日期时间"
+                  style="width:100%"
+                  :disabled="true"
+                />
               </div></el-col>
               <el-col :sm="5" :md="3" :lg="2" :xl="1"><div style="padding:10px;">
                 <span>到</span>
               </div></el-col>
               <el-col :sm="5" :md="7" :lg="8" :xl="10"><div class="grid-content bg-purple">
-                <el-date-picker v-model="startDate" type="date" placeholder="选择日期" style="width: 100%;" />
+                <el-date-picker
+                  v-model="endDatetime"
+                  type="datetime"
+                  placeholder="选择日期时间"
+                  style="width:100%"
+                  :picker-options="datePickerOptions"
+                />
               </div></el-col>
               <el-col :sm="3" :md="4" :lg="3" :xl="1"><div>
-                <el-button type="primary" style="float:right;" @click="true">
+                <el-button type="primary" style="float:right;" @click="invokeGenerateDailySettlement">
                   <svg-icon icon-class="component" />
                   日结
                 </el-button>
@@ -104,14 +116,17 @@
 
 <script>
 import {
-  selectAllDailySettlementList
+  selectAllDailySettlementList,
+  generateDailySettlement,
+  selectDailySettlementDetail,
+  dailySettlementDocument
 } from '../../api/registrationCharge/dailySettlement'
 
 export default {
   data() {
     return {
       // 前置
-      collectorId: 1,
+      collectorId: 1001,
       // 左侧面板显示标识
       modelPanelShow: false,
       // 左边表格内容，名称再改下吧
@@ -127,16 +142,43 @@ export default {
       historyDailyCheckTablePageSize: 50,
       currentRow: null,
       // 当前人员的起始日期与结束日期
-      startDate: '',
-      endDate: '',
+      startDatetime: '',
+      endDatetime: '',
       // 实例表
       exampleDailyCheckTable: [],
       exampleDailyCheckTableLoading: false,
       // 实例表分页
       exampleDailyCheckTableCurrentPage: 1,
       exampleDailyCheckTableTotalNumber: 0,
-      exampleDailyCheckTablePageSize: 50
+      exampleDailyCheckTablePageSize: 50,
+
+      // 日期选择建议
+      datePickerOptions: {
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date())
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
+          }
+        }]
+      }
     }
+  },
+  created() {
+    this.invokeSelectHistory()
   },
   methods: {
     // 历史分页
@@ -152,25 +194,70 @@ export default {
     },
     // selectAllDailySettlementList
     invokeSelectHistory() {
-      alert('TODO!')
       var query = {
-        'currentPage': this.currentPage
+        'currentPage': this.historyDailyCheckTableCurrentPage,
+        'pageSize': this.historyDailyCheckTablePageSize
       }
-      selectAllDailySettlementList()
+      selectAllDailySettlementList(query).then(response => {
+        console.log('selectAllDailySettlementList response: ')
+        console.log(response)
+        this.historyDailyCheckTable = response.data.list
+      })
     },
     // 实例分页
     exampleHandleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.exampleDailyCheckTablePageSize = val
-      this.invokeSelectExample()
+      this.invokeSelectDailySettlementDetail()
     },
     exampleHandleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.exampleDailyCheckTableCurrentPage = val
-      this.invokeSelectExample()
+      this.invokeSelectDailySettlementDetail()
     },
-    invokeSelectExample() {
+    invokeSelectDailySettlementDetail() {
       alert('TODO!')
+      selectDailySettlementDetail().then(response => {
+        console.log('selectDailySettlementDetail response: ')
+        console.log(response)
+      })
+    },
+    // 新建日结记录
+    invokeGenerateDailySettlement() {
+      if (this.endDatetime === '' || this.endDatetime == null) {
+        this.$message.error('为选择日结时间，错误！')
+        return
+      }
+      // yyyy-MM-dd HH:mm:ss
+      // eslint-disable-next-line no-extend-native
+      Date.prototype.Format = function(fmt) {
+        const o = {
+          'M+': this.getMonth() + 1, // 月份
+          'd+': this.getDate(), // 日
+          'h+': this.getHours(), // 小时
+          'm+': this.getMinutes(), // 分
+          's+': this.getSeconds(), // 秒
+          'q+': Math.floor((this.getMonth() + 3) / 3), // 季度
+          'S': this.getMilliseconds() // 毫秒
+        }
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
+        for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))) }
+        return fmt
+      }
+      var query = {
+        'collectorId': this.collectorId,
+        'endDatetime': this.endDatetime.Format('yyyy-MM-dd hh:mm:ss')
+      }
+      console.log('generateDailySettlement query: ')
+      console.log(query)
+      generateDailySettlement(query).then(response => {
+        console.log('generateDailySettlement response: ')
+        console.log(response)
+        this.$message({
+          message: '生成日结记录完成!',
+          type: 'success'
+        })
+      })
     },
     // 前置
     openModelPanel() {

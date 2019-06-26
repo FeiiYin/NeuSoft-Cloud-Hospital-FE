@@ -117,9 +117,12 @@
                 placeholder="请选择结算类别"
                 style="width:100%"
               >
-                <el-option label="自费" value="自费" />
-                <el-option label="医保" value="医保" />
-                <el-option label="新农合" value="新农合" />
+                <el-option
+                  v-for="item in settlementCategoryList"
+                  :key="item.settlementCategoryId"
+                  :label="item.settlementCategoryName"
+                  :value="item.settlementCategoryId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -263,6 +266,10 @@ import {
   registrationFee
 } from '../../api/basicInfo/registration_category'
 
+import {
+  selectAllSettlementCategory
+} from '../../api/basicInfo/settlement_category'
+
 export default {
   data() {
     return {
@@ -305,6 +312,8 @@ export default {
       }],
       // 搜索挂号种类
       registrationCategoryList: [],
+      // 挂号种类
+      settlementCategoryList: [],
       // 交费
       chargeDialogVisible: false,
       charge_form: {
@@ -387,6 +396,7 @@ export default {
     this.registrationForm.visitDate = new Date()
     this.invokeSelectAllRegistrationCategory()
     this.registrationForm.registrationDate = this.registrationForm.visitDate
+    this.invokeSelectAllSettlementCategory()
   },
   methods: {
     // 根据身份证号搜索个人信息
@@ -540,6 +550,13 @@ export default {
         return
       }
       this.chargeDialogVisible = true
+    },
+    invokeSelectAllSettlementCategory() {
+      selectAllSettlementCategory().then(response => {
+        console.log('selectAllSettlementCategory response: ')
+        console.log(response)
+        this.settlementCategoryList = response.data
+      })
     },
     // 清空表单
     resetForm() {

@@ -272,8 +272,10 @@ export default {
   },
   created() {
     this.registrationId = this.$route.query.registrationId
+    this.registrationForm.registrationId = this.registrationId
     this.invokeFetchDepartmentList()
-    this.invokeSelectHistoryPrescription()
+    // this.invokeSelectHistoryPrescription()
+    this.invokeFetchRegistrationRecord()
   },
   methods: {
     // 预处理
@@ -465,7 +467,15 @@ export default {
           this.registrationForm.departmentId = response.data.reserve1
           this.registrationForm.doctorId = response.data.reserve2
           this.registrationId = this.registrationForm.registrationId
-          // this.invokeFetchChargeItemListWithRegistrationId()
+          if (this.registrationForm.registrationCategoryId === 1) {
+            this.registrationForm.registrationCategory = '普通号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '急诊号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '专家号'
+          } else {
+            this.registrationForm.registrationCategory = '其他号'
+          }
           this.invokeSelectHistoryPrescription()
         }
       }).catch(error => {

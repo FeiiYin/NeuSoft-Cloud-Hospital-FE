@@ -331,7 +331,6 @@ export default {
     this.registrationId = this.$route.query.registrationId
     this.registrationForm.registrationId = this.$route.query.registrationId
     this.disease = this.$route.query.disease
-    this.registrationId = 1
     this.invokeSelectPatientHistoryMedicalRecords()
     this.invokeFetchDepartmentList()
     this.invokeSelectHistoryPrescription()
