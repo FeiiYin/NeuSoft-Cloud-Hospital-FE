@@ -19,7 +19,7 @@
                 />
               </el-col>
               <el-col :span="4">
-                <el-button type="primary" style="float:right;" @click="invokeSelectHistoryExam">
+                <el-button type="primary" style="float:right;" @click="invokeSelectHistoryExam" @keyup.enter="invokeSelectHistoryExam">>
                   <svg-icon icon-class="component" />
                   确认
                 </el-button>
@@ -253,6 +253,22 @@ export default {
   created() {
     this.invokeFetchDepartmentList()
     this.invokeCommonExam()
+    // 绑定回车
+    var _self = this
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      if (key === 13) {
+        _self.invokeSelectHistoryExam()
+      }
+    }
+  },
+  beforeDestroy() {
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      // eslint-disable-next-line no-empty
+      if (key === 13) {
+      }
+    }
   },
   methods: {
     invokeFetchDepartmentList() {

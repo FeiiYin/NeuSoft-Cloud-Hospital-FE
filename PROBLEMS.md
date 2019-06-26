@@ -27,3 +27,33 @@
   [Vue warn]: Error in callback for watcher "data": "RangeError: Maximum call stack size exceeded"
 
   RangeError: Maximum call stack size exceeded
+  
++ 测试遇到的问题
+ 
+  小数显示金额 too hard
+  挂号未保定应付金额 done
+  成功改完成 done
+  按时间倒叙显示  done
+  patientListSearch 状态显示错误 done
+  数量非正数的检测 done
+  registrationCharge 挂号类别不能正常显示 done
+  检查项目插入出现更多的 done
+  checkOut少传参数 done
+ 
+  选择挂号类型 快速计算金额 done ? 
+  添加时去除重复元素 done
+  实际找零错误 done
+  可以坐回车 done
+  处方设置初始值  done
+  钱的快速计算 done
+  
+  当前进度 done
+  诊断完毕 删除成功提示错误 done
+  诊断完毕跳转错误 done
+  挂号列表不显示总共金额 done
+  
+  挂号新类型列表的渲染
+  
+  诊断完毕，查询，列表显示 错误 不应该在前面还出现 
+  药房显示的错误 
+  模板类别错误 做模板时再做 

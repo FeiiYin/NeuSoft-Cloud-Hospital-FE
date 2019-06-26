@@ -39,9 +39,9 @@
           label="用户名"
         />
         <el-table-column
+          v-if="1 === 0"
           prop="userPassword"
           label="密码"
-          v-if="1 === 0"
         />
         <el-table-column
           prop="realName"
@@ -63,7 +63,7 @@
         <el-table-column
           v-if="radioSelect === '门诊医生' || radioSelect === '医技医生'|| radioSelect === '所有用户'"
           prop="doctorScheduling"
-          label="是否参与排班(医生)"
+          label="医生排班"
         />
         <el-table-column
           prop="edit"

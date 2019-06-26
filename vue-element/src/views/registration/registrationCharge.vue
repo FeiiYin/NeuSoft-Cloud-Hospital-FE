@@ -24,7 +24,11 @@
               <el-input v-model="registrationForm.patientName" :disabled="true" />
             </el-form-item>
             <el-form-item label="挂号类别">
-              <el-input v-model="registrationForm.registrationCategory" :disabled="true" />
+              <el-input v-model="registrationForm.registrationCategory" :disabled="true">
+                <template slot-scope="scope">
+                  {{ scope.registrationCategoryId === 1 ? '普通号' : (scope.registrationCategoryId === 2 ? '急诊号' : (scope.registrationCategoryId === 3 ? '专家号' : '其他')) }}
+                </template>
+              </el-input>
             </el-form-item>
           </div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light">
@@ -112,7 +116,9 @@
           </el-select>
         </el-form-item>
       </el-form>
-
+      <template v-if="value === '选项1'">
+        <img src="./img/1.jpg" style="width:100px;height:100px">
+      </template>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="invokeChargeSubmit()">确 定</el-button>
@@ -253,9 +259,9 @@ export default {
       // totalListMoney: '0.00',
       // 充值金额
       charge_form: {
-        should_charge: 0,
-        actual_charge: 0,
-        actual_exchange: 0
+        should_charge: 0.00,
+        actual_charge: 0.00,
+        actual_exchange: 0.00
       },
       // 选择支付方式
       options: [{
@@ -334,12 +340,14 @@ export default {
       if (this.charge_form.actual_charge > this.charge_form.should_charge) {
         this.charge_form.actual_exchange = this.charge_form.actual_charge - this.charge_form.should_charge
       } else {
-        this.charge_form.actual_exchange = 0
+        this.charge_form.actual_exchange = 0.00
       }
     }
   },
   created() {
     this.registrationId = this.$route.query.registrationId
+    this.registrationForm.registrationId = this.registrationId
+    this.invokeFetchRegistrationRecord()
     this.invokeFetchDepartmentList()
     this.invokeSelectHistoryPrescription()
   },
@@ -390,6 +398,7 @@ export default {
       selectHistoryExam({ 'registrationId': this.registrationId }).then(response => {
         console.log('selectHistoryExam response')
         var tempList = JSON.parse(response.data)
+        console.log(tempList)
         this.examineMoney = 0
         var i
         for (i = 0; i < tempList.length; ++i) {
@@ -468,10 +477,16 @@ export default {
           this.registrationForm.departmentId = response.data.reserve1
           this.registrationForm.doctorId = response.data.reserve2
           this.registrationId = this.registrationForm.registrationId
+          if (this.registrationForm.registrationCategoryId === 1) {
+            this.registrationForm.registrationCategory = '普通号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '急诊号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '专家号'
+          } else {
+            this.registrationForm.registrationCategory = '其他号'
+          }
           // this.invokeFetchChargeItemListWithRegistrationId()
-          this.invokeSelectHistoryDisposal()
-          this.invokeSelectHistoryExam()
-          this.invokeSelectHistoryPrescription()
         }
       }).catch(error => {
         console.log('selectRegistrationByPrimaryKey error: ')
@@ -594,7 +609,7 @@ export default {
       this.charge_form.should_charge = this.totalListMoney
     },
     invokeChargeSubmit() {
-      if (this.charge_form.should_charge === 0) {
+      if (this.charge_form.should_charge <= 0.0) {
         this.$message.error('付款金额为 0 ，错误！')
         return
       }
@@ -611,7 +626,19 @@ export default {
         })
       }
       var query = {
-        'checkoutJson': JSON.stringify(tempList)
+        'checkoutJson': {
+          'invoiceTitle': this.registrationForm.patientName,
+          'collectorId': this.collectorId,
+          'invoiceNums': 1, // 发票数量
+          'registrationId': this.registrationId,// 挂号单编号
+          'invoiceAmount': this.charge_form.should_charge,
+          'selfPay': this.charge_form.should_charge,
+          'accountPay': 0,
+          'discounted': 0,
+          'reimbursementPay': 0,
+          'invoiceState': 1,
+          'entryList': tempList
+        }
       }
       console.log('checkout query: ')
       console.log(query)
@@ -620,6 +647,7 @@ export default {
           message: '缴费成功！',
           type: 'success'
         })
+        this.chargeFormTableList = []
         this.invokeSelectHistoryDisposal()
         this.invokeSelectHistoryExam()
         this.invokeSelectHistoryPrescription()

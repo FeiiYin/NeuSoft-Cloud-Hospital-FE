@@ -247,6 +247,22 @@ export default {
   created() {
     this.invokeFetchDepartmentList()
     this.invokeCommonDisposal()
+    // 绑定回车
+    var _self = this
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      if (key === 13) {
+        _self.invokeSelectHistoryDisposal()
+      }
+    }
+  },
+  beforeDestroy() {
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      // eslint-disable-next-line no-empty
+      if (key === 13) {
+      }
+    }
   },
   methods: {
     invokeFetchDepartmentList() {

@@ -61,16 +61,33 @@
             <i v-show="!model_panel_show" class="el-icon-caret-right" />
           </el-button>
           <span style="margin-left:30px;">门诊病历消息</span>
+          <el-dropdown style="float:right" @command="handleMenuCommand">
+            <span class="el-dropdown-link">
+              <el-tag type="text">
+                请选择<i class="el-icon-arrow-down el-icon--right" />
+              </el-tag>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="a" disabled>病历诊断</el-dropdown-item>
+              <el-dropdown-item command="b">检查申请</el-dropdown-item>
+              <el-dropdown-item command="c">确诊</el-dropdown-item>
+              <el-dropdown-item command="d">处方申请</el-dropdown-item>
+              <el-dropdown-item command="e">处置申请</el-dropdown-item>
+              <el-dropdown-item command="f" divided>诊断完毕</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </aside>
         <el-container>
           <el-main id="subOutputRank-print">
-            <span>当前患者病历号</span>
-            <el-input
-              v-model="medicalRecordForm.registrationId"
-              :disabled="true"
-              style="width:350px;margin-left:20px;"
-              prefix-icon="el-icon-document"
-            />
+            <div>
+              <span>当前患者病历号</span>
+              <el-input
+                v-model="medicalRecordForm.registrationId"
+                :disabled="true"
+                style="width:350px;margin-left:20px;"
+                prefix-icon="el-icon-document"
+              />
+            </div>
             <h3>
               病史内容
             </h3>
@@ -426,6 +443,8 @@ export default {
     }
   },
   created() {
+    this.registrationId = this.$route.query.registrationId
+    this.medicalRecordForm.registrationId = this.registrationId
     this.invokeFetchDiseaseCategory()
     this.invokeSelectMedicalRecordsTemplateList()
     this.invokeSelectPatientHistoryMedicalRecords()
@@ -679,6 +698,64 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+    },
+    // 下拉菜单
+    handleMenuCommand(command) {
+      // this.$message('click on item ' + command)
+      if (command === 'a') {
+        // 病历
+        this.$router.push({
+          path: '/medicalRecord/medicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId
+          }
+        })
+      } else if (command === 'b') {
+        // 检查
+        this.$router.push({
+          path: '/medicalRecord/examination', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.diseaseForm.disease.diseaseName
+          }
+        })
+      } else if (command === 'c') {
+        // 确诊
+        this.$router.push({
+          path: '/medicalRecord/confirmMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.diseaseForm.disease.diseaseName
+          }
+        })
+      } else if (command === 'd') {
+        // 处方
+        this.$router.push({
+          path: '/medicalRecord/medicinePrescription', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.diseaseForm.disease.diseaseName
+          }
+        })
+      } else if (command === 'e') {
+        // 处置
+        this.$router.push({
+          path: '/medicalRecord/disposalApplication', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.diseaseForm.disease.diseaseName
+          }
+        })
+      } else if (command === 'f') {
+        // 诊断完毕
+        this.$router.push({
+          path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.diseaseForm.disease.diseaseName
+          }
+        })
+      }
     },
     doPrint(e) {
       const subOutputRankPrint = document.getElementById('subOutputRank-print')

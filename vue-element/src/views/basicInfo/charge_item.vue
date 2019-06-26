@@ -6,7 +6,7 @@
       <el-col :span="20">
         <el-button @click="true">导入</el-button>
         <el-button @click="true">导出</el-button>
-        <el-button @click="toggleSelection()">取消</el-button>
+        <el-button @click="toggleSelection()">取消所选</el-button>
         <el-button @click="addChargeItemDataDialogVisible = true">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
       </el-col>
@@ -366,7 +366,6 @@ export default {
       this.addChargeItemDataDialogVisible = false
       this.$refs['addChargeItemForm'].resetFields()
     }
-
 
     // 增删改查
   }

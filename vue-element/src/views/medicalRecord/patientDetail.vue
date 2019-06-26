@@ -2,15 +2,30 @@
   <div class="app-container">
     <aside>
       患者挂号信息明细
+      <el-dropdown style="float:right" @command="handleMenuCommand">
+        <span class="el-dropdown-link">
+          <el-tag type="text">
+            请选择<i class="el-icon-arrow-down el-icon--right" />
+          </el-tag>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="a">病历诊断</el-dropdown-item>
+          <el-dropdown-item command="b">检查申请</el-dropdown-item>
+          <el-dropdown-item command="c">确诊</el-dropdown-item>
+          <el-dropdown-item command="d">处方申请</el-dropdown-item>
+          <el-dropdown-item command="e">处置申请</el-dropdown-item>
+          <el-dropdown-item command="f" disabled divided>诊断完毕</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </aside>
-    <div style="height:50px">
+    <!-- <div style="height:50px">
       <el-col :span="3" style="margin-left:20px">
         当前进度
       </el-col>
       <el-col :span="20">
         <el-progress :text-inside="true" :stroke-width="18" :percentage="progressPercentage" />
       </el-col>
-    </div>
+    </div> -->
     <div>
       <el-form ref="registrationForm" :model="registrationForm" label-width="80px">
         <el-form-item label="患者信息">
@@ -262,6 +277,7 @@ export default {
     return {
       // 基础信息
       registrationId: 1,
+      disease: '',
       // 进度条
       progressPercentage: 10,
       // 患者信息
@@ -312,7 +328,9 @@ export default {
     }
   },
   created() {
-    // this.registrationId = this.$route.query.registrationId
+    this.registrationId = this.$route.query.registrationId
+    this.registrationForm.registrationId = this.$route.query.registrationId
+    this.disease = this.$route.query.disease
     this.registrationId = 1
     this.invokeSelectPatientHistoryMedicalRecords()
     this.invokeFetchDepartmentList()
@@ -446,7 +464,7 @@ export default {
         endRegistration({ 'registrationId': this.registrationId }).then(response => {
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: '诊断完毕!'
           })
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
@@ -458,6 +476,64 @@ export default {
           message: '已取消'
         })
       })
+    },
+    // 下拉菜单
+    handleMenuCommand(command) {
+      // this.$message('click on item ' + command)
+      if (command === 'a') {
+        // 病历
+        this.$router.push({
+          path: '/medicalRecord/medicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId
+          }
+        })
+      } else if (command === 'b') {
+        // 检查
+        this.$router.push({
+          path: '/medicalRecord/examination', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.disease
+          }
+        })
+      } else if (command === 'c') {
+        // 确诊
+        this.$router.push({
+          path: '/medicalRecord/confirmMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.disease
+          }
+        })
+      } else if (command === 'd') {
+        // 处方
+        this.$router.push({
+          path: '/medicalRecord/medicinePrescription', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.disease
+          }
+        })
+      } else if (command === 'e') {
+        // 处置
+        this.$router.push({
+          path: '/medicalRecord/disposalApplication', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.disease
+          }
+        })
+      } else if (command === 'f') {
+        // 诊断完毕
+        this.$router.push({
+          path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.registrationId,
+            disease: this.disease
+          }
+        })
+      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()

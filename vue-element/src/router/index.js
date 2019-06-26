@@ -181,9 +181,9 @@ export const constantRoutes = [
         meta: { title: '患者费用查询', noCache: true }
       },
       {
-        path: 'dailyCheck',
-        component: () => import('@/views/registration/dailyCheck'),
-        name: 'dailyCheck',
+        path: 'dailySettlement',
+        component: () => import('@/views/registration/dailySettlement'),
+        name: 'dailySettlement',
         meta: { title: '日结', noCache: true }
       }
     ]
@@ -218,15 +218,15 @@ export const constantRoutes = [
         meta: { title: '检查申请', noCache: true }
       },
       {
-        path: 'confirmMedicalReord',
-        component: () => import('@/views/medicalRecord/confirmMedicalReord'),
-        name: 'confirmMedicalReord',
+        path: 'confirmMedicalRecord',
+        component: () => import('@/views/medicalRecord/confirmMedicalRecord'),
+        name: 'confirmMedicalRecord',
         meta: { title: '确诊', noCache: true }
       },
       {
-        path: 'medicalPrescription',
+        path: 'medicinePrescription',
         component: () => import('@/views/medicalRecord/medicinePrescription'),
-        name: 'medicalPrescription',
+        name: 'medicinePrescription',
         meta: { title: '成药处方管理', noCache: true }
       },
       {
@@ -327,7 +327,30 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/finance',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'finance',
+    meta: {
+      title: '门诊财务管理',
+      icon: 'lock'
+    },
+    children: [
+      {
+        path: 'costCategory',
+        component: () => import('@/views/finance/costCategory'),
+        name: 'costCategory',
+        meta: { title: '费用科目管理', noCache: true }
+      },
+      {
+        path: 'financeDailyCheck',
+        component: () => import('@/views/finance/dailyCheck'),
+        name: 'financeDailyCheck',
+        meta: { title: '门诊日结核对', noCache: true }
+      }
+    ]
+  },
   {
     path: '/',
     component: Layout,

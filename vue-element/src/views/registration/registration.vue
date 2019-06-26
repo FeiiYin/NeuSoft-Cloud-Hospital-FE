@@ -5,24 +5,13 @@
     </aside>
     <div class="wordbox">
       <el-row>
-        <el-col :span="17">
-          <span>门诊挂号登记号</span>
-          <el-input
-            :disabled="true"
-            placeholder="自动生成"
-            style="width:350px;margin-left:20px;"
-            prefix-icon="el-icon-document"
-          />
-        </el-col>
-        <el-col :span="7">
-          <el-button style="float:right">
-            预约
-          </el-button>
-          <el-button type="primary" icon="document" style="float:right;margin-right:20px">
-            <svg-icon icon-class="documentation" />
-            挂号
-          </el-button>
-        </el-col>
+        <el-button style="float:right">
+          预约
+        </el-button>
+        <el-button type="primary" icon="document" style="float:right;margin-right:20px">
+          <svg-icon icon-class="documentation" />
+          挂号
+        </el-button>
       </el-row>
       <svg-icon style="display:inline-block;margin-right:20px;margin-top:20px;" icon-class="peoples" />
       个人信息
@@ -84,16 +73,20 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">挂号类型</h4>
-            <el-form-item prop="registrationCategory">
+            <el-form-item prop="registrationCategoryId">
               <el-select
-                v-model="registrationForm.registrationCategory"
+                v-model="registrationForm.registrationCategoryId"
                 filterable
                 placeholder="请选择"
                 style="width:100%;"
+                @change="invokeRegistrationMoney"
               >
-                <el-option label="普通挂号" value="普通挂号" />
-                <el-option label="急诊挂号" value="急诊挂号" />
-                <el-option label="专家挂号" value="专家挂号" />
+                <el-option
+                  v-for="item in registrationCategoryList"
+                  :key="item.registrationCategoryId"
+                  :label="item.registrationCategoryName"
+                  :value="item.registrationCategoryId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -120,7 +113,7 @@
             <h4 style="margin-bottom:2px;">结算类别</h4>
             <el-form-item>
               <el-select
-                v-model="registrationForm.settleAccountsCategory"
+                v-model="registrationForm.settlementCategoryId"
                 placeholder="请选择结算类别"
                 style="width:100%"
               >
@@ -204,7 +197,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <h4 style="margin-bottom:2px;">当前收费员Id</h4>
+            <h4 style="margin-bottom:2px;">当前收费员ID</h4>
             <el-form-item>
               <el-input v-model="registrationForm.collectorId" :disabled="true" />
             </el-form-item>
@@ -212,18 +205,49 @@
           <el-col :span="6">
             <h4 style="margin-bottom:2px;">应收金额</h4>
             <el-form-item>
-              <el-input v-model="registrationForm.totalCharge" :disabled="true" />
+              <el-input v-model="charge_form.should_charge" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
         <div style="margin-top:80px;margin-bottom:40px;text-align:center">
-          <el-button type="primary" @click="submitRegisterForm()">提交</el-button>
+          <el-button type="primary" @click="invokeCharge()">提交</el-button>
           <el-button type="info" @click="resetForm()">清空</el-button>
         </div>
       </el-form>
     </div>
-  </div>
 
+    <!-- 缴费对话框 -->
+    <el-dialog title="收费" :visible.sync="chargeDialogVisible">
+      <el-form :model="charge_form">
+        <el-form-item label="应收金额">
+          <el-input v-model="charge_form.should_charge" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="实收金额">
+          <el-input v-model="charge_form.actual_charge" />
+        </el-form-item>
+        <el-form-item label="实际找零">
+          <el-input v-model="actual_exchange" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="支付方式">
+          <el-select v-model="value" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template v-if="value === '选项1'">
+        <img src="./img/1.jpg" style="width:100px;height:100px">
+      </template>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="chargeDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitRegisterForm()">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -233,6 +257,11 @@ import {
   fetchPatientInfoByIdentityCardNo,
   register
 } from '../../api/registrationCharge/registration'
+
+import {
+  selectAllRegistrationCategory,
+  registrationFee
+} from '../../api/basicInfo/registration_category'
 
 export default {
   data() {
@@ -247,7 +276,7 @@ export default {
         gender: '',
         age: '',
         birthday: '',
-        registrationCategory: '',
+        registrationCategoryId: '',
         medicalCategory: '',
         identityCardNo: '',
         registrationStatus: '',
@@ -256,7 +285,7 @@ export default {
         departmentId: '',
         doctorId: '',
         registrationSource: '',
-        settleAccountsCategory: '',
+        settlementCategoryId: '',
         isVisited: '',
         valid: '',
         familyAddress: '',
@@ -274,6 +303,32 @@ export default {
         doctorId: '',
         doctorName: ''
       }],
+      // 搜索挂号种类
+      registrationCategoryList: [],
+      // 交费
+      chargeDialogVisible: false,
+      charge_form: {
+        should_charge: 0,
+        actual_charge: 0
+      },
+      value: '',
+      // 选择支付方式
+      options: [{
+        value: '选项1',
+        label: '支付宝'
+      }, {
+        value: '选项2',
+        label: '微信'
+      }, {
+        value: '选项3',
+        label: '银行卡'
+      }, {
+        value: '选项4',
+        label: '现金'
+      }, {
+        value: '选项5',
+        label: '医保'
+      }],
       // 表单限制条件
       rules: {
         identityCardNo: [
@@ -283,13 +338,13 @@ export default {
         patientName: [
           { required: true, message: '请输入用户姓名', trigger: 'blur' }
         ],
-        registrationCategory: [
+        registrationCategoryId: [
           { required: true, message: '请输入挂号类型', trigger: 'blur' }
         ],
         medicalCategory: [
           { required: true, message: '请输入医疗类别', trigger: 'blur' }
         ],
-        settleAccountsCategory: [
+        settlementCategoryId: [
           { required: true, message: '请输入结算类别', trigger: 'blur' }
         ],
         registrationDate: [
@@ -310,6 +365,15 @@ export default {
       }
     }
   },
+  computed: {
+    actual_exchange: function() {
+      if (this.charge_form.actual_charge - this.charge_form.should_charge > 0) {
+        return this.charge_form.actual_charge - this.charge_form.should_charge
+      } else {
+        return 0
+      }
+    }
+  },
   watch: {
     // 如果 身份证输入框 发生改变，这个函数就会运行
     'registrationForm.identityCardNo': function() {
@@ -321,6 +385,7 @@ export default {
   created() {
     this.invokeFetchDepartment()
     this.registrationForm.visitDate = new Date()
+    this.invokeSelectAllRegistrationCategory()
     this.registrationForm.registrationDate = this.registrationForm.visitDate
   },
   methods: {
@@ -332,17 +397,33 @@ export default {
         console.log('fetchPatientInfoByIdentityCardNo response: ')
         console.log(response)
         if (response.message === 'not found') {
+          // ******19980729****
+          var month = identityCardNo.substring(10, 12)
+          if (month.indexOf('0') === 0) {
+            month = parseInt(month.substring(1))
+          } else {
+            month = parseInt(month)
+          }
+          this.registrationForm.birthday = new Date(identityCardNo.substring(6, 10), month - 1, identityCardNo.substring(12, 14))
+          this.registrationForm.age = new Date().getFullYear() - this.registrationForm.birthday.getFullYear()
           return
         } else {
           this.registrationForm.patientName = response.data.patientName
           this.registrationForm.gender = response.data.gender
-          this.registrationForm.age = response.data.age
           this.registrationForm.birthday = new Date(response.data.birthDate.substring(0, 10))
           this.registrationForm.familyAddress = response.data.familyAddress
+          this.registrationForm.age = new Date().getFullYear() - this.registrationForm.birthday.getFullYear()
         }
       }).catch(error => {
         console.log('fetchPatientInfoByIdentityCardNo error: ')
         console.log(error)
+      })
+    },
+    invokeSelectAllRegistrationCategory() {
+      selectAllRegistrationCategory().then(response => {
+        console.log('selectAllRegistrationCategory response')
+        console.log(response)
+        this.registrationCategoryList = response.data
       })
     },
     invokeFetchDepartment() {
@@ -370,6 +451,11 @@ export default {
     },
     // 提交挂号表单
     submitRegisterForm() {
+      if (this.charge_form.actual_charge < this.charge_form.should_charge) {
+        this.$message.error('实际金额小于应交金额，错误！')
+        return
+      }
+      this.chargeDialogVisible = false
       this.$refs['registrationForm'].validate((valid) => {
         if (valid) {
           console.log('register valid passed ')
@@ -399,7 +485,7 @@ export default {
             'age': this.registrationForm.age,
             // format
             'birthday': this.registrationForm.birthday.Format('yyyy-MM-dd'),
-            'registrationCategory': this.registrationForm.registrationCategory,
+            'registrationCategoryId': this.registrationForm.registrationCategoryId,
             'medicalCategory': this.registrationForm.medicalCategory,
             'identityCardNo': this.registrationForm.identityCardNo,
             'registrationStatus': this.registrationForm.registrationStatus,
@@ -409,7 +495,7 @@ export default {
             'departmentId': this.registrationForm.departmentId,
             'doctorId': this.registrationForm.doctorId,
             'registrationSource': this.registrationForm.registrationSource,
-            'settleAccountsCategory': this.registrationForm.settleAccountsCategory,
+            'settlementCategoryId': this.registrationForm.settlementCategoryId,
             'isVisited': this.registrationForm.isVisited,
             'familyAddress': this.registrationForm.familyAddress,
             'collectorId': this.registrationForm.collectorId
@@ -417,10 +503,9 @@ export default {
           register(query).then(response => {
             console.log('register response: ')
             console.log(response)
-
             this.$notify({
-              title: '成功',
-              message: '挂号成功',
+              title: '完成',
+              message: '挂号完成',
               type: 'success'
             })
             this.resetForm()
@@ -442,6 +527,20 @@ export default {
         }
       })
     },
+    invokeRegistrationMoney() {
+      registrationFee({ 'registrationCategoryId': this.registrationForm.registrationCategoryId }).then(response => {
+        // console.log(response)
+        this.charge_form.should_charge = response.data
+        this.charge_form.actual_charge = 0
+      })
+    },
+    invokeCharge() {
+      if (this.registrationForm.registrationCategoryId === '') {
+        this.$message.error('未选择挂号类别，错误！')
+        return
+      }
+      this.chargeDialogVisible = true
+    },
     // 清空表单
     resetForm() {
       this.registrationForm.identityCardNo = ''
@@ -450,7 +549,7 @@ export default {
       this.registrationForm.gender = ''
       this.registrationForm.age = ''
       this.registrationForm.birthday = ''
-      this.registrationForm.registrationCategory = ''
+      this.registrationForm.registrationCategoryId = ''
       this.registrationForm.medicalCategory = ''
       this.registrationForm.identityCardNo = ''
       this.registrationForm.registrationStatus = ''
@@ -458,7 +557,7 @@ export default {
       this.registrationForm.departmentId = ''
       this.registrationForm.doctorId = ''
       this.registrationForm.registrationSource = ''
-      this.registrationForm.settleAccountsCategory = ''
+      this.registrationForm.settlementCategoryId = ''
       this.registrationForm.familyAddress = ''
       // this.registrationForm.collectorId = ''
       // this.registrationForm.totalCharge = ''

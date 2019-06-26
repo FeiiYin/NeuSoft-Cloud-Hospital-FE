@@ -4,13 +4,28 @@
       <el-main>
         <aside>
           <span style="margin-left:30px;">检查项目申请</span>
+          <el-dropdown style="float:right" @command="handleMenuCommand">
+            <span class="el-dropdown-link">
+              <el-tag type="text">
+                请选择<i class="el-icon-arrow-down el-icon--right" />
+              </el-tag>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="a">病历诊断</el-dropdown-item>
+              <el-dropdown-item command="b" disabled>检查申请</el-dropdown-item>
+              <el-dropdown-item command="c">确诊</el-dropdown-item>
+              <el-dropdown-item command="d">处方申请</el-dropdown-item>
+              <el-dropdown-item command="e">处置申请</el-dropdown-item>
+              <el-dropdown-item command="f" divided>诊断完毕</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </aside>
         <div>
           <el-form ref="examForm" :model="examForm" label-width="100px">
             <el-row :gutter="10" style="margin-bottom:0px">
               <el-col :span="12">
-                <el-form-item label="患者病历号" prop="registrationId">
-                  <el-input v-model="examForm.registrationId" prefix-icon="el-icon-document" />
+                <el-form-item label="患者病历号" prop="registrationId" :disabled="true">
+                  <el-input v-model="examForm.registrationId" :disabled="true" prefix-icon="el-icon-document" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -287,6 +302,7 @@ export default {
   data() {
     return {
       // 基础前置信息
+      registrationId: 1,
       doctorId: 1,
       totalListMoney: 0,
       prescriptionId: '',
@@ -375,11 +391,22 @@ export default {
       historyExamItemExample: []
     }
   },
+  watch: {
+    chargeItemEditableTableData: function() {
+      this.totalListMoney = 0
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        this.totalListMoney += this.chargeItemEditableTableData[i].price * this.chargeItemEditableTableData[i].nums
+      }
+    }
+  },
   created() {
     // not defined like below, 我把获取历史列表写在了获取部门列表里
     // this.invokeFetchDepartmentList().then(response => {
     //   this.invokeSelectHistoryExam()
     // })
+    this.registrationId = this.$route.query.registrationId
+    this.examForm.registrationId = this.$route.query.registrationId
+    this.examForm.disease = this.$route.query.disease
     this.invokeFetchDepartmentList()
     this.invokeCommonExam()
     // pre
@@ -420,6 +447,15 @@ export default {
       this.chargeItemForm.nums = 1
       this.chargeItemForm.doctorAdvice = '无'
       this.chargeItemForm.departmentName = this.departmentList[this.chargeItemForm.departmentId - 1].departmentName
+      for (i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        if (this.chargeItemEditableTableData[i].chargeItemId === this.chargeItemForm.chargeItemId) {
+          this.$message.error('列表中有重复元素，错误！')
+          this.chargeItemFormVisible = false
+          this.chargeItemFormDisable = true
+          this.chargeItemForm = {}
+          return
+        }
+      }
       this.$refs.chargeItemEditableTableData.insert(this.chargeItemForm)
       this.$message({
         message: '插入数据成功！',
@@ -441,7 +477,7 @@ export default {
       for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
         if (this.chargeItemEditableTableData[i].nums == null ||
           this.chargeItemEditableTableData[i].nums === '' ||
-          this.chargeItemEditableTableData[i].nums < 0
+          this.chargeItemEditableTableData[i].nums <= 0
         ) {
           this.$message.error('项目信息缺失或错误，错误！')
           return false
@@ -543,20 +579,36 @@ export default {
         this.commonExamDialogVisible = false
         return
       }
+      var abool = false
       for (var i = 0; i < this.commonExamListValue.length; ++i) {
         var id = this.commonExamListValue[i]
         for (var j = 0; j < this.commonExamListData.length; ++j) {
           if (id === this.commonExamListData[j].chargeItemId) {
+            var bool = false
+            for (var k = 0; k < this.chargeItemEditableTableData.length; ++k) {
+              if (this.chargeItemEditableTableData[k].chargeItemId === id) {
+                bool = true
+                abool = true
+                break
+              }
+            }
+            if (bool) {
+              break
+            }
             this.$refs.chargeItemEditableTableData.insert(this.commonExamListData[j])
             break
           }
         }
       }
       this.commonExamListValue = []
-      this.$message({
-        message: '插入数据成功！',
-        type: 'success'
-      })
+      if (abool) {
+        this.$message('已去除重复条目')
+      } else {
+        this.$message({
+          message: '插入数据成功！',
+          type: 'success'
+        })
+      }
       this.commonExamDialogVisible = false
     },
     // 历史
@@ -611,6 +663,14 @@ export default {
         })
       })
     },
+    checkIfNotIn(id) {
+      for (var j = 0; j < this.chargeItemEditableTableData.length; ++j) {
+        if (this.chargeItemEditableTableData[j].chargeItemId === id) {
+          return false
+        }
+      }
+      return true
+    },
     applyTempsave() {
       if (this.tempsaveExamItemExample.length === 0 || this.tempsaveExamItemExample.length == null) {
         this.$message.error('当前未选中暂存，错误！')
@@ -626,7 +686,11 @@ export default {
 
         this.tempsaveExamItemExample[i].departmentName =
           this.departmentList[this.tempsaveExamItemExample[i].chargeItem.departmentId - 1].departmentName
-        this.$refs.chargeItemEditableTableData.insert(this.tempsaveExamItemExample[i])
+        if (this.checkIfNotIn(this.tempsaveExamItemExample[i].chargeItemId)) {
+          this.$refs.chargeItemEditableTableData.insert(this.tempsaveExamItemExample[i])
+        } else {
+          continue
+        }
       }
       this.$message({
         message: '应用暂存成功！',
@@ -737,7 +801,64 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
-
+    // 下拉菜单
+    handleMenuCommand(command) {
+      // this.$message('click on item ' + command)
+      if (command === 'a') {
+        // 病历
+        this.$router.push({
+          path: '/medicalRecord/medicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId
+          }
+        })
+      } else if (command === 'b') {
+        // 检查
+        this.$router.push({
+          path: '/medicalRecord/examination', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'c') {
+        // 确诊
+        this.$router.push({
+          path: '/medicalRecord/confirmMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'd') {
+        // 处方
+        this.$router.push({
+          path: '/medicalRecord/medicinePrescription', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'e') {
+        // 处置
+        this.$router.push({
+          path: '/medicalRecord/disposalApplication', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      } else if (command === 'f') {
+        // 诊断完毕
+        this.$router.push({
+          path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径
+          query: {
+            registrationId: this.examForm.registrationId,
+            disease: this.examForm.disease
+          }
+        })
+      }
+    },
     doPrint(e) {
       const subOutputRankPrint = document.getElementById('subOutputRank-print')
       console.log(subOutputRankPrint.innerHTML)

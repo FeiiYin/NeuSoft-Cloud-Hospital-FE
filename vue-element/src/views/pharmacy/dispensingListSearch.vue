@@ -107,8 +107,8 @@
 
               <el-table-column class-name="status-col" label="状态" width="110">
                 <template slot-scope="{row}">
-                  <el-tag :type="row.registrationCategory == '急诊挂号' ? 'danger' : 'primary'">
-                    {{ row.registrationCategory }}
+                  <el-tag :type="row.registrationCategoryId === 1 ? 'primary' : (row.registrationCategoryId === 2 ? 'danger' : 'success')">
+                    {{ row.registrationCategoryId === 1 ? '普通号' : (row.registrationCategoryId === 2 ? '急诊号' : (row.registrationCategoryId === 3 ? '专家号' : '其他')) }}
                   </el-tag>
                 </template>
               </el-table-column>
@@ -170,6 +170,22 @@ export default {
   created() {
     // this.getDepartmentList()
     this.invokeWaitingRegistrationList()
+    // 绑定回车
+    var _self = this
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      if (key === 13) {
+        _self.searchPatientWithInfo()
+      }
+    }
+  },
+  beforeDestroy() {
+    document.onkeydown = function(e) {
+      var key = window.event.keyCode
+      // eslint-disable-next-line no-empty
+      if (key === 13) {
+      }
+    }
   },
   methods: {
     // 双击跳转
