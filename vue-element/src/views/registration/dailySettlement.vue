@@ -112,7 +112,8 @@
       </el-main>
     </el-container>
     <div>
-      <tabPane v-if="activeName==item.key" ref="tabPane" :type="item.key" />
+      asdf
+      <statement ref="statement" />
     </div>
   </div>
 </template>
