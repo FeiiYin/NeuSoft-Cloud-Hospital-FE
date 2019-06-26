@@ -26,7 +26,6 @@
             {{ scope.row.isVisited === '0' ? '未诊' : '已诊' }}
           </template>
         </el-table-column>
-        <el-table-column prop="totalCharge" label="实收费用" />
         <el-table-column prop="withdraw" label="执行" width="200px">
           <template slot-scope="scope">
             <el-button

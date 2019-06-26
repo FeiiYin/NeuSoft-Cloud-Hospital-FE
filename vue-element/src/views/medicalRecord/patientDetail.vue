@@ -18,14 +18,14 @@
         </el-dropdown-menu>
       </el-dropdown>
     </aside>
-    <div style="height:50px">
+    <!-- <div style="height:50px">
       <el-col :span="3" style="margin-left:20px">
         当前进度
       </el-col>
       <el-col :span="20">
         <el-progress :text-inside="true" :stroke-width="18" :percentage="progressPercentage" />
       </el-col>
-    </div>
+    </div> -->
     <div>
       <el-form ref="registrationForm" :model="registrationForm" label-width="80px">
         <el-form-item label="患者信息">
@@ -464,7 +464,7 @@ export default {
         endRegistration({ 'registrationId': this.registrationId }).then(response => {
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: '诊断完毕!'
           })
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {

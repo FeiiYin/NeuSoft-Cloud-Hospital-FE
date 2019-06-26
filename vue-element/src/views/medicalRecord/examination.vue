@@ -391,6 +391,14 @@ export default {
       historyExamItemExample: []
     }
   },
+  watch: {
+    chargeItemEditableTableData: function() {
+      this.totalListMoney = 0
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        this.totalListMoney += this.chargeItemEditableTableData[i].price * this.chargeItemEditableTableData[i].nums
+      }
+    }
+  },
   created() {
     // not defined like below, 我把获取历史列表写在了获取部门列表里
     // this.invokeFetchDepartmentList().then(response => {
@@ -439,6 +447,15 @@ export default {
       this.chargeItemForm.nums = 1
       this.chargeItemForm.doctorAdvice = '无'
       this.chargeItemForm.departmentName = this.departmentList[this.chargeItemForm.departmentId - 1].departmentName
+      for (i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        if (this.chargeItemEditableTableData[i].chargeItemId === this.chargeItemForm.chargeItemId) {
+          this.$message.error('列表中有重复元素，错误！')
+          this.chargeItemFormVisible = false
+          this.chargeItemFormDisable = true
+          this.chargeItemForm = {}
+          return
+        }
+      }
       this.$refs.chargeItemEditableTableData.insert(this.chargeItemForm)
       this.$message({
         message: '插入数据成功！',
@@ -562,20 +579,36 @@ export default {
         this.commonExamDialogVisible = false
         return
       }
+      var abool = false
       for (var i = 0; i < this.commonExamListValue.length; ++i) {
         var id = this.commonExamListValue[i]
         for (var j = 0; j < this.commonExamListData.length; ++j) {
           if (id === this.commonExamListData[j].chargeItemId) {
+            var bool = false
+            for (var k = 0; k < this.chargeItemEditableTableData.length; ++k) {
+              if (this.chargeItemEditableTableData[k].chargeItemId === id) {
+                bool = true
+                abool = true
+                break
+              }
+            }
+            if (bool) {
+              break
+            }
             this.$refs.chargeItemEditableTableData.insert(this.commonExamListData[j])
             break
           }
         }
       }
       this.commonExamListValue = []
-      this.$message({
-        message: '插入数据成功！',
-        type: 'success'
-      })
+      if (abool) {
+        this.$message('已去除重复条目')
+      } else {
+        this.$message({
+          message: '插入数据成功！',
+          type: 'success'
+        })
+      }
       this.commonExamDialogVisible = false
     },
     // 历史
@@ -630,6 +663,14 @@ export default {
         })
       })
     },
+    checkIfNotIn(id) {
+      for (var j = 0; j < this.chargeItemEditableTableData.length; ++j) {
+        if (this.chargeItemEditableTableData[j].chargeItemId === id) {
+          return false
+        }
+      }
+      return true
+    },
     applyTempsave() {
       if (this.tempsaveExamItemExample.length === 0 || this.tempsaveExamItemExample.length == null) {
         this.$message.error('当前未选中暂存，错误！')
@@ -645,7 +686,11 @@ export default {
 
         this.tempsaveExamItemExample[i].departmentName =
           this.departmentList[this.tempsaveExamItemExample[i].chargeItem.departmentId - 1].departmentName
-        this.$refs.chargeItemEditableTableData.insert(this.tempsaveExamItemExample[i])
+        if (this.checkIfNotIn(this.tempsaveExamItemExample[i].chargeItemId)) {
+          this.$refs.chargeItemEditableTableData.insert(this.tempsaveExamItemExample[i])
+        } else {
+          continue
+        }
       }
       this.$message({
         message: '应用暂存成功！',

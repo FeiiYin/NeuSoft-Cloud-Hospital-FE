@@ -169,9 +169,9 @@ export const constantRoutes = [
         meta: { title: '患者费用查询', noCache: true }
       },
       {
-        path: 'dailyCheck',
-        component: () => import('@/views/registration/dailyCheck'),
-        name: 'dailyCheck',
+        path: 'dailySettlement',
+        component: () => import('@/views/registration/dailySettlement'),
+        name: 'dailySettlement',
         meta: { title: '日结', noCache: true }
       }
     ]

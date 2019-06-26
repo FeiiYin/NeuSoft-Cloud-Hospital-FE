@@ -103,6 +103,10 @@
 </template>
 
 <script>
+import {
+  selectAllDailySettlementList
+} from '../../api/registrationCharge/dailySettlement'
+
 export default {
   data() {
     return {
@@ -146,8 +150,13 @@ export default {
       this.historyDailyCheckTableCurrentPage = val
       this.invokeSelectHistory()
     },
+    // selectAllDailySettlementList
     invokeSelectHistory() {
       alert('TODO!')
+      var query = {
+        'currentPage': this.currentPage
+      }
+      selectAllDailySettlementList()
     },
     // 实例分页
     exampleHandleSizeChange(val) {

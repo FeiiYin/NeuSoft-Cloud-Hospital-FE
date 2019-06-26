@@ -253,7 +253,7 @@ export default {
       } else if (command === 'f') {
         // 诊断完毕
         this.$router.push({
-          path: '/medicalRecord/endMedicalRecord', // 这个path是在router/index.js里边配置的路径
+          path: '/medicalRecord/patientDetail', // 这个path是在router/index.js里边配置的路径
           query: {
             registrationId: this.currentRow.registrationId,
             disease: ''
