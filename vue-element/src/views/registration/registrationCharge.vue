@@ -630,7 +630,7 @@ export default {
           'invoiceTitle': this.registrationForm.patientName,
           'collectorId': this.collectorId,
           'invoiceNums': 1, // 发票数量
-          'registrationId': this.registrationId,// 挂号单编号
+          'registrationId': this.registrationId, // 挂号单编号
           'invoiceAmount': this.charge_form.should_charge,
           'selfPay': this.charge_form.should_charge,
           'accountPay': 0,
