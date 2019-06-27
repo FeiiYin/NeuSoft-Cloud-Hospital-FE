@@ -62,40 +62,6 @@
         </aside>
 
         <el-container>
-          <el-header>
-            <el-row :gutter="10">
-              <el-col :sm="5" :md="3" :lg="3" :xl="1"><div style="padding:10px">
-                <span>统计时间从</span>
-              </div></el-col>
-              <el-col :sm="5" :md="7" :lg="8" :xl="11"><div class="grid-content bg-purple-light">
-                <el-date-picker
-                  v-model="startDatetime"
-                  type="datetime"
-                  placeholder="选择日期时间"
-                  style="width:100%"
-                  :disabled="true"
-                />
-              </div></el-col>
-              <el-col :sm="5" :md="3" :lg="2" :xl="1"><div style="padding:10px;">
-                <span>到</span>
-              </div></el-col>
-              <el-col :sm="5" :md="7" :lg="8" :xl="10"><div class="grid-content bg-purple">
-                <el-date-picker
-                  v-model="endDatetime"
-                  type="datetime"
-                  placeholder="选择日期时间"
-                  style="width:100%"
-                  :picker-options="datePickerOptions"
-                />
-              </div></el-col>
-              <el-col :sm="3" :md="4" :lg="3" :xl="1"><div>
-                <el-button type="primary" style="float:right;" @click="invokeGenerateDailySettlement">
-                  <svg-icon icon-class="component" />
-                  日结
-                </el-button>
-              </div></el-col>
-            </el-row>
-          </el-header>
           <el-main>
             <el-table
               ref="exampleDailyCheckTable"
@@ -133,7 +99,7 @@
       :visible.sync="documentVisible"
       width="80%"
     >
-      <statement ref="statement" />
+      <statement ref="statement" :document="document" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="documentVisible = false">取 消</el-button>
         <el-button type="primary" :disabled="currentRow == null || currentRow.checked === 1" @click="invokeCheckDailySettlement">核对通过</el-button>
@@ -183,7 +149,7 @@ export default {
       exampleDailyCheckTableCurrentPage: 1,
       exampleDailyCheckTableTotalNumber: 0,
       exampleDailyCheckTablePageSize: 50,
-
+      document: '',
       documentVisible: false,
       // 日期选择建议
       datePickerOptions: {
@@ -312,7 +278,9 @@ export default {
       dailySettlementDocument({ 'dailySettlementId': row.dailySettlementId }).then(response => {
         console.log('dailySettlementDocument response: ')
         console.log(response)
+        // this.$refs.statement[0].draw()
         this.currentRow = row
+        this.document = JSON.parse(response.data)
         this.documentVisible = true
       })
     },

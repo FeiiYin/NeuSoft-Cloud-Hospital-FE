@@ -126,7 +126,7 @@
       :visible.sync="documentVisible"
       width="80%"
     >
-      <statement ref="statement" />
+      <statement ref="statement" :document="document" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="documentVisible = false">确 定</el-button>
       </span>
@@ -176,6 +176,7 @@ export default {
       exampleDailyCheckTablePageSize: 50,
 
       documentVisible: false,
+      document: '',
       // 日期选择建议
       datePickerOptions: {
         shortcuts: [{
@@ -245,6 +246,7 @@ export default {
         for (var i = 0; i < this.historyDailyCheckTable.length; ++i) {
           this.historyDailyCheckTable[i].dailySettlementDate = new Date(this.historyDailyCheckTable[i].dailySettlementDate).Format('yyyy-MM-dd hh:mm:ss')
         }
+        this.startDatetime = this.historyDailyCheckTable[0].dailySettlementDate
       })
     },
     // 实例分页
@@ -286,6 +288,9 @@ export default {
       dailySettlementDocument({ 'dailySettlementId': row.dailySettlementId }).then(response => {
         console.log('dailySettlementDocument response: ')
         console.log(response)
+        // this.$refs.statement[0].draw()
+        this.currentRow = row
+        this.document = JSON.parse(response.data)
         this.documentVisible = true
       })
     },
