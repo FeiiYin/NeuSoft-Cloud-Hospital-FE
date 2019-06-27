@@ -12,10 +12,11 @@ npm install --registry=https://registry.npm.taobao.org
 注意在 Windows 中，如果 Python 2 和 Python 3 并存，请将 `Python2.exe` 文件名修改为 `Python.exe`，并设置好环境变量，确保系统不使用 Python 3
 ```
 
-- 安装 node-sass
+- 安装 node-sass 等环境
 
 ```
 npm install node-sass
+npm install moment --save
 ```
 
 - 运行服务器
