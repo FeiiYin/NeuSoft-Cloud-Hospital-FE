@@ -27,25 +27,27 @@
           </el-button>
         </el-col>
       </el-row>
-      <el-table ref="workloadTable" :data="workloadTable">
-        <el-table-column label="科室" />
-        <el-table-column label="看诊人次" />
-        <el-table-column label="发票数量" />
+      <div style="margin:20px">
+        <count-to
+          ref="nums"
+          :start-val="_startVal"
+          :end-val="_endVal"
+          :duration="_duration"
+          :decimals="_decimals"
+          :separator="_separator"
+          :prefix="_prefix"
+          :suffix="_suffix"
+          :autoplay="false"
+          class="nums"
+        />
+      </div>
+      <el-table ref="patientChargeInfo" :data="patientChargeInfo" show-summary>
+        <el-table-column type="index" />
+        <el-table-column label="患者姓名" prop="patientName" />
+        <el-table-column label="检查费用" prop="patientExaminationFee" />
+        <el-table-column label="处置费用" prop="patientDisposalFee" />
+        <el-table-column label="处方费用" prop="patientPrescriptionFee" />
       </el-table>
-    </div>
-    <div>
-      <count-to
-        ref="nums"
-        :start-val="_startVal"
-        :end-val="_endVal"
-        :duration="_duration"
-        :decimals="_decimals"
-        :separator="_separator"
-        :prefix="_prefix"
-        :suffix="_suffix"
-        :autoplay="false"
-        class="nums"
-      />
     </div>
   </div>
 </template>
@@ -71,13 +73,16 @@ export default {
       setDuration: 4000,
       setDecimals: 0,
       setSeparator: ',',
-      setSuffix: ' rmb',
-      setPrefix: '¥ ',
+      setSuffix: ' 位病人',
+      setPrefix: '该段时间内，您一共诊断了 ',
 
       startDate: null,
       endDate: null,
       doctorId: 1,
       workloadTable: [],
+
+      patientNums: 0,
+      patientChargeInfo: [],
 
       piechartSeriesData: [
         { value: 320, name: 'Industries' },
@@ -126,8 +131,8 @@ export default {
       }
     },
     _endVal() {
-      if (this.setEndVal) {
-        return this.setEndVal
+      if (this.patientNums) {
+        return this.patientNums
       } else {
         return 0
       }
@@ -187,10 +192,12 @@ export default {
         'doctorId': this.doctorId
       }
       console.log(query)
-      techDoctorWorkloadStatistics(query).then(reponse => {
-        console.log('techDoctorWorkloadStatistics response')
-        console.log(reponse)
-
+      techDoctorWorkloadStatistics(query).then(response => {
+        console.log('doctorWorkloadFinancialStatistics response')
+        console.log(response)
+        var data = JSON.parse(response.data)
+        this.patientNums = data.patientNums
+        this.patientChargeInfo = data.patientChargeInfo
         this.$refs.nums.start()
       }).catch(error => {
         console.log(error)
@@ -203,11 +210,11 @@ export default {
 <style>
   .nums {
     font-size: 20px;
-    color: #F6416C;
+    color: rgba(71, 71, 71, 0.8);
     display: block;
-    margin: 10px 0;
+    margin: 30px 0;
     text-align: center;
-    font-size: 80px;
     font-weight: 500;
+    font-family:"宋体"
   }
 </style>

@@ -41,9 +41,7 @@
           class="nums"
         />
       </div>
-      <el-table ref="patientChargeInfo" :data="patientChargeInfo" show-summary>
-        <el-table-column type="index" />
-        <el-table-column label="患者姓名" prop="patientName" />
+      <el-table ref="patientChargeInfo" :data="patientChargeInfo">
         <el-table-column label="检查费用" prop="patientExaminationFee" />
         <el-table-column label="处置费用" prop="patientDisposalFee" />
         <el-table-column label="处方费用" prop="patientPrescriptionFee" />
@@ -54,7 +52,7 @@
 
 <script>
 import {
-  doctorWorkloadFinancialStatistics
+  doctorWorkloadFinancialStatistics_menzhen
 } from '../../api/personal/workload'
 
 import countTo from 'vue-count-to'
@@ -188,23 +186,24 @@ export default {
       // console.log(this.startDate)
       var query = {
         'startDatetime': moment(this.startDate[0]).format('YYYY-MM-DD HH:MM:SS'),
-        'endDatetime': moment(this.startDate[1]).format('YYYY-MM-DD HH:MM:SS'),
-        'doctorId': this.doctorId
+        'endDatetime': moment(this.startDate[1]).format('YYYY-MM-DD HH:MM:SS')
       }
       console.log(query)
-      doctorWorkloadFinancialStatistics(query).then(response => {
+      doctorWorkloadFinancialStatistics_menzhen(query).then(response => {
         console.log('doctorWorkloadFinancialStatistics response')
         console.log(response)
-        var data = JSON.parse(response.data)
-        this.patientNums = data.patientNums
-        this.patientChargeInfo = data.patientChargeInfo
-        this.$refs.nums.start()
+        // var data = JSON.parse(response.data)
+        // this.patientNums = data.patientNums
+        // this.patientChargeInfo = data.patientChargeInfo
+        // this.$refs.nums.start()
       }).catch(error => {
         console.log(error)
       })
     }
   }
 }
+// 【应用场景】：用于财务工作人员统计指定时间段的医生工作量，如图所示。
+// 【操作描述】：操作员输入统计起始和终止时间，点击查询按钮，查询看诊人次、发票数量、各分项收入及总收入情况。通过点击导出按钮，对统计结果进行导出。
 </script>
 
 <style>

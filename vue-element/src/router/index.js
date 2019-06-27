@@ -419,6 +419,18 @@ export const asyncRoutes = [
         component: () => import('@/views/finance/financeDailySettlement'),
         name: 'financeDailySettlement',
         meta: { title: '门诊日结核对', noCache: true }
+      },
+      {
+        path: 'departmentWorkload',
+        component: () => import('@/views/finance/departmentWorkload'),
+        name: 'departmentWorkload',
+        meta: { title: '科室工作量统计', noCache: true }
+      },
+      {
+        path: 'doctorWorkload',
+        component: () => import('@/views/finance/doctorWorkload'),
+        name: 'doctorWorkload',
+        meta: { title: '医生工作量统计', noCache: true }
       }
     ]
   },
