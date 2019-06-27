@@ -380,7 +380,7 @@
 </template>
 
 <script>
-import { fetchList, saveSchedulingRule, deleteSchedulingRule, generateSchedulingInfo, selectSchedulingInfo, saveSchedulingInfo, deleteSchedulingInfo } from '../../api/basicInfo/schedule'
+import { fetchList, saveSchedulingRule, deleteSchedulingRule, generateSchedulingInfo, selectSchedulingInfo, saveSchedulingInfo } from '../../api/basicInfo/schedule'
 import { fetchDepartmentList } from '../../api/basicInfo/department'
 import { selectRegistration_categoryList } from '../../api/basicInfo/registration_category'
 import { selectDoctorList } from '../../api/basicInfo/account'

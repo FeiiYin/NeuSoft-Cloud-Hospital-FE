@@ -253,7 +253,7 @@ import {
 import {
   fetchDepartmentList
 } from '../../api/basicInfo/department'
-import moment from 'moment'
+// import moment from 'moment'
 export default {
   data() {
     return {

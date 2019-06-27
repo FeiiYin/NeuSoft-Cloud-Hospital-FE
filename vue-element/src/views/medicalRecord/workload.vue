@@ -6,18 +6,21 @@
     <div>
       <el-row style="margin-bottom:20px">
         <el-col :span="2.2" style="padding:10px;">
-          统计时间从
+          统计时间
         </el-col>
-        <el-col :span="9" style="padding:5px;">
-          <el-date-picker v-model="startDate" type="date" placeholder="选择日期" style="width: 100%;" />
+        <el-col :span="16" style="padding:5px">
+          <el-date-picker
+            v-model="startDate"
+            type="datetimerange"
+            :picker-options="pickerOptions"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            align="right"
+            style="width:100%;"
+          />
         </el-col>
-        <el-col :span="0.8" style="padding:10px;">
-          <span>到</span>
-        </el-col>
-        <el-col :span="9" style="padding:5px;">
-          <el-date-picker v-model="endDate" type="date" placeholder="选择日期" style="width: 100%;" />
-        </el-col>
-        <el-col :span="3" style="padding-left:30px;padding-top:5px;">
+        <el-col :span="4" style="padding-left:30px;padding-top:5px;">
           <el-button type="primary" style="float:right;" @click="invokeDoctorWorkloadFinancialStatistics">
             <svg-icon icon-class="component" />
             确认
@@ -100,7 +103,35 @@ export default {
         { value: 100, name: 'Gold' },
         { value: 59, name: 'Forecasts' }
       ],
-      piechartLegendData: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+      piechartLegendData: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts'],
+
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      }
     }
   },
   computed: {
@@ -147,8 +178,8 @@ export default {
     }
   },
   created() {
-    var i = this.$store.getters.accountId
-    alert('id ' + i)
+    // var i = this.$store.getters.accountId
+    // alert('id ' + i)
   },
   methods: {
     // 日期选择
@@ -162,17 +193,14 @@ export default {
       return moment(date).format('YYYY-MM-DD')
     },
     invokeDoctorWorkloadFinancialStatistics() {
-      if (this.startDate == null || this.endDate == null) {
+      if (this.startDate == null) {
         this.$message.error('未选择时间，错误!')
         return
       }
-      if (this.startDate > this.endDate) {
-        this.$message.error('时间大小，错误!')
-        return
-      }
+      // console.log(this.startDate)
       var query = {
-        'startDatetime': moment(this.startDate).format('YYYY-MM-DD HH:MM:SS'),
-        'endDatetime': moment(this.endDate,).format('YYYY-MM-DD HH:MM:SS'),
+        'startDatetime': moment(this.startDate[0]).format('YYYY-MM-DD HH:MM:SS'),
+        'endDatetime': moment(this.startDate[1]).format('YYYY-MM-DD HH:MM:SS'),
         'doctorId': this.doctorId
       }
       console.log(query)
