@@ -3,11 +3,11 @@
   <div style="padding:1%;" class="app-container">
     <aside>医生排班规则维护</aside>
     <el-row style="margin-bottom: 20px">
-    <el-col :span="6">
-      <el-button @click="addScheduleVisible = true">新增</el-button>
-      <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
-      <el-button @click="toggleSelection()">取消所选</el-button>
-    </el-col>
+      <el-col :span="6">
+        <el-button @click="addScheduleVisible = true">新增</el-button>
+        <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
+        <el-button @click="toggleSelection()">取消所选</el-button>
+      </el-col>
     </el-row>
     <el-table
       ref="multipleTable"
@@ -19,23 +19,23 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="schedulingRuleId" label="规则id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="weekday" label="星期 数字" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="weekdayName" label="星期" width="120"></el-table-column>
-      <el-table-column prop="departmentName" label="科室" width="120"></el-table-column>
-      <el-table-column prop="departmentId" label="科室id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="doctorName" label="排班医生" width="120"></el-table-column>
-      <el-table-column prop="doctorId" label="排班医生id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="registrationCategoryName" label="挂号类别" width="120"></el-table-column>
-      <el-table-column prop="registrationCategoryId" label="挂号类别id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="validName" label="有效状态" width="120"></el-table-column>
-      <el-table-column prop="valid" label="有效状态 数字" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="noonName" label="午别" width="120"></el-table-column>
-      <el-table-column prop="noon" label="午别 数字" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="limitation" label="排班限额" width="120"></el-table-column>
-      <el-table-column prop="operationAccountName" label="操作员" width="120"></el-table-column>
-      <el-table-column prop="operationAccountId" label="操作员id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="operationDate1" label="操作日期" width="120" :formatter="dateFormat"></el-table-column>
+      <el-table-column v-if="1 === 0" prop="schedulingRuleId" label="规则id" width="120" />
+      <el-table-column v-if="1 === 0" prop="weekday" label="星期 数字" width="120" />
+      <el-table-column prop="weekdayName" label="星期" width="120" />
+      <el-table-column prop="departmentName" label="科室" width="120" />
+      <el-table-column v-if="1 === 0" prop="departmentId" label="科室id" width="120" />
+      <el-table-column prop="doctorName" label="排班医生" width="120" />
+      <el-table-column v-if="1 === 0" prop="doctorId" label="排班医生id" width="120" />
+      <el-table-column prop="registrationCategoryName" label="挂号类别" width="120" />
+      <el-table-column v-if="1 === 0" prop="registrationCategoryId" label="挂号类别id" width="120" />
+      <el-table-column prop="validName" label="有效状态" width="120" />
+      <el-table-column v-if="1 === 0" prop="valid" label="有效状态 数字" width="120" />
+      <el-table-column prop="noonName" label="午别" width="120" />
+      <el-table-column v-if="1 === 0" prop="noon" label="午别 数字" width="120" />
+      <el-table-column prop="limitation" label="排班限额" width="120" />
+      <el-table-column prop="operationAccountName" label="操作员" width="120" />
+      <el-table-column v-if="1 === 0" prop="operationAccountId" label="操作员id" width="120" />
+      <el-table-column prop="operationDate1" label="操作日期" width="120" :formatter="dateFormat" />
       <el-table-column
         prop="edit"
         label="编辑"
@@ -59,17 +59,18 @@
         :total="totalNumber"
       />
     </div>
-<!--    新增排班规则对话框-->
+    <!--    新增排班规则对话框-->
     <el-dialog titile="新增排班规则" :visible.sync="addScheduleVisible" width="30%">
       <el-form ref="addScheduleRuleForm" :model="addScheduleRuleForm" :rules="rules" label-position="top">
-        <el-form-item lable="星期" prop="weekday" label="星期" v-model="addScheduleRuleForm.weekday">
+        <el-form-item v-model="addScheduleRuleForm.weekday" lable="星期" prop="weekday" label="星期">
           <template>
             <el-select v-model="SelectValueWeek" filterable placeholder="请选择星期" @change="changeWeek">
               <el-option
                 v-for="item in weekType"
                 :key="item.weekId"
                 :label="item.weekName"
-                :value="item.weekId"></el-option>
+                :value="item.weekId"
+              />
             </el-select>
           </template>
         </el-form-item>
@@ -126,21 +127,22 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="addScheduleVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveSchedulingRuleV('addScheduleRuleForm')">确 定</el-button>
-        </span>
+        <el-button @click="addScheduleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveSchedulingRuleV('addScheduleRuleForm')">确 定</el-button>
+      </span>
     </el-dialog>
-<!--    修改排班规则信息-->
+    <!--    修改排班规则信息-->
     <el-dialog titile="更新排班规则" :visible.sync="saveScheduleVisible" width="30%">
       <el-form ref="saveScheduleRuleForm" :model="saveScheduleRuleForm" :rules="rules" label-position="top">
-        <el-form-item lable="星期" prop="weekday" label="星期" v-model="addScheduleRuleForm.weekday">
+        <el-form-item v-model="addScheduleRuleForm.weekday" lable="星期" prop="weekday" label="星期">
           <template>
             <el-select v-model="SelectValueWeek" filterable placeholder="请选择星期" @change="changeWeek">
               <el-option
                 v-for="item in weekType"
                 :key="item.weekId"
                 :label="item.weekName"
-                :value="item.weekId"></el-option>
+                :value="item.weekId"
+              />
             </el-select>
           </template>
         </el-form-item>
@@ -206,14 +208,14 @@
         </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="saveScheduleVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveSchedulingRuleV1('saveScheduleRuleForm')">确 定</el-button>
-        </span>
+        <el-button @click="saveScheduleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveSchedulingRuleV1('saveScheduleRuleForm')">确 定</el-button>
+      </span>
     </el-dialog>
     <aside>
       医生排班信息
     </aside>
-    <div class="block" :rule="rules" ref="valueDate">
+    <div ref="valueDate" class="block" :rule="rules">
       <span class="demonstration" style="padding-left: 10px; padding-right: 15px">请选择开始和结束日期</span>
       <el-date-picker
         v-model="valueDate"
@@ -225,19 +227,19 @@
         end-placeholder="结束日期"
         prop="valueDate"
         value-format="yyyy-MM-dd"
-        :picker-options="pickerOptions">
-      </el-date-picker>
-        <el-button @click="valueDate = ''">重选日期</el-button>
-        <el-button type="primary" @click="generateSchedulingInfoV()">生成排班信息</el-button>
+        :picker-options="pickerOptions"
+      />
+      <el-button @click="valueDate = ''">重选日期</el-button>
+      <el-button type="primary" @click="generateSchedulingInfoV()">生成排班信息</el-button>
     </div>
 
     <el-row style="margin-bottom: 20px">
       <el-col :span="6">
-<!--        <el-button @click="openConfirmDeleteMessageBox1()">删除</el-button> // 修改一下 方法-->
-<!--        <el-button @click="toggleSelection1()">取消所选</el-button>-->
+        <!--        <el-button @click="openConfirmDeleteMessageBox1()">删除</el-button> // 修改一下 方法-->
+        <!--        <el-button @click="toggleSelection1()">取消所选</el-button>-->
       </el-col>
     </el-row>
-<!--    下面的表格：医生排班信息表-->
+    <!--    下面的表格：医生排班信息表-->
     <el-table
       ref="multipleTable"
       v-loading="listLoading1"
@@ -245,38 +247,38 @@
       :data="schedulingTable1"
       tooltip-effect="dark"
       style="width: 100%"
+      :default-sort="{prop: 'schedulingTime', order: 'descending'}"
       @selection-change="handleSelectionChange"
-      :default-sort = "{prop: 'schedulingTime', order: 'descending'}"
     >
-      <el-table-column prop="schedulingRuleId" label="规则id" width="120" v-if="1 === 0" />
-      <el-table-column prop="schedulingRuleInfoId" label="信息id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="schedulingTime" label="排班时间" width="120" :formatter="dateFormat" sortable></el-table-column>
-      <el-table-column prop="departmentName" label="科室" width="120"></el-table-column>
-      <el-table-column prop="departmentId" label="科室id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="doctorName" label="排班医生" width="120"></el-table-column>
-      <el-table-column prop="doctorId" label="排班医生id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="registrationCategoryName" label="挂号类别" width="120"></el-table-column>
-      <el-table-column prop="registrationCategoryId" label="挂号类别id" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="validName" label="有效状态" width="120"></el-table-column>
-      <el-table-column prop="valid" label="有效状态 数字" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="noonName" label="午别" width="120"></el-table-column>
-      <el-table-column prop="noon" label="午别 数字" width="120" v-if="1 === 0"></el-table-column>
-      <el-table-column prop="limitation" label="排班限额" width="120"></el-table-column>
-      <el-table-column prop="remainNums" label="剩余号数" width="120"></el-table-column>
-      <el-table-column prop="dis" label="设置是否可以编辑" v-if="1 === 0"></el-table-column>
+      <el-table-column v-if="1 === 0" prop="schedulingRuleId" label="规则id" width="120" />
+      <el-table-column v-if="1 === 0" prop="schedulingRuleInfoId" label="信息id" width="120" />
+      <el-table-column prop="schedulingTime" label="排班时间" width="120" :formatter="dateFormat" sortable />
+      <el-table-column prop="departmentName" label="科室" width="120" />
+      <el-table-column v-if="1 === 0" prop="departmentId" label="科室id" width="120" />
+      <el-table-column prop="doctorName" label="排班医生" width="120" />
+      <el-table-column v-if="1 === 0" prop="doctorId" label="排班医生id" width="120" />
+      <el-table-column prop="registrationCategoryName" label="挂号类别" width="120" />
+      <el-table-column v-if="1 === 0" prop="registrationCategoryId" label="挂号类别id" width="120" />
+      <el-table-column prop="validName" label="有效状态" width="120" />
+      <el-table-column v-if="1 === 0" prop="valid" label="有效状态 数字" width="120" />
+      <el-table-column prop="noonName" label="午别" width="120" />
+      <el-table-column v-if="1 === 0" prop="noon" label="午别 数字" width="120" />
+      <el-table-column prop="limitation" label="排班限额" width="120" />
+      <el-table-column prop="remainNums" label="剩余号数" width="120" />
+      <el-table-column v-if="1 === 0" prop="dis" label="设置是否可以编辑" />
       <el-table-column
         prop="edit"
         label="编辑"
       >
         <template slot-scope="scope">
-<!--          <div v-if="moment(scope.row.schedulingTime).format('YYYY-MM-DD') < Date.now()">-->
-            <el-button
-              size="mini"
-              @click="editScheduleRuleInfoDataFunction(scope.$index, scope.row)"
-            >
-              <i class="el-icon-edit" />
-            </el-button>
-<!--          </div>-->
+          <!--          <div v-if="moment(scope.row.schedulingTime).format('YYYY-MM-DD') < Date.now()">-->
+          <el-button
+            size="mini"
+            @click="editScheduleRuleInfoDataFunction(scope.$index, scope.row)"
+          >
+            <i class="el-icon-edit" />
+          </el-button>
+          <!--          </div>-->
         </template>
       </el-table-column>
     </el-table>
@@ -339,15 +341,15 @@
         </el-form-item>
         <el-form-item label="修改日期" prop="schedulingTime">
           <div class="block">
-            <span class="demonstration"></span>
+            <span class="demonstration" />
             <el-date-picker
               v-model="saveSchedulingInfoForm.schedulingTime"
               align="right"
               type="date"
               placeholder="选择日期"
               format="yyyy-MM-dd"
-              :picker-options="pickerOptions1">
-            </el-date-picker>
+              :picker-options="pickerOptions1"
+            />
           </div>
         </el-form-item>
         <template>
@@ -361,9 +363,9 @@
         </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="saveScheduleInfoVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveSchedulingInfoV('saveSchedulingInfoForm')">确 定</el-button>
-        </span>
+        <el-button @click="saveScheduleInfoVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveSchedulingInfoV('saveSchedulingInfoForm')">确 定</el-button>
+      </span>
     </el-dialog>
     <div class="block">
       <el-pagination
@@ -378,7 +380,7 @@
 </template>
 
 <script>
-import { fetchList, saveSchedulingRule, deleteSchedulingRule, generateSchedulingInfo, selectSchedulingInfo, saveSchedulingInfo, deleteSchedulingInfo} from '../../api/basicInfo/schedule';
+import { fetchList, saveSchedulingRule, deleteSchedulingRule, generateSchedulingInfo, selectSchedulingInfo, saveSchedulingInfo, deleteSchedulingInfo } from '../../api/basicInfo/schedule'
 import { fetchDepartmentList } from '../../api/basicInfo/department'
 import { selectRegistration_categoryList } from '../../api/basicInfo/registration_category'
 import { selectDoctorList } from '../../api/basicInfo/account'
