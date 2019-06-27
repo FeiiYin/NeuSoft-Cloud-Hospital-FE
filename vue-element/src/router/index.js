@@ -69,13 +69,73 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/dashboard/index'),
+        name: 'Dashboard',
+        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/documentation',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/documentation/index'),
+        name: 'Documentation',
+        meta: { title: 'Documentation', icon: 'documentation', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/guide',
+    component: Layout,
+    redirect: '/guide/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/guide/index'),
+        name: 'Guide',
+        meta: { title: 'Guide', icon: 'guide', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/profile',
+    component: Layout,
+    redirect: '/profile/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/profile/index'),
+        name: 'Profile',
+        meta: { title: 'Profile', icon: 'user', noCache: true }
+      }
+    ]
+  }
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
+  {
     path: '/basicInfo',
     component: Layout,
     redirect: 'noRedirect',
     name: 'basicInfo',
     meta: {
       title: '基础信息维护',
-      icon: 'example'
+      icon: 'example',
+      roles: ['admin', 'basic']
     },
     children: [
       {
@@ -147,7 +207,8 @@ export const constantRoutes = [
     name: 'registration',
     meta: {
       title: '门诊挂号收费',
-      icon: 'theme'
+      icon: 'theme',
+      roles: ['admin', 'registration']
     },
     children: [
       {
@@ -196,7 +257,8 @@ export const constantRoutes = [
     name: 'medicalRecord',
     meta: {
       title: '门诊医生工作站',
-      icon: 'example'
+      icon: 'example',
+      roles: ['admin', 'doctor']
     },
     children: [
       {
@@ -268,7 +330,8 @@ export const constantRoutes = [
     name: 'techWorkstation',
     meta: {
       title: '门诊医技工作站',
-      icon: 'lock'
+      icon: 'lock',
+      roles: ['admin', 'tech']
     },
     children: [
       {
@@ -288,6 +351,12 @@ export const constantRoutes = [
         component: () => import('@/views/techWorkstation/disposalIndex'),
         name: 'disposalIndex',
         meta: { title: '处置结果登记', noCache: true }
+      },
+      {
+        path: 'techWorkload',
+        component: () => import('@/views/techWorkstation/techWorkload'),
+        name: 'techWorkload',
+        meta: { title: '处置工作量统计', noCache: true }
       }
     ]
   },
@@ -298,7 +367,8 @@ export const constantRoutes = [
     name: 'pharmacy',
     meta: {
       title: '门诊药房工作站',
-      icon: 'lock'
+      icon: 'lock',
+      roles: ['admin', 'pharmacy']
     },
     children: [
       {
@@ -334,7 +404,8 @@ export const constantRoutes = [
     name: 'finance',
     meta: {
       title: '门诊财务管理',
-      icon: 'lock'
+      icon: 'lock',
+      roles: ['admin', 'financial']
     },
     children: [
       {
@@ -351,65 +422,7 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/profile',
-    component: Layout,
-    redirect: '/profile/index',
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
-      }
-    ]
-  }
-]
 
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
   {
     path: '/permission',
     component: Layout,

@@ -64,12 +64,10 @@ import PieChart from './components/workloadPiechart'
 import BarChart from './components/workloadBarchart'
 
 import {
-  doctorWorkloadFinancialStatistics
+  techDoctorWorkloadStatistics
 } from '../../api/personal/workload'
 
 import countTo from 'vue-count-to'
-
-import moment from 'moment'
 
 export default {
   components: {
@@ -151,17 +149,7 @@ export default {
     }
   },
   methods: {
-    // 日期选择
-    // # 编写日期格式化方法
-    dateFormat: function(row, column) {
-      const date = row[column.property]
-      if (date === undefined) {
-        return ''
-      }
-      // # 这里的格式根据需求修改
-      return moment(date).format('YYYY-MM-DD')
-    },
-    invokeDoctorWorkloadFinancialStatistics() {
+    invoketTechDoctorWorkloadStatistics() {
       if (this.startDate == null || this.endDate == null) {
         this.$message.error('未选择时间，错误!')
         return
@@ -171,12 +159,12 @@ export default {
         return
       }
       var query = {
-        'startDatetime': moment(this.startDate).format('YYYY-MM-DD HH:MM:SS'),
-        'endDatetime': moment(this.endDate,).format('YYYY-MM-DD HH:MM:SS'),
+        'startDatetime': this.startDate,
+        'endDatetime': this.endDate,
         'doctorId': this.doctorId
       }
-      console.log(query)
-      doctorWorkloadFinancialStatistics(query).then(reponse => {
+      // 医生录入统计时间起始时间和截止时间，点击“统计”按钮，统计出该时间段内本人登记的患者数量、以及每个患者的对应执行科室为本科室的费用情况。注意，只能查询本人进行检查的项目收费情况，同一个患者其他医生执行的项目收费情况，是查询不到的。
+      techDoctorWorkloadStatistics(query).then(reponse => {
         console.log('doctorWorkloadFinancialStatistics response')
         console.log(reponse)
 

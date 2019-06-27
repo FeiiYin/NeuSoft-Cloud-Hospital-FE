@@ -110,11 +110,11 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'infi',
+        password: '123456'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
@@ -177,6 +177,30 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
+          // var query = {
+          //   'userName': this.loginForm.username,
+          //   'userPassword': this.loginForm.password
+          // }
+          // // this.$store.dispatch('login/sign_in', query).then(response => {
+          // signIn(query).then(response => {
+          //   this.loading = false
+          //   console.log(response)
+          //   if (response.data === 'signin_mismatch') {
+          //     this.$message.error('用户名或密码不匹配，错误！')
+          //   } else {
+          //     console.log(this.redirect || '/')
+          //     // console.log(this.otherQuery)
+          //     this.$router.push({
+          //       // path: '/',
+          //       path: this.redirect || '/',
+          //       query: this.otherQuery
+          //     })
+          //     // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+          //   }
+          // }).catch(() => {
+          //   this.loading = false
+          // })
+          // 调用module里的模块
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })

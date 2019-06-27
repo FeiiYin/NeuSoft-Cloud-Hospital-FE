@@ -5,6 +5,9 @@ const tokens = {
   },
   editor: {
     token: 'editor-token'
+  },
+  infi: {
+    token: 'infi-token'
   }
 }
 
