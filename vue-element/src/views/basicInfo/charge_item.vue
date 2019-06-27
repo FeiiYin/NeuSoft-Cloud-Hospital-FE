@@ -23,12 +23,12 @@
           type="selection"
           width="40px"
         />
-        <el-table-column prop="chargeItemId" label="收费项目id" v-if=false></el-table-column>
+        <el-table-column v-if="false" prop="chargeItemId" label="收费项目id" />
         <el-table-column
           prop="chargeItemCode"
           label="编号"
         />
-        <el-table-column prop="nameZh" label="收费项目名"></el-table-column>
+        <el-table-column prop="nameZh" label="收费项目名" />
         <el-table-column
           prop="namePinyin"
           label="收费项目拼音"
@@ -42,23 +42,22 @@
           label="价格(元)"
         />
         <el-table-column
+          v-if="false"
           prop="expenseCategoryId"
           label="所属费用科目编号"
-          v-if=false
         />
-        <el-table-column prop="expenseCategoryName" label="所属收费种类"></el-table-column>
+        <el-table-column prop="expenseCategoryName" label="所属收费种类" />
         <el-table-column
+          v-if="false"
           prop="departmentId"
           label="收费科室编号"
-          v-if=false
         />
-        <el-table-column prop="departmentName" label="收费科室"></el-table-column>
+        <el-table-column prop="departmentName" label="收费科室" />
         <el-table-column
+          v-if="false"
           prop="chargeType"
           label="项目类型id"
-          v-if=false
         />
-<!--        <el-table-column prop="chargeTypeName" label="项目类型"></el-table-column>-->
         <el-table-column
           prop="creationTime"
           label="创建时间"
@@ -113,7 +112,7 @@
         <el-form-item label="价格(元)" prop="price">
           <el-input v-model="addChargeItemForm.price" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="所属收费种类" prop="expenseCategoryId" v-model="addChargeItemForm.expenseCategoryId">
+        <el-form-item v-model="addChargeItemForm.expenseCategoryId" label="所属收费种类" prop="expenseCategoryId">
           <el-select v-model="selectEC" filterable placeholder="请选择收费种类" @change="changeEC">
             <el-option
               v-for="item in expenseCategoryList"
@@ -123,7 +122,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="收费科室" prop="departmentId" v-model="addChargeItemForm.departmentId">
+        <el-form-item v-model="addChargeItemForm.departmentId" label="收费科室" prop="departmentId">
           <el-select v-model="selectDep" filterable placeholder="请选择科室" @change="changeDep">
             <el-option
               v-for="item in departmentList"
@@ -161,7 +160,7 @@
         <el-form-item label="价格（元）" prop="price">
           <el-input v-model="editChargeItemForm.price" auto-complete="off" />
         </el-form-item>
-        <el-form-item label="所属收费种类" prop="expenseCategoryId" v-model="editChargeItemForm.expenseCategoryId">
+        <el-form-item v-model="editChargeItemForm.expenseCategoryId" label="所属收费种类" prop="expenseCategoryId">
           <el-select v-model="selectEC" filterable placeholder="请选择收费种类" @change="changeEC">
             <el-option
               v-for="item in expenseCategoryList"
@@ -171,7 +170,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="收费科室" prop="departmentId" v-model="editChargeItemForm.departmentId">
+        <el-form-item v-model="editChargeItemForm.departmentId" label="收费科室" prop="departmentId">
           <el-select v-model="selectDep" filterable placeholder="请选择科室" @change="changeDep">
             <el-option
               v-for="item in departmentList"
@@ -446,7 +445,7 @@ export default {
       console.log(`当前页: ${val}`)
       this.currentPage = val
       this.selectChargeItemV()
-    },
+    }
   }
 }
 </script>

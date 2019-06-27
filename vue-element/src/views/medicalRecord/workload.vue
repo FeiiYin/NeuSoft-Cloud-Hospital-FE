@@ -103,10 +103,6 @@ export default {
       piechartLegendData: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
     }
   },
-  created() {
-    var i = this.$store.getters.accountId
-    alert('id ' + i)
-  },
   computed: {
     _startVal() {
       if (this.setStartVal) {
@@ -149,6 +145,10 @@ export default {
     _prefix() {
       return this.setPrefix
     }
+  },
+  created() {
+    var i = this.$store.getters.accountId
+    alert('id ' + i)
   },
   methods: {
     // 日期选择
