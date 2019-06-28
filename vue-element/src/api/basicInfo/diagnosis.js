@@ -11,7 +11,6 @@ export function fetchDiseaseList(query) {
     url: '/diagnostic_catalog/list_disease',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -25,7 +24,6 @@ export function fetchDiseaseCategory() {
   return request({
     url: '/diagnostic_catalog/list_disease_category',
     method: 'get',
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -40,7 +38,6 @@ export function addDisease(addDiseaseInfo) {
       url: '/diagnostic_catalog/add',
       method: 'post',
       params: addDiseaseInfo,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -60,7 +57,6 @@ export function updateDisease(updateDiseaseInfo) {
     url: '/diagnostic_catalog/update',
     method: 'put',
     params: updateDiseaseInfo,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-www-form-urlencoded'
   })
 }
@@ -79,7 +75,6 @@ export function deleteDiseaseByPrimaryKey(diseaseInfo) {
     url: '/diagnostic_catalog/delete',
     method: 'delete',
     params: diseaseInfo,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-www-form-urlencoded'
   })
 }

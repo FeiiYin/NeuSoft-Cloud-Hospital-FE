@@ -20,7 +20,6 @@ export function selectAccountList(query) {
     url: '/account/select_account',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -32,7 +31,6 @@ export function selectDoctorList(query) {
     url: 'account/select_doctor',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -48,7 +46,6 @@ export function addAccount(newAccount) {
       url: '/account/add_account',
       method: 'post',
       params: newAccount,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -66,7 +63,6 @@ export function updateAccount(query) {
       url: '/account/update_account',
       method: 'put',
       params: query,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -79,7 +75,6 @@ export function deleteAccount(deleteAccount) {
       url: '/account/delete_account',
       method: 'delete',
       params: deleteAccount,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     })
 }

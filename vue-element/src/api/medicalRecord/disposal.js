@@ -19,7 +19,6 @@ export function addDisposal(query) {
     url: '/disposal/add',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -37,7 +36,6 @@ export function selectDisposalItemListInChargeItemByDepartmentId(query) {
     url: '/disposal/select_disposal_list',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -55,7 +53,6 @@ export function selectHistoryDisposal(query) {
     url: '/disposal/history_disposal',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -80,7 +77,6 @@ export function updateDisposal(query) {
     url: '/disposal/update',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -100,7 +96,6 @@ export function deleteDisposal(query) {
     url: '/disposal/delete_disposal',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -120,7 +115,6 @@ export function deleteDisposalEntry(query) {
     url: '/disposal/delete_disposal_entry',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

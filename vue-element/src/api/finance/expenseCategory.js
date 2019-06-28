@@ -14,7 +14,6 @@ export function selectExpenseCategory(query) {
     url: '/expense_category/select',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -36,7 +35,6 @@ export function saveExpenseCategory(query) {
     url: '/expense_category/save',
     method: 'post',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -54,7 +52,6 @@ export function deleteExpenseCategory(query) {
     url: '/expense_category/delete',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

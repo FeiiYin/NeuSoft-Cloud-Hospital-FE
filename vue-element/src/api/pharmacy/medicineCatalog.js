@@ -26,7 +26,6 @@ export function saveMedicine(query) {
     url: '/medicine_catalog/save',
     method: 'post',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -44,7 +43,6 @@ export function deleteMedicine(query) {
     url: '/medicine_catalog/delete',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

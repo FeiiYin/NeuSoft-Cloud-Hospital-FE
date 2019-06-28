@@ -11,7 +11,6 @@ export function fetchRegistrationList(query) {
     url: '/registration/list_registration',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

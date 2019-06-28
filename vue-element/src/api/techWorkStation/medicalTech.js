@@ -13,7 +13,6 @@ export function selectPatient(query) {
     url: '/medical_tech/patient_info',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -31,7 +30,6 @@ export function selectChargeEntryList(query) {
     url: '/medical_tech/list_medicine',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -52,7 +50,6 @@ export function chargeEntryListApply(query) {
     url: '/medical_tech/apply',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -75,7 +72,6 @@ export function chargeEntryListRefund(query) {
     url: '/medical_tech/return',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

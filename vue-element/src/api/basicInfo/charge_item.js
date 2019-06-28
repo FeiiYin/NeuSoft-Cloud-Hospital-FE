@@ -14,7 +14,6 @@ export function selectChargeItem(query) {
     url: '/charge_item/select',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -33,7 +32,6 @@ export function saveChargeItem(param) {
     url: '/charge_item/save',
     method: 'post',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -51,7 +49,6 @@ export function deleteChargeItem(param) {
     url: '/charge_item/delete',
     method: 'delete',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
