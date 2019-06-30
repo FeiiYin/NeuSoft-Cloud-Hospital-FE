@@ -14,7 +14,6 @@ export function selectAllDailySettlementList(query) {
     url: '/daily_settlement/select_all_daily_settlement',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -37,7 +36,6 @@ export function selectDailySettlementList(query) {
     url: '/daily_settlement/select_daily_settlement',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -57,7 +55,6 @@ export function generateDailySettlement(query) {
     url: '/daily_settlement/generate',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -77,7 +74,6 @@ export function selectDailySettlementDetail(query) {
     url: '/daily_settlement/select_daily_settlement_detail',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -95,7 +91,6 @@ export function dailySettlementDocument(query) {
     url: '/daily_settlement/daily_settlement_document',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -114,7 +109,6 @@ export function checkDailySettlement(query) {
     url: '/daily_settlement/check',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

@@ -26,7 +26,6 @@ export function addExamination(query) {
     url: '/exam/add',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -38,7 +37,6 @@ export function selectExaminationItemListInChargeItemByDepartmentId(query) {
     url: '/exam/select_exam_list',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -56,7 +54,6 @@ export function selectHistoryExam(query) {
     url: '/exam/history_exam',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -76,7 +73,6 @@ export function deleteUnpaidChargeEntry(query) {
     url: '/exam/delete_exam_entry',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -95,7 +91,6 @@ export function deleteExam(query) {
     url: '/exam/delete_exam',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

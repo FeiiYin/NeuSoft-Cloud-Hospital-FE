@@ -16,7 +16,6 @@ export function doctorWorkloadFinancialStatistics(query) {
     url: '/workload_statistics/outpatient_doctor',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -37,7 +36,6 @@ export function techDoctorWorkloadStatistics(query) {
     url: '/workload_statistics/tech_doctor',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -57,7 +55,6 @@ export function departmentWorkloadFinancialStatistics(query) {
     url: '/workload_statistics/department',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -76,7 +73,6 @@ export function doctorWorkloadFinancialStatistics_menzhen(query) {
     url: '/workload_statistics/doctor',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

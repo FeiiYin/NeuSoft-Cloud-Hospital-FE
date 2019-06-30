@@ -12,7 +12,6 @@ export function fetchDepartmentList(query) {
     url: '/department/list',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -29,7 +28,6 @@ export function addDepartment(newDepartment) {
       url: '/department/add',
       method: 'post',
       params: newDepartment,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -47,7 +45,6 @@ export function updateDepartmentByPrimaryKey(query) {
       url: '/department/update',
       method: 'put',
       params: query,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -65,7 +62,6 @@ export function deleteDepartmentByPrimaryKey(departmentIdList) {
       url: '/department/delete',
       method: 'delete',
       params: departmentIdList,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/json'
     }
   )

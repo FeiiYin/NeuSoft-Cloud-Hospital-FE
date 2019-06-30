@@ -12,7 +12,6 @@ export function fetchList(query) {
     url: '/scheduling/select_rule',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -30,7 +29,6 @@ export function saveSchedulingRule(param) {
     url: '/scheduling/save_rule',
     method: 'get',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -48,7 +46,6 @@ export function deleteSchedulingRule(param) {
     url: '/scheduling/delete_rule',
     method: 'delete',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -66,7 +63,6 @@ export function generateSchedulingInfo(param) {
     url: '/scheduling/generate_info',
     method: 'get',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -84,7 +80,6 @@ export function selectSchedulingInfo(param) {
     url: '/scheduling/select_info',
     method: 'get',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -102,7 +97,6 @@ export function saveSchedulingInfo(param) {
     url: '/scheduling/update_info',
     method: 'put',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -120,7 +114,6 @@ export function deleteSchedulingInfo(param) {
     url: '/scheduling/delete_info',
     method: 'delete',
     params: param,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

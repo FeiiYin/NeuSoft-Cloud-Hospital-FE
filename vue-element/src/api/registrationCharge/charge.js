@@ -27,7 +27,6 @@ export function checkout(query) {
     url: '/charge/checkout',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -49,7 +48,6 @@ export function refund(query) {
     url: '/charge/refund',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -67,7 +65,6 @@ export function withdrawRegistration(query) {
     url: '/charge/withdraw_registration',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

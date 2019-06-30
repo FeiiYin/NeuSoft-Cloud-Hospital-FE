@@ -14,7 +14,6 @@ export function waitingRegistrationList(query) {
     url: '/doctor_work/waiting_registration',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -33,7 +32,6 @@ export function visitedRegistrationList(query) {
     url: '/doctor_work/visited_registration',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -69,7 +67,6 @@ export function saveMedicalRecord(medicalRecordJson) {
     url: '/doctor_work/save_record',
     method: 'get',
     params: medicalRecordJson,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -95,7 +92,6 @@ export function saveMedicalRecordAsTemplate(query) {
     url: '/doctor_work/save_record_template',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -114,7 +110,6 @@ export function selectMedicalRecordsTemplateList(query) {
     url: '/doctor_work/select_record_template',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -133,7 +128,6 @@ export function endRegistration(query) {
     url: '/doctor_work/end_registration',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -151,7 +145,6 @@ export function selectPatientHistoryMedicalRecords(query) {
     url: '/doctor_work/history_record',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

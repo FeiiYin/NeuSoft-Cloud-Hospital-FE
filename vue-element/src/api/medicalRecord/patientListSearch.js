@@ -14,7 +14,6 @@ export function selectPatient(query) {
     url: '/doctor_work/select_patient_by_registration',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

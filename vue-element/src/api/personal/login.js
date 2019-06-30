@@ -14,7 +14,6 @@ export function signIn(query) {
     url: '/login/sign_in',
     method: 'post',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -33,7 +32,6 @@ export function permission(query) {
     url: '/login/permission',
     method: 'post',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

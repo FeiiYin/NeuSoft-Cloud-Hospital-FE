@@ -10,7 +10,6 @@ export function selectAllRegistrationCategory(query) {
     url: '/registration_category/list_all',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -28,7 +27,6 @@ export function registrationFee(query) {
     url: '/registration_category/registration_fee',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -45,7 +43,6 @@ export function selectRegistration_categoryList(query) {
     url: '/registration_category/list',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -62,7 +59,6 @@ export function addRegistration_category(newRegistration_category) {
       url: '/registration_category/add',
       method: 'post',
       params: newRegistration_category,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -80,7 +76,6 @@ export function updateRegistration_category(query) {
       url: '/registration_category/update',
       method: 'put',
       params: query,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -98,7 +93,6 @@ export function deleteRegistration_categoryByPrimaryKey(registration_categoryIdL
       url: '/registration_category/delete',
       method: 'delete',
       params: registration_categoryIdList,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/json'
     }
   )

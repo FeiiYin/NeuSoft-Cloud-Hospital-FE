@@ -12,7 +12,6 @@ export function selectPatient(query) {
     url: '/medicine_distribute/patient_info',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -28,7 +27,6 @@ export function selectChargeEntryList(query) {
     url: '/medicine_distribute/list_medicine',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -44,7 +42,6 @@ export function medicineDistribute(query) {
     url: '/medicine_distribute/distribute',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -65,7 +62,6 @@ export function medicineReturn(query) {
     url: '/medicine_distribute/return',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -81,7 +77,6 @@ export function selectPrescriptionEntryList(query) {
     url: '/medicine_distribute/list_prescription_entry',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -100,7 +95,6 @@ export function prescriptionEntryDelivery(query) {
     url: '/medicine_distribute/apply',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

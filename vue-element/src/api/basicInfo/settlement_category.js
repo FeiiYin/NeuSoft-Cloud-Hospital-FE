@@ -15,7 +15,6 @@ export function fecthSettlementCategory(query) {
     url: '/settlement_category/list',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -30,7 +29,6 @@ export function selectAllSettlementCategory(query) {
     url: '/settlement_category/list_all',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -46,7 +44,6 @@ export function addSettlementCategory(addSettlementCategoryInfo) {
       url: '/settlement_category/save',
       method: 'post',
       params: addSettlementCategoryInfo,
-      baseURL: 'http://localhost:8081/cloud-hospital/',
       contentType: 'application/x-wwww-form-urlencoded'
     }
   )
@@ -66,7 +63,6 @@ export function updateSettlementCategory(updateSettlementCategoryInfo) {
     url: '/settlement_category/save',
     method: 'post',
     params: updateSettlementCategoryInfo,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-www-form-urlencoded'
   })
 }
@@ -85,7 +81,6 @@ export function deleteSettlementCategoryByPrimaryKey(settlementCategoryInfo) {
     url: '/settlement_category/delete',
     method: 'delete',
     params: settlementCategoryInfo,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-www-form-urlencoded'
   })
 }

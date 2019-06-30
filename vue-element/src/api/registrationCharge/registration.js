@@ -11,7 +11,6 @@ export function fetchPatientInfoByIdentityCardNo(identityCardNo) {
     url: '/registration/patient_info',
     method: 'get',
     params: identityCardNo,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -24,7 +23,6 @@ export function fetchDepartment() {
   return request({
     url: '/registration/list_department',
     method: 'get',
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -39,7 +37,6 @@ export function fetchCurrentAvailableDoctor(departmentIdOfDoctor) {
     url: '/registration/list_doctor',
     method: 'get',
     params: departmentIdOfDoctor,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -55,7 +52,6 @@ export function register(registration) {
     url: '/registration/add_registration',
     method: 'post',
     params: registration,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -71,7 +67,6 @@ export function selectRegistrationByPrimaryKey(registrationId) {
     url: '/registration/select_registration',
     method: 'get',
     params: registrationId,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

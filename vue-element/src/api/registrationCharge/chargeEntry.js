@@ -12,7 +12,6 @@ export function selectChargeForm(query) {
     url: '/charge_entry/list',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -29,7 +28,6 @@ export function selectChargeItemByDepartmentId(departmentId) {
     url: '/charge_entry/list_charge_item',
     method: 'get',
     params: departmentId,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -59,7 +57,6 @@ export function addChargeItemToForm(query) {
     url: '/charge_entry/add_charge_item_to_form',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -77,7 +74,6 @@ export function deleteChargeItemInForm(query) {
     url: '/charge_entry/delete_charge_item_in_form',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -95,7 +91,6 @@ export function payBill(query) {
     url: '/charge_entry/pay_bill',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

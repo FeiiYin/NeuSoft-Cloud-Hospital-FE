@@ -11,7 +11,6 @@ export function selectMedicine() {
   return request({
     url: '/prescription/list_medicine',
     method: 'get',
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -30,7 +29,6 @@ export function searchMedicine(query) {
     url: '/prescription/search_medicine',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -67,7 +65,6 @@ export function savePrescription(query) {
     url: '/prescription/save_prescription',
     method: 'post',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -85,7 +82,6 @@ export function commonMedicine(query) {
     url: '/prescription/common_medicine',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -104,7 +100,6 @@ export function selectPrescriptionTemplate(query) {
     url: '/prescription/prescription_template',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -122,7 +117,6 @@ export function selectHistoryPrescription(query) {
     url: '/prescription/history_prescription',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -140,7 +134,6 @@ export function deletePrescription(query) {
     url: '/prescription/delete_prescription',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

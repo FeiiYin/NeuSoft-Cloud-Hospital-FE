@@ -7,7 +7,6 @@ export function fetchConstantDepartmentMap(query) {
     url: '/department/const',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
