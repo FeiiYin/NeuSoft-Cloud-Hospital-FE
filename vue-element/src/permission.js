@@ -34,7 +34,7 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-          alert('now')
+          // alert('now')
           const { roles } = await store.dispatch('user/getInfo')
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
@@ -56,7 +56,7 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* has no token*/
-    alert('no token now ')
+    // alert('no token now ')
     // alert(to.path)
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly

@@ -2,7 +2,7 @@
   <div class="app-container">
     <aside>用户管理</aside>
 
-    <el-row style="margin-bottom: 20px">
+    <el-row style="margin-bottom: 20px" :gutter="20">
       <el-col :span="18">
         <el-radio-group v-model="radioSelect" size="medium" @change="invokeChangeRadioSelect">
           <el-radio-button label="所有用户" />
@@ -13,6 +13,9 @@
           <el-radio-button label="财务管理员" />
           <el-radio-button label="医院管理员" />
         </el-radio-group>
+        <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;float:right" type="primary" icon="document" @click="handleDownload">
+          导出 Excel
+        </el-button>
       </el-col>
       <el-col :span="6">
         <el-button @click="toggleSelection()">取消所选</el-button>
@@ -257,7 +260,7 @@ import {
 export default {
   data() {
     return {
-
+      downloadLoading: false,
       // 单选框
       radioSelect: '所有用户',
       // 多选框
@@ -614,6 +617,28 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['用户名', '真实姓名', '科室', '类别']
+        const filterVal = ['userName', 'realName', 'departmentName', 'accountType']
+        const list = this.accountTableData
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        return v[j]
+      }))
     }
   }
 }

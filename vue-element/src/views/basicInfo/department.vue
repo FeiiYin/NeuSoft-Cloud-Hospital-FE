@@ -2,7 +2,7 @@
   <div class="app-container">
     <aside>科室管理</aside>
 
-    <el-row>
+    <el-row :gutter="20">
       <el-col :span="18">
         <el-radio-group v-model="departmentCategory" size="medium" @change="radioChangeGetList()">
           <el-radio-button label="所有科室" />
@@ -10,6 +10,9 @@
           <el-radio-button label="医技科室" />
           <el-radio-button label="其他科室" />
         </el-radio-group>
+        <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;float:right" type="primary" icon="document" @click="handleDownload">
+          导出 Excel
+        </el-button>
       </el-col>
       <el-col :span="6">
         <el-button @click="toggleSelection()">取消所选</el-button>
@@ -162,6 +165,7 @@ import {
 export default {
   data() {
     return {
+      downloadLoading: false,
       // 单选框
       departmentCategory: '所有科室',
       alls: [11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
@@ -452,6 +456,28 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['科室编码', '科室名称', '科室分类']
+        const filterVal = ['departmentCode', 'departmentName', 'category']
+        const list = this.departmentTableData
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        return v[j]
+      }))
     }
   }
 }

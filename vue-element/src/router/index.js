@@ -208,6 +208,7 @@ export const asyncRoutes = [
       },
       {
         path: 'COStest',
+        hidden: true,
         component: () => import('@/views/basicInfo/COStest'),
         name: 'COStest',
         meta: { title: '测试', noCache: true }

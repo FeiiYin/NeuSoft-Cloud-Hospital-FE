@@ -4,8 +4,9 @@
 
     <el-row style="margin-bottom: 20px">
       <el-col :span="20">
-        <el-button @click="true">导入</el-button>
-        <el-button @click="true">导出</el-button>
+        <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="document" @click="handleDownload">
+          导出 Excel
+        </el-button>
         <el-button @click="toggleSelection()">取消所选</el-button>
         <el-button @click="addChargeItemDataDialogVisible = true; clearAddChargeItemDataDialog ">新增</el-button>
         <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
@@ -196,6 +197,7 @@ import { selectExpenseCategory } from '../../api/finance/expenseCategory'
 export default {
   data: function() {
     return {
+      downloadLoading: false,
       selectEC: '',
       selectDep: '',
       listLoading: false, // 收费项目列表加载状态
@@ -445,6 +447,29 @@ export default {
       console.log(`当前页: ${val}`)
       this.currentPage = val
       this.selectChargeItemV()
+    },
+
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['编号', '收费项目名', '收费项目拼音', '规格', '价格(元)', '所属收费种类', '收费科室', '创建时间']
+        const filterVal = ['chargeItemCode', 'nameZh', 'namePinyin', 'specification', 'price', 'expenseCategoryName', 'departmentName', 'creationTime']
+        const list = this.chargeItemTableData
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        return v[j]
+      }))
     }
   }
 }

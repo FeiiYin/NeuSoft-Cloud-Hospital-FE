@@ -105,6 +105,9 @@
               </div>
             </el-dialog>
             <el-button @click="openConfirmDeleteMessageBox()">删除</el-button>
+            <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="document" @click="handleDownload">
+              导出 Excel
+            </el-button>
           </div>
 
           <el-table
@@ -181,6 +184,7 @@ import { fetchDiseaseCategory, fetchDiseaseList, addDisease, updateDisease, dele
 export default {
   data() {
     return {
+      downloadLoading: false,
       totalNumber: 0,
       // 页面左侧：疾病种类
       diseaseCategoryList: [{
@@ -391,6 +395,28 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['疾病编码', '疾病名称', '拼音码']
+        const filterVal = ['diseaseIcd', 'diseaseName', 'diseaseCode']
+        const list = this.diseaseTable
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        return v[j]
+      }))
     }
   }
 }
