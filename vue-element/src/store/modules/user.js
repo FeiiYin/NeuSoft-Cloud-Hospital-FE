@@ -17,7 +17,9 @@ const state = {
   introduction: '',
   roles: [],
   // ["basic","registration","doctor","tech","pharmacy","financial"]
-  accountId: ''
+  accountId: '',
+  accountType: '',
+  doctorId: 0
 }
 
 const mutations = {
@@ -38,6 +40,12 @@ const mutations = {
   },
   SET_ACCOUNTID: (state, accountId) => {
     state.accountId = accountId
+  },
+  SET_ACCOUNTTYPE: (state, accountType) => {
+    state.accountType = accountType
+  },
+  SET_DOCTORID: (state, doctorId) => {
+    state.doctorId = doctorId
   }
 }
 
@@ -91,23 +99,22 @@ const actions = {
       }
       permission(query).then(response => {
       // getInfo(state.token).then(response => {
-        console.log(query)
-        console.log(response)
+        console.log('permission response: ')
+        // console.log(response)
         // alert('???')
         response = JSON.parse(response.data)
-
+        console.log(response)
         var data = {
           'roles': response.permissionNameList,
           'name': response.userName,
           'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-          'introduction': 'introduction',
+          'introduction': response.accountDetail.accountTypeName,
           'accountId': response.accountId
         }
         console.log(data)
         if (!data) {
-          reject('Verification failed, please Login again.')
+          reject('验证失败，请重新登录.')
         }
-
         const { roles, name, avatar, introduction, accountId } = data
 
         // roles must be a non-empty array
@@ -120,6 +127,8 @@ const actions = {
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
         commit('SET_ACCOUNTID', accountId)
+        commit('SET_ACCOUNTTYPE', response.accountDetail.accountType)
+        commit('SET_DOCTORID', response.accountDetail.doctorId)
         resolve(data)
       }).catch(error => {
         reject(error)

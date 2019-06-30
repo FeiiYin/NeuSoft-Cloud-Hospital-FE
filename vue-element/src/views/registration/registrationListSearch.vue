@@ -26,7 +26,7 @@
             {{ scope.row.isVisited === '0' ? '未诊' : '已诊' }}
           </template>
         </el-table-column>
-        <el-table-column prop="withdraw" label="执行" width="200px">
+        <el-table-column prop="withdraw" label="执行" width="260px">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -40,6 +40,13 @@
               @click="toCharge(scope.$index, scope.row)"
             >
               收费
+            </el-button>
+            <el-button
+              size="mini"
+              type="info"
+              @click="print(scope.$index, scope.row)"
+            >
+              打印
             </el-button>
           </template>
         </el-table-column>
@@ -122,6 +129,21 @@ export default {
     this.queryRegistrationListWithPage()
   },
   methods: {
+    print(index, row) {
+      var query = '?registrationId=' + row.registrationId +
+        '&age=' + row.age +
+        '&birthday=' + row.birthday.substring(0, 10) +
+        '&collectorId=' + row.collectorId +
+        '&departmentName=' + row.departmentId +
+        '&doctorName=' + row.doctorId +
+        '&familyAddress=' + row.familyAddress +
+        '&gender=' + row.gender +
+        '&identityCardNo=' + row.identityCardNo +
+        '&patientName=' + row.patientName +
+        '&registrationDate=' + row.registrationDate +
+        '&departmentName=' + row.departmentName
+      window.open('#/registered_receipt' + query)
+    },
     // 跳转
     toCharge(index, row) {
       this.$router.push({

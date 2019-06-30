@@ -85,10 +85,12 @@ export default {
       // for (var i = 0; i < 10; ++i) {
       // for (var i = start; i < end; ++i) {
       for (var i = 0; i < list.length; ++i) {
-        x_data.push(list[i].departmentName)
-        departmentExaminationFee.push(list[i].departmentExaminationFee)
-        departmentDisposalFee.push(list[i].departmentDisposalFee)
-        departmentPrescriptionFee.push(list[i].departmentPrescriptionFee)
+        x_data.push(list[i].doctorName)
+        // doctorName，visitNums，doctorExaminationFee，doctorDisposalFee，doctorPrescriptionFee，
+        departmentExaminationFee.push(list[i].doctorExaminationFee)
+        departmentDisposalFee.push(list[i].doctorDisposalFee)
+        departmentPrescriptionFee.push(list[i].doctorPrescriptionFee)
+        // doctorName，visitNums，doctorExaminationFee，doctorDisposalFee，doctorPrescriptionFee，
       }
       this.chart.setOption({
         tooltip: {

@@ -77,3 +77,11 @@ element <https://element.eleme.cn/2.0/#/zh-CN/component/tree>
 ### 注意
 
 vue 里不能有多余空行与空格。
+
+### COS安装
+
+npm i scp2 -g
+
+npm i cos-nodejs-sdk-v5 --save
+
+npm install

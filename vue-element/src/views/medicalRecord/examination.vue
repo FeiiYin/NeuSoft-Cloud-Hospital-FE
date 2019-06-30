@@ -51,7 +51,7 @@
           <el-button @click="$refs.chargeItemEditableTableData.removeSelecteds()">删除选中</el-button>
           <el-button @click="$refs.chargeItemEditableTableData.clear()">清空</el-button>
 
-          <elx-editable ref="chargeItemEditableTableData" :data.sync="chargeItemEditableTableData">
+          <elx-editable ref="chargeItemEditableTableData" :data.sync="chargeItemEditableTableData" @blur-active="calculateTotalMoney">
             <elx-editable-column type="selection" width="55" />
             <elx-editable-column type="index" width="55" />
             <elx-editable-column prop="nameZh" label="项目名称" />
@@ -73,7 +73,7 @@
         <!-- 全局按钮 -->
         <div style="text-align:center;margin-top:40px;">
           <el-button type="primary" @click="submitExamination(1)">提交</el-button>
-          <el-button type="info" @click="doPrint"><i class="el-icon-printer" />打印预览</el-button>
+          <el-button type="info" @click="print"><i class="el-icon-printer" />打印预览</el-button>
         </div>
       </el-main>
     </el-container>
@@ -155,29 +155,30 @@
         <el-button type="primary" @click="saveCurrentIntoTemplate()">保存模板</el-button>
       </span>
     </el-dialog>
-    <!--
+
+    <!-- 模板 -->
     <el-row :gutter="20" style="margin:20px">
-      <el-col :span="10"><div >
+      <el-col :span="10"><div>
         <el-aside style="background:#eef1f6;width:500px">
-          处方模板
-          <el-button type="primary" plain style="float:right;" @click="templateDialogVisible=true">保存为模板</el-button>
+          处置模板
+          <!-- <el-button type="primary" plain style="float:right;" @click="templateDialogVisible=true">保存为模板</el-button> -->
           <el-button plain style="float:right;margin-right:10px" @click="applyTemplate">应用</el-button>
         </el-aside>
         <el-tree
-          :data="prescriptionTemplateTreeData"
+          :data="templateTreeData"
           :props="defaultProps"
           accordion
           @node-click="handleNodeClick"
         />
       </div></el-col>
       <el-col :span="14"><div>
-        <el-table :data="prescriptionTemplateMedicineExample" style="width: 100%">
-        <el-table-column prop="nameZh" label="药品名称"></el-table-column>
-        <el-table-column prop="medicineSpecification" label="规格"></el-table-column>
-        <el-table-column prop="medicinePrice" label="单价"></el-table-column>
-      </el-table>
+        <el-table :data="templateExample" style="width: 100%">
+          <el-table-column prop="nameZh" label="名称" />
+          <el-table-column prop="specification" label="规格" />
+          <el-table-column prop="price" label="单价" />
+        </el-table>
       </div></el-col>
-    </el-row> -->
+    </el-row>
 
     <!-- 暂存 -->
     <el-row :gutter="20" style="margin:20px">
@@ -286,12 +287,9 @@ import {
   selectExaminationItemListInChargeItemByDepartmentId,
   addExamination,
   selectHistoryExam,
-  deleteExam
+  deleteExam,
+  selectExaminationTemplate
 } from '../../api/medicalRecord/examination'
-
-import {
-  selectPrescriptionTemplate
-} from '../../api/medicalRecord/prescription'
 
 Vue.use(Editable)
 Vue.use(EditableColumn)
@@ -350,7 +348,7 @@ export default {
         children: 'children',
         label: 'label'
       },
-      prescriptionTemplateTreeData: [
+      templateTreeData: [
         {
           label: '全院',
           children: []
@@ -364,20 +362,20 @@ export default {
       ],
       // 模板
       templateDialogVisible: false,
-      prescriptionTemplateTreeDirectory: 0,
+      templateTreeDirectory: 0,
       // 模板的完整数据 二维的
-      prescriptionTemplateData: [],
+      templateData: [],
       // 一个具体模板的数据
-      prescriptionTemplateMedicineExample: [],
-      saveState: '',
+      templateExample: [],
+      saveState: 2,
       templateCategory: [{
-        value: '2',
+        value: 2,
         label: '全院模板'
       }, {
-        value: '3',
+        value: 3,
         label: '科室模板'
       }, {
-        value: '4',
+        value: 4,
         label: '个人模板'
       }],
       // 暂存
@@ -404,15 +402,27 @@ export default {
     // this.invokeFetchDepartmentList().then(response => {
     //   this.invokeSelectHistoryExam()
     // })
+    this.doctorId = this.$store.getters.doctorId
     this.registrationId = this.$route.query.registrationId
     this.examForm.registrationId = this.$route.query.registrationId
     this.examForm.disease = this.$route.query.disease
-    this.invokeFetchDepartmentList()
     this.invokeCommonExam()
-    // pre
-    this.invokeSelectPrescriptionTemplate()
+    this.invokeSelectExamTemplate()
+    if (typeof (this.registrationId) === 'undefined') {
+      this.invokeFetchDepartmentList_withNoRegistration()
+      return
+    }
+    this.invokeFetchDepartmentList()
   },
   methods: {
+    invokeFetchDepartmentList_withNoRegistration() {
+      var query = { 'currentPage': 1, 'pageSize': 400 }
+      fetchDepartmentList(query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentList = response.data.list
+      })
+    },
     // 获取
     invokeFetchDepartmentList() {
       var query = { 'currentPage': 1, 'pageSize': 400 }
@@ -466,6 +476,10 @@ export default {
       this.chargeItemForm = {}
     },
     submitCheck() {
+      if (typeof (this.registrationId) === 'undefined' || this.registrationId == null) {
+        this.$message.error('无挂号号，错误！')
+        return false
+      }
       if (this.examForm.examinationName === '' || this.examForm.requirement === '') {
         this.$message.error('当前检查名称信息缺失，错误！')
         return false
@@ -494,7 +508,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.invokeAddExamination(saveState)
+          this.invokeAddExamination(this.examForm.registrationId, saveState)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -502,17 +516,26 @@ export default {
           })
         })
       } else {
-        this.invokeAddExamination(saveState)
+        this.invokeAddExamination(this.examForm.registrationId, saveState)
       }
     },
     calculateTotalMoney() {
       this.totalListMoney = 0
+      var bool = false
       for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
         this.totalListMoney += this.chargeItemEditableTableData[i].nums *
           this.chargeItemEditableTableData[i].price
+        if (this.chargeItemEditableTableData[i].nums <= 0) {
+          bool = true
+          break
+        }
+      }
+      if (bool) {
+        this.totalListMoney = 0
+        this.$message.error('输入数据小于等于0，将无法提交！')
       }
     },
-    invokeAddExamination(saveState) {
+    invokeAddExamination(registrationId, saveState) {
       var tempList = []
       for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
         tempList.push({
@@ -524,7 +547,7 @@ export default {
       }
       var examinationJson = {
         'examinationJson': {
-          'registrationId': this.examForm.registrationId,
+          'registrationId': registrationId,
           'saveState': saveState, // 暂存 0；正式提交 1；全院模板 2；科室模板 3；医生个人模板 4
           'examName': this.examForm.examinationName,
           'requirement': this.examForm.requirement,
@@ -533,6 +556,7 @@ export default {
           'chargeEntryList': tempList
         }
       }
+      console.log('addExamination query: ')
       console.log(examinationJson)
       addExamination(examinationJson).then(response => {
         console.log('addExamination response: ')
@@ -654,7 +678,10 @@ export default {
     invokeDeletePrescription() {
       var tempList = []
       for (var i = 0; i < this.tempsaveExamTableMultipleSelection.length; ++i) { tempList.push(this.tempsaveExamTableMultipleSelection[i].examinationId) }
-
+      if (tempList.length === 0) {
+        this.$message.error('未选中删除对象，错误！')
+        return
+      }
       deleteExam({ 'examinationIdList': tempList }).then(response => {
         this.invokeSelectHistoryExam()
         this.$message({
@@ -700,40 +727,43 @@ export default {
 
     // 模板
     applyTemplate() {
-      if (this.prescriptionTemplateMedicineExample.length === 0 || this.prescriptionTemplateMedicineExample.length == null) {
+      if (this.templateExample.length === 0 || this.templateExample.length == null) {
         this.$message.error('当前未选中模板，错误！')
         return
       }
-      for (var i = 0; i < this.prescriptionTemplateMedicineExample.length; ++i) {
-        var id = this.prescriptionTemplateMedicineExample[i].medicineId - 1
-        this.prescriptionItem = this.medicineTotalList[id]
-        this.$refs.chargeItemEditableTableData.insert(this.prescriptionItem)
+      for (var i = 0; i < this.templateExample.length; ++i) {
+        // departmentName" label="科室名称" />
+        // <elx-editable-column prop="nums" label="数量" :edit-render="{name: 'ElInputNumber'}" />
+        //   <elx-editable-column prop="doctorAdvice
+        this.templateExample[i].departmentName = this.departmentList[this.templateExample[i].chargeItem.departmentId - 1].departmentName
+        this.$refs.chargeItemEditableTableData.insert(this.templateExample[i])
       }
       this.$message({
         message: '应用模板成功！',
         type: 'success'
       })
     },
-    invokeSelectPrescriptionTemplate() {
-      this.prescriptionTemplateData = []
+
+    invokeSelectExamTemplate() {
+      this.templateData = []
       var query = {
-        'prescriptionScope': 2,
+        'examinationScope': 2,
         'doctorId': this.doctorId
       }
-      selectPrescriptionTemplate(query).then(response => {
-        console.log('selectPrescriptionTemplate response:')
+      selectExaminationTemplate(query).then(response => {
+        console.log('selectDisposalTemplate response:')
         console.log(response)
-        this.prescriptionTemplateData.push(JSON.parse(response.data))
+        this.templateData.push(JSON.parse(response.data))
         // this.medicineTotalList = response.data
-        query.prescriptionScope = 3
-        selectPrescriptionTemplate(query).then(response => {
-          this.prescriptionTemplateData.push(JSON.parse(response.data))
-          query.prescriptionScope = 4
-          selectPrescriptionTemplate(query).then(response => {
-            this.prescriptionTemplateData.push(JSON.parse(response.data))
-            console.log(this.prescriptionTemplateData)
+        query.examinationScope = 3
+        selectExaminationTemplate(query).then(response => {
+          this.templateData.push(JSON.parse(response.data))
+          query.examinationScope = 4
+          selectExaminationTemplate(query).then(response => {
+            this.templateData.push(JSON.parse(response.data))
+            console.log(this.templateData)
 
-            this.prescriptionTemplateTreeData = [
+            this.templateTreeData = [
               {
                 label: '全院',
                 children: []
@@ -746,56 +776,81 @@ export default {
               }]
             // 加到树形列表中
             for (var i = 0; i < 3; ++i) {
-              for (var j = 0; j < this.prescriptionTemplateData[i].length; ++j) {
-                this.prescriptionTemplateTreeData[i].children.push({ 'label': this.prescriptionTemplateData[i][j].prescriptionName })
+              if (this.templateData[i] == null) {
+                this.templateData[i] = []
+                continue
+              }
+              for (var j = 0; j < this.templateData[i].length; ++j) {
+                this.templateTreeData[i].children.push({
+                  'label': this.templateData[i][j].examName,
+                  'id': this.templateData[i][j].examinationId
+                })
+                for (var k = 0; k < this.templateData[i][j].chargeEntryList.length; ++k) {
+                  this.templateData[i][j].chargeEntryList[k].nameZh = this.templateData[i][j].chargeEntryList[k].chargeItem.nameZh
+                  this.templateData[i][j].chargeEntryList[k].specification = this.templateData[i][j].chargeEntryList[k].chargeItem.specification
+                  this.templateData[i][j].chargeEntryList[k].price = this.templateData[i][j].chargeEntryList[k].chargeItem.price
+                }
               }
             }
           })
         })
       })
     },
-
-    // 树形目录检测
     handleNodeClick(data) {
       console.log(data)
       if (data.label === '全院') {
-        this.prescriptionTemplateTreeDirectory = 0
+        this.templateTreeDirectory = 0
         return
       }
       if (data.label === '科室') {
-        this.prescriptionTemplateTreeDirectory = 1
+        this.templateTreeDirectory = 1
         return
       }
       if (data.label === '个人') {
-        this.prescriptionTemplateTreeDirectory = 2
+        this.templateTreeDirectory = 2
         return
       }
-      var now = this.prescriptionTemplateTreeDirectory
-      for (var i = 0; i < this.prescriptionTemplateData[now].length; ++i) {
+      var now = this.templateTreeDirectory
+      for (var i = 0; i < this.templateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
-        if (this.prescriptionTemplateData[now][i].prescriptionName === data.label) {
-          // console.log(this.prescriptionTemplateData[now][i])
-          var tempList = JSON.parse(this.prescriptionTemplateData[now][i].medicine)
-          // console.log('tempList')
-          // console.log(tempList)
-          this.prescriptionTemplateMedicineExample = []
+        if (this.templateData[now][i].examinationId === data.id) {
+          console.log('handle node click : ')
+          // console.log(this.templateData[now][i])
+          var tempList = this.templateData[now][i].chargeEntryList
+          this.templateExample = []
           for (var j = 0; j < tempList.length; ++j) {
-            this.prescriptionTemplateMedicineExample.push(this.medicineTotalList[tempList[j].medicineId - 1])
+            this.templateExample.push(tempList[j])
           }
-          console.log(this.prescriptionTemplateMedicineExample)
+          console.log(this.templateExample)
           break
         }
       }
     },
     saveCurrentIntoTemplate() {
-      if (this.submitCheck() === false) { return }
+      if (this.examForm.examinationName === '' || this.examForm.requirement === '') {
+        this.$message.error('当前检查名称信息缺失，错误！')
+        return false
+      }
+      if (this.chargeItemEditableTableData.length === 0 || this.chargeItemEditableTableData.length == null) {
+        this.$message.error('未选中任何项目，错误！')
+        return false
+      }
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        if (this.chargeItemEditableTableData[i].nums == null ||
+          this.chargeItemEditableTableData[i].nums === '' ||
+          this.chargeItemEditableTableData[i].nums <= 0
+        ) {
+          this.$message.error('项目信息缺失或错误，错误！')
+          return false
+        }
+      }
       if (this.saveState === '') {
         this.$message.error('未选择保存模板类型，错误！')
         return
       }
       this.templateDialogVisible = false
-      this.invokekSavePrescription(-1, this.saveState)
-      this.invokeSelectPrescriptionTemplate()
+      this.invokeAddExamination(-1, this.saveState)
+      this.invokeSelectExamTemplate()
       // console.log('now here ' + this.saveState)
     },
     resetForm(formName) {
@@ -869,6 +924,28 @@ export default {
       window.location.reload()
       document.body.innerHTML = oldContent
       return false
+    },
+    print() {
+      var namelist = []
+      var numlist = []
+      var pricelist = []
+      for (var i = 0; i < this.chargeItemEditableTableData.length; ++i) {
+        namelist.push(this.chargeItemEditableTableData[i].nameZh)
+        numlist.push(this.chargeItemEditableTableData[i].nums)
+        pricelist.push(this.chargeItemEditableTableData[i].price)
+      }
+      const routeData = this.$router.resolve({
+        path: '/print_cost',
+        query: {
+          registrationId: this.examForm.registrationId,
+          namelist: namelist,
+          numlist: numlist,
+          pricelist: pricelist,
+          prescriptionName: this.examForm.examinationName
+        }
+      })
+      // console.log(routeData)
+      window.open(routeData.href, '_blank')
     }
   }
 }

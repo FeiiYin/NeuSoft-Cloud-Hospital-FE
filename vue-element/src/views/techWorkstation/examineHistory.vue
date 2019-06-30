@@ -27,7 +27,7 @@
               </el-col>
             </el-row>
           </el-header>
-          <el-main>
+          <el-main style="margin-top:60px;">
             <div style="margin-top:40px">
               <el-form ref="examForm" :model="examForm" label-width="100px">
                 <el-form-item label="检查申请编号" prop="examinationId">
@@ -37,37 +37,35 @@
                   <el-input v-model="examForm.examName" prefix-icon="el-icon-document" :disabled="true" />
                 </el-form-item>
                 <el-form-item label="检查要求" prop="requirement">
-                  <el-input v-model="examForm.requirement" prefix-icon="el-icon-document" type="textarea" :rows="2" />
+                  <el-input v-model="examForm.requirement" prefix-icon="el-icon-document" type="textarea" :rows="2" :disabled="true" />
                 </el-form-item>
                 <el-form-item label="临床印象" prop="clinicalImpression">
-                  <el-input v-model="examForm.clinicalImpression" prefix-icon="el-icon-document" type="textarea" :rows="2" />
+                  <el-input v-model="examForm.clinicalImpression" prefix-icon="el-icon-document" type="textarea" :rows="2" :disabled="true" />
                 </el-form-item>
                 <el-form-item label="检查结果" prop="examResult">
-                  <el-input v-model="examForm.examResult" prefix-icon="el-icon-document" type="textarea" :rows="2" />
+                  <el-input v-model="examForm.examResult" prefix-icon="el-icon-document" type="textarea" :rows="2" :disabled="true" />
                 </el-form-item>
               </el-form>
             </div>
             <div class="editor-container">
               <aside>
-                检查结果图片上传
+                历史图片记录
               </aside>
-              <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :http-request="handleUpload"
-                :limit="3"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :on-exceed="handleExceed"
-              >
-                <i class="el-icon-plus" />
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible" size="tiny">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
+              <el-row>
+                <el-col v-for="(item, index) in imgList" :key="index" :span="10" :offset="index > 0 ? 2 : 0">
+                  <el-card :body-style="{ padding: '0px' }">
+                    <img v-bind:src="item.url" class="image">
+                    <div style="padding: 14px;">
+                      <span>历史图片</span>
+                      <div class="bottom clearfix">
+                        <time class="time">{{ item.date }}</time>
+                      </div>
+                    </div>
+                  </el-card>
+                </el-col>
+              </el-row>
             </div>
             <div style="text-align:center;margin-top:40px;">
-              <el-button type="primary" @click="invokeUpdateExaminationAbstract()">提交</el-button>
             </div>
           </el-main>
         </el-container>
@@ -83,7 +81,6 @@ import {
 
 import {
   selectHistoryExam,
-  updateExaminationAbstract,
   selectExaminationAbstract
 } from '../../api/medicalRecord/examination'
 
@@ -140,7 +137,8 @@ export default {
       cos: null,
       dialogImageUrl: '',
       dialogVisible: false,
-      mapFilename: []
+      mapFilename: [],
+      imgList: []
     }
   },
   created() {
@@ -150,13 +148,14 @@ export default {
     if (typeof (this.examinationId) === 'undefined') {
       return
     }
-    // this.examinationId
     this.invokeSelectExaminationAbstract()
+    // this.invokeFetchDepartmentList()
     var COS = require('cos-js-sdk-v5')
     this.cos = new COS({
       SecretId: 'AKIDHQK4h66DvPgiWGF6C2mKdhdMtBFBCPiu',
       SecretKey: '7zhHdqnU2LSPDsPhyf7f3IF5h74mGWbE'
     })
+    this.handleDownload()
   },
   methods: {
     invokeSelectExaminationAbstract() {
@@ -168,34 +167,54 @@ export default {
         console.log(error)
       })
     },
-    invokeUpdateExaminationAbstract() {
-      // var query = {
-      //   examinationId
-      //   registrationId = registrationId;
-      //   patientName = patientName;
-      //   doctorId = doctorId;
-      //   departmentId = departmentId;
-      //   saveState = saveState;
-      //   payState = payState;
-      //   executionState = executionState;
-      //   examName = examName;
-      //   clinicalImpression = clinicalImpression;
-      //   requirement = requirement;
-      //   examResult = examResult;
-      // }
-      updateExaminationAbstract({ 'examinationJson': this.examForm }).then(response => {
-        console.log('selectExaminationAbstract ressponspe :')
-        console.log(response)
-        this.$message({
-          message: '修改成功！',
-          type: 'success'
-        })
-        this.$router.push({
-          path: '/techWorkstation/examineIndex'
-        })
-      }).catch(error => {
-        console.log(error)
+    output() {
+      console.log(this.imgList)
+    },
+    handleDownload() {
+      var COS = require('cos-js-sdk-v5')
+      const cos = new COS({
+        SecretId: this.SecretId,
+        SecretKey: this.SecretKey
       })
+      // 声明常量可以绑定this
+      const self = this
+      const bucket = this.Bucket
+      const region = this.Region
+      var prefix = ('00000' + this.examinationId).slice(-5) + '_'
+      console.log(prefix)
+      this.imgList = cos.getBucket({
+        Bucket: this.Bucket,
+        Region: this.Region,
+        Prefix: prefix // 这里传入列出的文件前缀
+      }, function(err, data) {
+        console.log('handleDownload directory')
+        console.log(err || data.Contents)
+        var keyList = data.Contents
+
+        self.imgList = []
+        for (var i = 0; i < keyList.length; ++i) {
+          var key = keyList[i].Key
+          const thisUrl = cos.getObjectUrl({
+            Bucket: bucket, // Bucket 格式：test-1250000000
+            Region: region,
+            Key: key
+          }, function(err, data) {
+            console.log('download url:')
+            console.log(err || data && data.Url)
+          })
+          var date = ('' + key).slice(6, 10) + '-' + ('' + key).slice(10, 12) + '-' + ('' + key).slice(12, 14) + ' ' +
+            ('' + key).slice(14, 16) + ':' + ('' + key).slice(16, 18)
+          self.imgList.push({
+            'key': key,
+            'url': thisUrl,
+            'date': date
+          })
+        }
+        return err || data.Contents
+      })
+      // for (var i = 0; i < keyList.length; ++i) {
+      //   'https://neusoft-hospital-1259205273.cos.ap-beijing.myqcloud.com/'
+      // }
     },
     // 日期选择
     // # 编写日期格式化方法
@@ -400,5 +419,34 @@ export default {
   .row-bg {
     padding: 10px 0;
     background-color: #f9fafc;
+  }
+  .time {
+    font-size: 13px;
+    color: #999;
+  }
+
+  .bottom {
+    margin-top: 13px;
+    line-height: 12px;
+  }
+
+  .button {
+    padding: 0;
+    float: right;
+  }
+
+  .image {
+    width: 100%;
+    display: block;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+
+  .clearfix:after {
+    clear: both
   }
 </style>

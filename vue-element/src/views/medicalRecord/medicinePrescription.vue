@@ -50,7 +50,7 @@
               <el-button @click="$refs.prescriptionItemEditableTableData.removeSelecteds()">删除选中</el-button>
               <el-button @click="$refs.prescriptionItemEditableTableData.clear()">清空</el-button>
 
-              <elx-editable ref="prescriptionItemEditableTableData" :data.sync="prescriptionItemEditableTableData">
+              <elx-editable ref="prescriptionItemEditableTableData" :data.sync="prescriptionItemEditableTableData" @blur-active="calculateTotalMoney">
                 <elx-editable-column type="selection" width="55" />
                 <elx-editable-column type="index" width="55" />
                 <elx-editable-column prop="nameZh" label="药品名称" />
@@ -83,7 +83,7 @@
             <!-- 全局按钮 -->
             <div style="text-align:center;margin-top:40px;">
               <el-button type="primary" @click="submitPrescriptionItemList(-1, 1)">提交</el-button>
-              <el-button type="info" @click="doPrint"><i class="el-icon-printer" />打印预览</el-button>
+              <el-button type="info" @click="print"><i class="el-icon-printer" />打印预览</el-button>
             </div>
           </el-main>
         </el-container>
@@ -169,9 +169,9 @@
       </div></el-col>
       <el-col :span="14"><div>
         <el-table :data="prescriptionTemplateMedicineExample" style="width: 100%">
-          <el-table-column prop="medicine.nameZh" label="药品名称" />
-          <el-table-column prop="medicine.medicineSpecification" label="规格" />
-          <el-table-column prop="medicine.medicinePrice" label="单价" />
+          <el-table-column prop="nameZh" label="药品名称" />
+          <el-table-column prop="medicineSpecification" label="规格" />
+          <el-table-column prop="medicinePrice" label="单价" />
         </el-table>
       </div></el-col>
     </el-row>
@@ -277,7 +277,7 @@ import {
   selectHistoryPrescription,
   selectPrescriptionTemplate
 } from '../../api/medicalRecord/prescription'
-import {deepClone} from "../../utils";
+import { deepClone } from '../../utils'
 
 Vue.use(Editable)
 Vue.use(EditableColumn)
@@ -405,21 +405,25 @@ export default {
       historyPrescriptionMedicineExample: []
     }
   },
-  created() {
-    this.registrationId = this.$route.query.registrationId
-    this.disease = this.$route.query.disease
-    this.invokeSelectMedicine()
-    this.invokeCommonMedicine()
-    this.invokeSelectPrescriptionTemplate()
-    this.invokeSelectHistoryPrescription()
-  },
   watch: {
-    prescriptionItemEditableTableData: function () {
+    prescriptionItemEditableTableData: function() {
       this.totalListMoney = 0
       for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
         this.totalListMoney += this.prescriptionItemEditableTableData[i].medicinePrice * this.prescriptionItemEditableTableData[i].medicineQuantity
       }
     }
+  },
+  created() {
+    this.doctorId = this.$store.getters.doctorId
+    this.registrationId = this.$route.query.registrationId
+    this.disease = this.$route.query.disease
+    this.invokeSelectMedicine()
+    this.invokeCommonMedicine()
+    this.invokeSelectPrescriptionTemplate()
+    if (typeof (this.registrationId) === 'undefined') {
+      return
+    }
+    this.invokeSelectHistoryPrescription()
   },
   methods: {
     // 疾病对话框处理
@@ -474,6 +478,10 @@ export default {
       }
     },
     submitCheck() {
+      if (typeof (this.registrationId) === 'undefined' || this.registrationId == null) {
+        this.$message.error('无挂号号，错误！')
+        return false
+      }
       if (this.prescriptionName === '') {
         this.$message.error('未输入当前处方名称，错误！')
         return false
@@ -554,8 +562,17 @@ export default {
     },
     calculateTotalMoney() {
       this.totalListMoney = 0
+      var bool = false
       for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
         this.totalListMoney += this.prescriptionItemEditableTableData[i].medicineQuantity * this.prescriptionItemEditableTableData[i].medicinePrice
+        if (this.prescriptionItemEditableTableData[i].medicineQuantity <= 0) {
+          bool = true
+          break
+        }
+      }
+      if (bool) {
+        this.totalListMoney = 0
+        this.$message.error('输入数据小于等于0，将无法提交！')
       }
     },
     // 常用药
@@ -634,6 +651,11 @@ export default {
         if (bool) {
           continue
         }
+        this.prescriptionItem.medicineUsage = '服用'
+        this.prescriptionItem.medicineDosage = 1
+        this.prescriptionItem.medicineFrequency = '一天一次'
+        this.prescriptionItem.medicineNumberDay = 1
+        this.prescriptionItem.medicineQuantity = 1
         this.$refs.prescriptionItemEditableTableData.insert(this.prescriptionItem)
       }
       this.$message({
@@ -671,6 +693,9 @@ export default {
             }]
             // 加到树形列表中
             for (var i = 0; i < 3; ++i) {
+              if (this.prescriptionTemplateData[i] == null) {
+                continue
+              }
               for (var j = 0; j < this.prescriptionTemplateData[i].length; ++j) {
                 this.prescriptionTemplateTreeData[i].children.push({ 'label': this.prescriptionTemplateData[i][j].prescriptionName })
               }
@@ -699,8 +724,8 @@ export default {
       for (var i = 0; i < this.prescriptionTemplateData[now].length; ++i) {
         // console.log(this.medicalRecordTemplateData[now][i].templateName)
         if (this.prescriptionTemplateData[now][i].prescriptionName === data.label) {
-          // console.log(this.prescriptionTemplateData[now][i])
-          var tempList = JSON.parse(this.prescriptionTemplateData[now][i].medicine)
+          console.log(this.prescriptionTemplateData[now][i])
+          var tempList = this.prescriptionTemplateData[now][i].prescriptionEntryList
           // console.log('tempList')
           // console.log(tempList)
           this.prescriptionTemplateMedicineExample = []
@@ -763,6 +788,10 @@ export default {
       // console.log(this.tempsavePrescriptionTableMultipleSelection)
       for (var i = 0; i < this.tempsavePrescriptionTableMultipleSelection.length; ++i) {
         tempList.push(this.tempsavePrescriptionTableMultipleSelection[i].prescriptionId)
+      }
+      if (tempList.length === 0) {
+        this.$message.error('未选中删除对象，错误！')
+        return
       }
       deletePrescription({ 'prescriptionIdList': tempList }).then(response => {
         this.invokeSelectHistoryPrescription()
@@ -844,6 +873,28 @@ export default {
       window.location.reload()
       document.body.innerHTML = oldContent
       return false
+    },
+    print() {
+      var namelist = []
+      var numlist = []
+      var pricelist = []
+      for (var i = 0; i < this.prescriptionItemEditableTableData.length; ++i) {
+        namelist.push(this.prescriptionItemEditableTableData[i].nameZh)
+        numlist.push(this.prescriptionItemEditableTableData[i].medicineQuantity)
+        pricelist.push(this.prescriptionItemEditableTableData[i].medicinePrice)
+      }
+      const routeData = this.$router.resolve({
+        path: '/print_cost',
+        query: {
+          registrationId: this.registrationId,
+          namelist: namelist,
+          numlist: numlist,
+          pricelist: pricelist,
+          prescriptionName: this.prescriptionName
+        }
+      })
+      // console.log(routeData)
+      window.open(routeData.href, '_blank')
     }
   }
 }

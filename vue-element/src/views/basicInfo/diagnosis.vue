@@ -163,7 +163,7 @@
           <div style="height:30px;" />
           <el-pagination
             :current-page="currentPage"
-            :page-sizes="[20, 50, 100, 200]"
+            :page-sizes="[50, 100, 200]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalNumber"
@@ -285,8 +285,8 @@ export default {
       this.getDiseaseList()
     },
     /**
-       * 获取页面右侧的疾病信息表格
-       */
+     * 获取页面右侧的疾病信息表格
+     */
     getDiseaseList() {
       this.listLoading = true // 列表正在加载
       this.query = {
@@ -299,6 +299,7 @@ export default {
         console.log(response)
         // todo 分页按钮，分页数量，每页大小等
         this.diseaseTable = response.data.list // 数据列表
+        this.totalNumber = this.diseaseTable.length
         // this.total = response.data.total // 数据项数量
         this.listLoading = false // 列表加载完成
       }).catch(error => {

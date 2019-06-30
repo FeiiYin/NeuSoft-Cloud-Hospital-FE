@@ -54,6 +54,25 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/register',
+    component: () => import('@/views/login/register'),
+    hidden: true
+  },
+  {
+    path: '/registered_receipt',
+    hidden: true,
+    component: () => import('@/views/basicInfo/registered_receipt'),
+    name: 'registered_receipt',
+    meta: { title: '挂号发票' }
+  },
+  {
+    path: '/print_cost',
+    hidden: true,
+    component: () => import('@/views/basicInfo/cost'),
+    name: 'print_cost',
+    meta: { title: '收据', noCache: true }
+  },
+  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
@@ -77,35 +96,35 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
   },
-  {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/documentation',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/documentation/index'),
+  //       name: 'Documentation',
+  //       meta: { title: 'Documentation', icon: 'documentation', affix: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/guide',
+  //   component: Layout,
+  //   redirect: '/guide/index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/guide/index'),
+  //       name: 'Guide',
+  //       meta: { title: 'Guide', icon: 'guide', noCache: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/profile',
     component: Layout,
@@ -115,7 +134,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/profile/index'),
-        name: 'Profile',
+        name: '个人主页',
         meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
@@ -181,22 +200,17 @@ export const asyncRoutes = [
         meta: { title: '医生排班管理', noCache: true }
       },
       {
-        path: 'cost',
-        component: () => import('@/views/basicInfo/cost'),
-        name: 'cost',
-        meta: { title: '收据', noCache: true }
-      },
-      {
-        path: 'registered_receipt',
-        component: () => import('@/views/basicInfo/registered_receipt'),
-        name: 'registered_receipt',
-        meta: { title: '挂号发票', noCache: true }
-      },
-      {
         path: 'statement',
         component: () => import('@/views/basicInfo/statement'),
         name: 'statement',
+        hidden: true,
         meta: { title: '收费日结单', noCache: true }
+      },
+      {
+        path: 'COStest',
+        component: () => import('@/views/basicInfo/COStest'),
+        name: 'COStest',
+        meta: { title: '测试', noCache: true }
       }
     ]
   },
@@ -307,13 +321,19 @@ export const asyncRoutes = [
         path: 'endMedicalRecord',
         component: () => import('@/views/medicalRecord/endMedicalRecord'),
         name: 'endMedicalRecord',
-        meta: { title: '诊断完毕', noCache: true }
+        meta: { title: '患者信息检索', noCache: true }
       },
       {
         path: 'medicalRecordTemplate',
         component: () => import('@/views/medicalRecord/medicalRecordTemplate'),
         name: 'medicalRecordTemplate',
         meta: { title: '病历模板管理', noCache: true }
+      },
+      {
+        path: 'disposalTemplate',
+        component: () => import('@/views/medicalRecord/disposalTemplate'),
+        name: 'disposalTemplate',
+        meta: { title: '处置模板管理', noCache: true }
       },
       {
         path: 'workload',
@@ -345,6 +365,13 @@ export const asyncRoutes = [
         component: () => import('@/views/techWorkstation/examineResult'),
         name: 'examineResult',
         meta: { title: '检查结果录入', noCache: true }
+      },
+      {
+        path: 'examineHistory',
+        hidden: true,
+        component: () => import('@/views/techWorkstation/examineHistory'),
+        name: 'examineHistory',
+        meta: { title: '检查结果历史记录', noCache: true }
       },
       {
         path: 'disposalIndex',
@@ -441,6 +468,7 @@ export const asyncRoutes = [
     redirect: '/permission/page',
     alwaysShow: true, // will always show the root menu
     name: 'Permission',
+    hidden: true,
     meta: {
       title: 'Permission',
       icon: 'lock',
@@ -501,6 +529,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/example/list',
     name: 'Example',
+    hidden: true,
     meta: {
       title: 'Example',
       icon: 'example'
@@ -530,6 +559,7 @@ export const asyncRoutes = [
   {
     path: '/tab',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -545,6 +575,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: 'noRedirect',
     name: 'ErrorPages',
+    hidden: true,
     meta: {
       title: 'Error Pages',
       icon: '404'
@@ -568,6 +599,7 @@ export const asyncRoutes = [
   {
     path: '/error-log',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'log',
@@ -654,6 +686,7 @@ export const asyncRoutes = [
   {
     path: '/theme',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -680,6 +713,7 @@ export const asyncRoutes = [
   {
     path: 'external-link',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'https://github.com/PanJiaChen/vue-element-admin',

@@ -12,11 +12,11 @@ import request from '@/utils/request'
  * - chargeItemId 处置项目作为收费项目的编号
  * - nums 处置项目的数量
  */
-export function addDisposal(query) {
-  console.log('addDisposal query: ')
+export function saveDisposal(query) {
+  console.log('saveDisposal query: ')
   console.log(query)
   return request({
-    url: '/disposal/add',
+    url: '/disposal/save',
     method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
@@ -69,8 +69,10 @@ export function selectHistoryDisposal(query) {
  * @return 操作结果
  * <p>
  * disposalJson 包含的属性：
+ * - chargeFormId 处置项目单编号
  * - chargeEntryList 处置项目列表，json 数组
  * chargeEntryList 数组包含的属性：
+ * - chargeEntryId 处置项目作为收费项目的编号
  * - not_given_nums 在执行处置后，尚未交付的项目数量，（不修改填-1）
  */
 export function updateDisposal(query) {
@@ -119,6 +121,25 @@ export function deleteDisposalEntry(query) {
   return request({
     url: '/disposal/delete_disposal_entry',
     method: 'delete',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 查询处置项目模板
+ *
+ * @param disposalScope 查询的处置项目模板范围（全院模板 2；科室模板 3；医生个人模板 4）
+ * @param doctorId      医生编号
+ * @return 处置项目模板列表，json 字符串
+ */
+export function selectDisposalTemplate(query) {
+  console.log('selectDisposalTemplate query: ')
+  console.log(query)
+  return request({
+    url: '/disposal/disposal_template',
+    method: 'get',
     params: query,
     baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'

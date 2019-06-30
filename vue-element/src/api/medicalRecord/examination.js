@@ -99,3 +99,60 @@ export function deleteExam(query) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+/**
+ * 获取检查单模板
+ *
+ * @param examinationScope 查询的检查单模板范围（全院模板 2；科室模板 3；医生个人模板 4）
+ * @param doctorId         医生编号
+ * @return 检查单模板列表，json 字符串
+ */
+export function selectExaminationTemplate(query) {
+  console.log('selectExaminationTemplate query: ')
+  console.log(query)
+  return request({
+    url: '/exam/examination_template',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 获取检查单的基本信息
+ * 不包含检查单上的检查项目
+ *
+ * @param examinationId 检查单编号
+ * @return 检查单基本信息
+ */
+export function selectExaminationAbstract(query) {
+  console.log('selectExaminationAbstract query: ')
+  console.log(query)
+  return request({
+    url: '/exam/select_exam_abstract',
+    method: 'get',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 修改检查单基本信息
+ * 检查单上的检查项目保持不变
+ *
+ * @param examinationJson 检查单基本信息，json 字符串
+ * @return 操作结果
+ */
+export function updateExaminationAbstract(query) {
+  console.log('updateExaminationAbstract query: ')
+  console.log(query)
+  return request({
+    url: '/exam/update_exam_abstract',
+    method: 'post',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}

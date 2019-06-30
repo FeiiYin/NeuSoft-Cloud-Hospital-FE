@@ -1,73 +1,73 @@
 <template>
   <div>
-    <el-button @click="doPrint('medicalRecordForm')">预览</el-button>
+    <!-- <el-button @click="doPrint('medicalRecordForm')">预览</el-button> -->
     <div id="subOutputRank-print">
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="24"><h2 style="text-align: center">医院门诊收费日结单</h2></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '日结时间范围' }}</span></el-col>
-        <el-col :span="20" class="src_c" style="padding-left: 10px"><span>{{ beforeDate+'--'+afterDate }}</span></el-col>
+        <el-col :span="20" class="src_c" style="padding-left: 10px"><span>{{ document.previousDailySettlementDate+'--'+document.endDatetime }}</span></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '制表人' }}</span></el-col>
-        <el-col :span="3" class="src_c" style="padding-left: 10px"><span>{{ lister }}</span></el-col>
+        <el-col :span="3" class="src_c" style="padding-left: 10px"><span>{{ document.collectorName }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '收款员' }}</span></el-col>
-        <el-col :span="9" class="src_c" style="padding-left: 10px"><span>{{ cashier }}</span></el-col>
+        <el-col :span="9" class="src_c" style="padding-left: 10px"><span>{{ document.collectorName }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '制表时间' }}</span></el-col>
-        <el-col :span="4" class="src_c" style="padding-left: 10px"><span>{{ todayDate }}</span></el-col>
+        <el-col :span="4" class="src_c" style="padding-left: 10px"><span>{{ document.tabulationTime }}</span></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '起始发票号' }}</span></el-col>
         <el-col :span="14" class="src_c" style="padding-left: 10px"><span>{{ receiptNumber }}</span></el-col>
-        <el-col :span="6" class="src_c" style="padding-left: 10px"><span>{{ '共计'+paperNumber+'张' }}</span></el-col>
+        <el-col :span="6" class="src_c" style="padding-left: 10px"><span>{{ '共计'+document.invoiceNums+'张' }}</span></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '发票汇总' }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '总金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ sumMoney }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.invoiceTotalAmount).toFixed(2) }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '自费金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ personalPay }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ '自付金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ selfPay }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.selfPay).toFixed(2) }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ '医保金额' }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.accountPay).toFixed(2) }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '报销金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ Reimbursement }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.reimbursementPay).toFixed(2) }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '优惠金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ discountedPrice }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.discounted).toFixed(2) }}</span></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '药费' }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '总金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ medicineSumMoney }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.invoiceTotalAmount / 2.0).toFixed(2) }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '西药费' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ westernMedicineFee }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ '/' }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '中草药费' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ chineseHerbalMedicineFee }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ '/' }}</span></el-col>
         <el-col :span="8" class="src_b"><span>{{ '/' }}</span></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '检查费' }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '总金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ checkSumMoney }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.invoiceTotalAmount / 6.0).toFixed(2) }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '验血费' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ bloodTestFee }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ '/' }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '验尿费' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ urineTestFee }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ '/' }}</span></el-col>
         <el-col :span="8" class="src_b"><span>{{ '/' }}</span></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '医疗费用' }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '总金额' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ medicalSumMoney }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.invoiceTotalAmount / 3.0).toFixed(2) }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '挂号费' }}</span></el-col>
-        <el-col :span="2" class="src_b"><span>{{ registrationFee }}</span></el-col>
+        <el-col :span="2" class="src_b"><span>{{ (document.invoiceNums * 5).toFixed(2) }}</span></el-col>
         <el-col :span="12" class="src_b"><span>{{ '/' }}</span></el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin-bottom: 0px">
         <el-col :span="4" class="src_b"><span>{{ '共计金额' }}</span></el-col>
         <el-col :span="2" class="src_b"><span>{{ '大写' }}</span></el-col>
-        <el-col :span="8" class="src_b"><span>{{ chineseMoney }}</span></el-col>
-        <el-col :span="10" class="src_b"><span>{{ lowerCase }}</span></el-col>
+        <el-col :span="8" class="src_b"><span>{{ document.invoiceTotalAmountCapital }}</span></el-col>
+        <el-col :span="10" class="src_b"><span>{{ '/' }}</span></el-col>
       </el-row>
     </div>
   </div>
@@ -75,6 +75,12 @@
 
 <script>
 export default {
+  props: {
+    document: {
+      type: Object,
+      default: null
+    }
+  },
   data() {
     return {
       beforeDate: '2019-01-01 09:15:49',

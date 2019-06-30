@@ -19,31 +19,31 @@
 
     <div class="user-bio">
       <div class=" user-bio-section">
-        <div class="user-bio-section-header"><svg-icon icon-class="education" /><span>Education</span></div>
+        <div class="user-bio-section-header"><svg-icon icon-class="education" /><span>个人职位</span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
-            JS in Computer Science from the University of Technology
+            {{ discription }}
           </div>
         </div>
       </div>
 
       <div class="user-skills user-bio-section">
-        <div class="user-bio-section-header"><svg-icon icon-class="skill" /><span>Skills</span></div>
+        <div class="user-bio-section-header"><svg-icon icon-class="skill" /><span>计划</span></div>
         <div class="user-bio-section-body">
           <div class="progress-item">
-            <span>Vue</span>
+            <span>检查</span>
             <el-progress :percentage="70" />
           </div>
           <div class="progress-item">
-            <span>JavaScript</span>
+            <span>处置</span>
             <el-progress :percentage="18" />
           </div>
           <div class="progress-item">
-            <span>Css</span>
+            <span>处方</span>
             <el-progress :percentage="12" />
           </div>
           <div class="progress-item">
-            <span>ESLint</span>
+            <span>登录</span>
             <el-progress :percentage="100" status="success" />
           </div>
         </div>
@@ -69,6 +69,14 @@ export default {
         }
       }
     }
+  },
+  data() {
+    return {
+      discription: '医院人员'
+    }
+  },
+  created() {
+    this.discription = this.$store.getters.introduction
   }
 }
 </script>

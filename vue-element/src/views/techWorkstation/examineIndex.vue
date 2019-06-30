@@ -36,6 +36,24 @@
               <el-table-column type="index" />
               <el-table-column prop="examName" label="检查名称" />
               <el-table-column prop="departmentName" label="挂号科室" />
+              <el-table-column prop="excute" label="执行" width="260px">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    @click="toExamineResult(scope.$index, scope.row)"
+                  >
+                    录入检查结果
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="success"
+                    @click="toHistory(scope.$index, scope.row)"
+                  >
+                    查看历史
+                  </el-button>
+                </template>
+              </el-table-column>
             </el-table>
             <div style="margin-top:40px">
               <el-form ref="examForm" :model="examForm" label-width="100px">
@@ -50,7 +68,6 @@
             <div>
               <el-button @click="chooseBool === true ? chargeItemFormVisible = true : $message.error('未选中检验，错误！')">新增</el-button>
               <el-button @click="chooseBool === true ? commonExamDialogVisible = true : $message.error('未选中检验，错误！')">常用项目</el-button>
-              <el-button type="primary" @click="chooseBool === true ? $message.error('跳转TODO！') : $message.error('未选中检验，错误！')">录入检查结果</el-button>
             </div>
             <el-table v-loading="chargeFormTableLoading" :data="historyExamItemExample" style="width: 100%">
               <el-table-column prop="chargeItem.nameZh" label="消费名称" />
@@ -271,6 +288,24 @@ export default {
     }
   },
   methods: {
+    toExamineResult(index, row) {
+      this.$router.push({
+        path: '/techWorkstation/examineResult', // 这个path是在router/index.js里边配置的路径
+        query: {
+          registrationId: this.registrationId,
+          examinationId: row.examinationId
+        }
+      })
+    },
+    toHistory(index, row) {
+      this.$router.push({
+        path: '/techWorkstation/examineHistory', // 这个path是在router/index.js里边配置的路径
+        query: {
+          registrationId: this.registrationId,
+          examinationId: row.examinationId
+        }
+      })
+    },
     invokeFetchDepartmentList() {
       var query = { 'currentPage': 1, 'pageSize': 400 }
       fetchDepartmentList(query).then(response => {

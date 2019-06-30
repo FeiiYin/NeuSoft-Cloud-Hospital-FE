@@ -272,10 +272,15 @@ import {
   selectHistoryPrescription
 } from '../../api/medicalRecord/prescription'
 
+import {
+  selectRegistrationByPrimaryKey
+} from '../../api/registrationCharge/registration'
+
 export default {
   data() {
     return {
       // 基础信息
+      doctorId: 1,
       registrationId: 1,
       disease: '',
       // 进度条
@@ -328,9 +333,15 @@ export default {
     }
   },
   created() {
+    this.doctorId = this.$store.getters.doctorId
+    this.registrationForm.doctorId = this.doctorId
     this.registrationId = this.$route.query.registrationId
     this.registrationForm.registrationId = this.$route.query.registrationId
     this.disease = this.$route.query.disease
+    if (typeof (this.registrationId) === 'undefined') {
+      return
+    }
+    this.invokeFetchRegistrationRecord()
     this.invokeSelectPatientHistoryMedicalRecords()
     this.invokeFetchDepartmentList()
     this.invokeSelectHistoryPrescription()
@@ -346,6 +357,40 @@ export default {
         // problem?
         this.invokeSelectHistoryDisposal()
         this.invokeSelectHistoryExam()
+      })
+    },
+    // 根据病历号 registrationId 返回整条registration记录
+    invokeFetchRegistrationRecord() {
+      var query = { 'registrationId': this.registrationForm.registrationId }
+      selectRegistrationByPrimaryKey(query).then(response => {
+        console.log('selectRegistrationByPrimaryKey response: ')
+        console.log(response)
+        if (response.message === 'not found') {
+          this.$message.error('未找到该条记录')
+          return false
+        } else {
+          this.$message({
+            message: '获取成功',
+            type: 'success'
+          })
+          this.registrationForm = response.data
+          this.registrationForm.departmentId = response.data.reserve1
+          this.registrationForm.doctorId = response.data.reserve2
+          this.registrationId = this.registrationForm.registrationId
+          if (this.registrationForm.registrationCategoryId === 1) {
+            this.registrationForm.registrationCategory = '普通号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '急诊号'
+          } else if (this.registrationForm.registrationCategoryId === 2) {
+            this.registrationForm.registrationCategory = '专家号'
+          } else {
+            this.registrationForm.registrationCategory = '其他号'
+          }
+          // this.invokeFetchChargeItemListWithRegistrationId()
+        }
+      }).catch(error => {
+        console.log('selectRegistrationByPrimaryKey error: ')
+        console.log(error)
       })
     },
     invokeSelectHistoryDisposal() {
@@ -455,6 +500,10 @@ export default {
     },
     // 一切的结束，又是一切的开始
     invokeEndRegistration() {
+      if (typeof (this.registrationId) === 'undefined' || this.registrationId == null) {
+        this.$message.error('无挂号号，错误！')
+        return false
+      }
       this.$confirm('将要结束该次挂号诊断吗，结束后无法撤销, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

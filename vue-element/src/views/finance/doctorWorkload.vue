@@ -27,25 +27,34 @@
           </el-button>
         </el-col>
       </el-row>
-      <div style="margin:20px">
-        <count-to
-          ref="nums"
-          :start-val="_startVal"
-          :end-val="_endVal"
-          :duration="_duration"
-          :decimals="_decimals"
-          :separator="_separator"
-          :prefix="_prefix"
-          :suffix="_suffix"
-          :autoplay="false"
-          class="nums"
+      <el-table ref="patientChargeInfo" v-loading="tableLoading" :summary-method="getSummaries" :data="patientChargeInfo" show-summary>
+        <el-table-column type="index" />
+        <el-table-column label="医生名称" prop="doctorName" />
+        <el-table-column label="访问人次" prop="visitNums" />
+        <el-table-column label="检查费用" prop="doctorExaminationFee" />
+        <el-table-column label="处置费用" prop="doctorDisposalFee" />
+        <el-table-column label="处方费用" prop="doctorPrescriptionFee" />
+        <el-table-column label="发票数量" prop="doctorInvoiceNums" />
+      </el-table>
+      <div style="background: #d3dce6;">
+        <el-pagination
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 15]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalNumber"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
-      <el-table ref="patientChargeInfo" :data="patientChargeInfo">
-        <el-table-column label="检查费用" prop="patientExaminationFee" />
-        <el-table-column label="处置费用" prop="patientDisposalFee" />
-        <el-table-column label="处方费用" prop="patientPrescriptionFee" />
-      </el-table>
+      <div>
+        <div style="margin:40px">
+          <barchart ref="barchart" :list="totalList" />
+        </div>
+        <div style="margin:40px">
+          <piechart ref="piechart" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -55,32 +64,29 @@ import {
   doctorWorkloadFinancialStatistics_menzhen
 } from '../../api/personal/workload'
 
-import countTo from 'vue-count-to'
-
 import moment from 'moment'
+import barchart from './components/workloadBarchart2'
+import piechart from './components/workloadPiechart2'
 
 export default {
   components: {
-    countTo
+    barchart,
+    piechart
   },
   data() {
     return {
-      // 计数器
-      setStartVal: 0,
-      setEndVal: 2017,
-      setDuration: 4000,
-      setDecimals: 0,
-      setSeparator: ',',
-      setSuffix: ' 位病人',
-      setPrefix: '该段时间内，您一共诊断了 ',
-
       startDate: null,
-      endDate: null,
       doctorId: 1,
       workloadTable: [],
 
-      patientNums: 0,
+      totalList: [],
+      sums: [],
       patientChargeInfo: [],
+      tableLoading: false,
+      // 分页
+      currentPage: 1,
+      pageSize: 5,
+      totalNumber: 0,
 
       piechartSeriesData: [
         { value: 320, name: 'Industries' },
@@ -120,54 +126,35 @@ export default {
       }
     }
   },
-  computed: {
-    _startVal() {
-      if (this.setStartVal) {
-        return this.setStartVal
-      } else {
-        return 0
-      }
-    },
-    _endVal() {
-      if (this.patientNums) {
-        return this.patientNums
-      } else {
-        return 0
-      }
-    },
-    _duration() {
-      if (this.setDuration) {
-        return this.setDuration
-      } else {
-        return 100
-      }
-    },
-    _decimals() {
-      if (this.setDecimals) {
-        if (this.setDecimals < 0 || this.setDecimals > 20) {
-          alert('digits argument must be between 0 and 20')
-          return 0
-        }
-        return this.setDecimals
-      } else {
-        return 0
-      }
-    },
-    _separator() {
-      return this.setSeparator
-    },
-    _suffix() {
-      return this.setSuffix
-    },
-    _prefix() {
-      return this.setPrefix
-    }
-  },
   created() {
     // var i = this.$store.getters.accountId
     // alert('id ' + i)
   },
   methods: {
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '总价'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+        } else {
+          sums[index] = ''
+        }
+      })
+      return sums
+    },
     // 日期选择
     // # 编写日期格式化方法
     dateFormat: function(row, column) {
@@ -188,17 +175,51 @@ export default {
         'startDatetime': moment(this.startDate[0]).format('YYYY-MM-DD HH:MM:SS'),
         'endDatetime': moment(this.startDate[1]).format('YYYY-MM-DD HH:MM:SS')
       }
+      this.tableLoading = true
       console.log(query)
       doctorWorkloadFinancialStatistics_menzhen(query).then(response => {
-        console.log('doctorWorkloadFinancialStatistics response')
+        console.log('doctorWorkloadFinancialStatistics_menzhen response')
         console.log(response)
-        // var data = JSON.parse(response.data)
-        // this.patientNums = data.patientNums
-        // this.patientChargeInfo = data.patientChargeInfo
-        // this.$refs.nums.start()
+        var data = JSON.parse(response.data)
+        this.totalList = data
+        this.totalNumber = this.totalList.length
+        this.handleTableDataPageChange()
+        this.tableLoading = false
       }).catch(error => {
         console.log(error)
       })
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.handleTableDataPageChange()
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.handleTableDataPageChange()
+    },
+    handleTableDataPageChange() {
+      this.tableLoading = true
+      var start = this.pageSize * (this.currentPage - 1)
+      var end = this.pageSize * this.currentPage
+      if (end > this.totalNumber) { end = this.totalNumber }
+      this.patientChargeInfo = []
+      this.sums = []
+      for (var i = 0; i < 5; ++i) {
+        this.sums.push(0)
+      }
+      for (i = start; i < end; ++i) {
+        this.patientChargeInfo.push(this.totalList[i])
+        this.sums[2] += this.totalList[i].doctorExaminationFee
+        this.sums[3] += this.totalList[i].doctorDisposalFee
+        this.sums[4] += this.totalList[i].doctorPrescriptionFee
+      }
+      // doctorName，visitNums，doctorExaminationFee，doctorDisposalFee，doctorPrescriptionFee，
+      this.tableLoading = false
+
+      this.$refs.piechart.initChart(this.sums)
+      this.$refs.barchart.initChart(this.patientChargeInfo)
     }
   }
 }

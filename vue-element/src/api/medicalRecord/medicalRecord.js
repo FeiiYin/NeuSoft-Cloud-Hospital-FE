@@ -155,3 +155,21 @@ export function selectPatientHistoryMedicalRecords(query) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+/**
+ * 删除病历记录
+ *
+ * @param medicalRecordsIdList 病历编号列表
+ * @return 操作结果
+ */
+export function deleteMedicalRecord(query) {
+  console.log('deleteMedicalRecord: ')
+  console.log(query)
+  return request({
+    url: '/doctor_work/delete',
+    method: 'delete',
+    params: query,
+    baseURL: 'http://localhost:8081/cloud-hospital/',
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}

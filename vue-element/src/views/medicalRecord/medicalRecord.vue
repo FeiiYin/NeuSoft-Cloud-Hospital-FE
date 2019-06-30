@@ -443,10 +443,15 @@ export default {
     }
   },
   created() {
+    this.doctorId = this.$store.getters.doctorId
+    this.medicalRecordForm.doctorId = this.doctorId
     this.registrationId = this.$route.query.registrationId
     this.medicalRecordForm.registrationId = this.registrationId
     this.invokeFetchDiseaseCategory()
     this.invokeSelectMedicalRecordsTemplateList()
+    if (typeof (this.registrationId) === 'undefined') {
+      return
+    }
     this.invokeSelectPatientHistoryMedicalRecords()
   },
   methods: {
@@ -454,6 +459,10 @@ export default {
       this.model_panel_show = !this.model_panel_show
     },
     submitMedicalRecordForm(formName, choose) {
+      if (typeof (this.registrationId) === 'undefined' || this.registrationId == null) {
+        this.$message.error('无挂号号，错误！')
+        return
+      }
       // choose 1 提交 0 暂存
       this.$refs[formName].validate((valid) => {
         if (valid) {

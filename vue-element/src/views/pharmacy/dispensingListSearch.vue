@@ -190,6 +190,7 @@ export default {
     }
   },
   created() {
+    this.doctorId = this.$store.getters.doctorId
     // this.getDepartmentList()
     this.invokeWaitingRegistrationList()
     // 绑定回车

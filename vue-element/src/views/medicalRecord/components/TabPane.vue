@@ -6,8 +6,8 @@
       fit
       highlight-current-row
       style="width: 100%"
+      :default-sort="{prop: 'registrationId', order: 'descending'}"
       @row-dblclick="toPatientDetail"
-      :default-sort = "{prop: 'registrationId', order: 'descending'}"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -41,12 +41,12 @@
                   </el-tag>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a">病历诊断</el-dropdown-item>
-                  <el-dropdown-item command="b">检查申请</el-dropdown-item>
-                  <el-dropdown-item command="c">确诊</el-dropdown-item>
-                  <el-dropdown-item command="d">处方申请</el-dropdown-item>
-                  <el-dropdown-item command="e">处置申请</el-dropdown-item>
-                  <el-dropdown-item command="f" divided>诊断完毕</el-dropdown-item>
+                  <el-dropdown-item command="a" :disabled="type!=='1'">病历诊断</el-dropdown-item>
+                  <el-dropdown-item command="b" :disabled="type!=='1'">检查申请</el-dropdown-item>
+                  <el-dropdown-item command="c" :disabled="type!=='1'">确诊</el-dropdown-item>
+                  <el-dropdown-item command="d" :disabled="type!=='1'">处方申请</el-dropdown-item>
+                  <el-dropdown-item command="e" :disabled="type!=='1'">处置申请</el-dropdown-item>
+                  <el-dropdown-item command="f" divided :disabled="type!=='1'">诊断完毕</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-form-item>
@@ -179,6 +179,7 @@ export default {
     }
   },
   created() {
+    this.doctorId = this.$store.getters.doctorId
     this.getList()
   },
   methods: {

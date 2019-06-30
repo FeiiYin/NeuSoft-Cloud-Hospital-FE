@@ -8,13 +8,14 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        value1: true,
-        value2: true
-      }
+export default {
+  data() {
+    return {
+      value1: true,
+      value2: true
     }
+  }
+}
 </script>
 
 <style scoped>

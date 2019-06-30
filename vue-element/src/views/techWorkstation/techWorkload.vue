@@ -166,6 +166,7 @@ export default {
     }
   },
   created() {
+    this.doctorId = this.$store.getters.doctorId
     // var i = this.$store.getters.accountId
     // alert('id ' + i)
   },

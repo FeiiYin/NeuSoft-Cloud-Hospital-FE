@@ -28,6 +28,28 @@
 
   RangeError: Maximum call stack size exceeded
   
++ watch 只能watch 基础对象
+    
+    https://www.jb51.net/article/127980.htm
+    
+    https://blog.csdn.net/zhouweixue_vivi/article/details/78550738 
+: {
+  　　　　handler(newValue, oldValue) {
+  　　　　　　for (let i = 0; i < newValue.length; i++) {
+  　　　　　　　　if (oldValue[i] != newValue[i]) {
+  　　　　　　　　　　console.log(newValue)
+  　　　　　　　　}
+  　　　　　　}
+  　　　　},
+  　　　　deep: true
+  　　}
+
++ cos
+ 
+  npm i scp2 -g
+  
+  https://blog.csdn.net/Simoral/article/details/83834482
+
 + 测试遇到的问题
  
   小数显示金额 too hard
@@ -57,4 +79,7 @@
   药房显示的错误 done
   
   patientDetail 价格总和出现问题
-  模板类别错误 做模板时再做 
+  模板类别错误 做模板时再做
+  
+  
++ 打印， excel， pdf , 登录获取医生id

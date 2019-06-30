@@ -100,7 +100,7 @@
           <el-input v-model="charge_form.should_charge" :disabled="true" />
         </el-form-item>
         <el-form-item label="实收金额">
-          <el-input v-model="charge_form.actual_charge" />
+          <el-input v-model="charge_form.actual_charge" oninput="if(value.length>9)value=value.slice(0,9)" />
         </el-form-item>
         <el-form-item label="实际找零">
           <el-input v-model="charge_form.actual_exchange" :disabled="true" />
@@ -280,7 +280,7 @@ export default {
         value: '选项5',
         label: '医保'
       }],
-      value: '',
+      value: '选项4',
       // 弹出框
       dialogFormVisible: false,
       addChargeFormVisible: false,
@@ -345,13 +345,30 @@ export default {
     }
   },
   created() {
+    this.collectorId = this.$store.getters.accountId
+    this.registrationForm.collectorId = this.collectorId
+    this.chargeForm.collectorId = this.collectorId
+
     this.registrationId = this.$route.query.registrationId
     this.registrationForm.registrationId = this.registrationId
+    if (typeof (this.registrationId) === 'undefined') {
+      this.invokeFetchDepartmentList_withNoRegistration()
+      return
+    }
+    console.log('registrationId: ' + this.registrationId)
     this.invokeFetchRegistrationRecord()
     this.invokeFetchDepartmentList()
     this.invokeSelectHistoryPrescription()
   },
   methods: {
+    invokeFetchDepartmentList_withNoRegistration() {
+      var query = { 'currentPage': 1, 'pageSize': 400 }
+      fetchDepartmentList(query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentList = response.data.list
+      })
+    },
     // 预处理
     invokeFetchDepartmentList() {
       var query = { 'currentPage': 1, 'pageSize': 400 }

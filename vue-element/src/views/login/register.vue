@@ -20,7 +20,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -28,17 +28,31 @@
         />
       </el-form-item>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+      <el-form-item prop="realname">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="realname"
+          v-model="loginForm.realname"
+          placeholder="真实姓名"
+          name="realname"
+          type="text"
+          tabindex="1"
+        />
+      </el-form-item>
+
+      <el-tooltip v-model="capsTooltip" placement="right" manual>
         <el-form-item prop="password">
           <span class="svg-container">
-            <svg-icon icon-class="password" />
+            <svg-icon icon-class="user" />
           </span>
           <el-input
             :key="passwordType"
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -52,20 +66,29 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-button
-            :loading="loading"
-            type="primary"
-            style="width:100%;margin-bottom:30px;"
-            @click.native.prevent="handleLogin"
-          >登录
-          </el-button>
-        </el-col>
-        <el-col :span="12">
-          <el-button style="width:100%;margin-bottom:30px;" @click="routeToRegister">注册</el-button>
-        </el-col>
-      </el-row>
+      <el-form-item prop="accountScope">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-select ref="accountScope" v-model="val" placeholder="请选择" style="width:70%">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="handleLogin"
+      >注册
+      </el-button>
+
       <!-- <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
            Or connect with
       </el-button> -->
@@ -84,6 +107,10 @@
 <script>
 // import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+
+import {
+  addAccount
+} from '../../api/basicInfo/account'
 
 export default {
   name: 'Login',
@@ -106,10 +133,15 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        realname: '',
+        accountScope: []
       },
+      accountScope: [],
+      val: '门诊医生',
       loginRules: {
         username: [{ required: true, trigger: 'blur' }],
+        realname: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
@@ -117,7 +149,29 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+
+      options: [
+        {
+          value: '门诊医生',
+          label: '门诊医生'
+        }, {
+          value: '医技医生',
+          label: '医技医生'
+        }, {
+          value: '医院管理员',
+          label: '医院管理员'
+        }, {
+          value: '药房操作员',
+          label: '药房操作员'
+        }, {
+          value: '财务管理员',
+          label: '财务管理员'
+        }, {
+          value: '挂号收费员',
+          label: '挂号收费员'
+        }
+      ]
     }
   },
   watch: {
@@ -146,11 +200,6 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-    routeToRegister() {
-      this.$router.push({
-        path: '/register'
-      })
-    },
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
@@ -177,41 +226,49 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          // var query = {
-          //   'userName': this.loginForm.username,
-          //   'userPassword': this.loginForm.password
-          // }
-          // // this.$store.dispatch('login/sign_in', query).then(response => {
-          // signIn(query).then(response => {
-          //   this.loading = false
-          //   console.log(response)
-          //   if (response.data === 'signin_mismatch') {
-          //     this.$message.error('用户名或密码不匹配，错误！')
-          //   } else {
-          //     console.log(this.redirect || '/')
-          //     // console.log(this.otherQuery)
-          //     this.$router.push({
-          //       // path: '/',
-          //       path: this.redirect || '/',
-          //       query: this.otherQuery
-          //     })
-          //     // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-          //   }
-          // }).catch(() => {
-          //   this.loading = false
-          // })
-          // 调用module里的模块
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
+          this.accountScope = []
+          var val = this.val
+          if (val === '门诊医生') {
+            this.accountScope.push('00')
+          } else if (val === '医技医生') {
+            this.accountScope.push('01')
+          } else if (val === '医院管理员') {
+            this.accountScope.push('10')
+          } else if (val === '药房操作员') {
+            this.accountScope.push('11')
+          } else if (val === '财务管理员') {
+            this.accountScope.push('12')
+          } else if (val === '挂号收费员') {
+            this.accountScope.push('13')
+          }
+          var query = {
+            userName: this.loginForm.username,
+            userPassword: this.loginForm.password,
+            realName: this.loginForm.realname,
+            departmentId: '',
+            accountType: this.accountScope[0],
+            jobTitle: '',
+            doctorScheduling: ''
+          }
+          console.log(query)
+          addAccount(query).then(response => {
+            console.log('addAccount response: ')
+            console.log(response)
+            this.loading = false
+            if (response.data === false) {
+              this.$message.error('注册失败，用户名已经被注册！')
+            } else {
+              this.$message({
+                message: '注册失败，用户名已经被注册！',
+                type: 'success'
+              })
+              this.$router.push({
+                path: '/login'
+              })
+            }
+          }).catch(error => {
+            console.log(error)
+          })
         }
       })
     },

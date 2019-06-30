@@ -12,31 +12,54 @@
 </template>
 
 <script>
+import {
+  doctorWorkloadFinancialStatistics
+} from '../../../api/personal/workload'
+
 export default {
   data() {
     return {
+      doctorId: 1,
       timeline: [
         {
           timestamp: '2019/4/20',
-          title: 'Update Github template',
-          content: 'PanJiaChen committed 2019/4/20 20:46'
+          title: '诊断病人',
+          content: '门诊医生工作站 2019/4/20 20:46'
         },
         {
           timestamp: '2019/4/21',
-          title: 'Update Github template',
-          content: 'PanJiaChen committed 2019/4/21 20:46'
+          title: '诊断病人',
+          content: '门诊医生工作站 2019/4/21 20:46'
         },
         {
           timestamp: '2019/4/22',
-          title: 'Build Template',
-          content: 'PanJiaChen committed 2019/4/22 20:46'
+          title: '诊断病人',
+          content: '门诊医生工作站 2019/4/22 20:46'
         },
         {
           timestamp: '2019/4/23',
-          title: 'Release New Version',
-          content: 'PanJiaChen committed 2019/4/23 20:46'
+          title: '诊断病人',
+          content: '门诊医生工作站 2019/4/23 20:46'
         }
       ]
+    }
+  },
+  methods: {
+    invokeDoctorWorkloadFinancialStatistics() {
+      var query = {
+        'startDatetime': '2019-06-01 00:00:00',
+        'endDatetime': '2019-07-20 00:00:00',
+        'doctorId': this.doctorId
+      }
+      doctorWorkloadFinancialStatistics(query).then(response => {
+        console.log('doctorWorkloadFinancialStatistics response')
+        console.log(response)
+        // var data = JSON.parse(response.data)
+        // this.patientNums = data.patientNums
+        // this.patientChargeInfo = data.patientChargeInfo
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }

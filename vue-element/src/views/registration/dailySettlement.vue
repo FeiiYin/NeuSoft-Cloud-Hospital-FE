@@ -203,6 +203,7 @@ export default {
     }
   },
   created() {
+    this.collectorId = this.$store.getters.accountId
     this.invokeSelectHistory()
   },
   methods: {

@@ -7,75 +7,27 @@
       </el-row>
       <el-row :gutter="40" style="margin-top: 10px">
         <el-col :span="10"><div class="block"><span>{{ '日期：'+todayDate }}</span></div></el-col>
-        <el-col :span="10"><span>{{ '编号：xxxxxxxxx' }}</span></el-col>
-      </el-row>
-      <el-row :gutter="40" style="margin-top: 10px">
-        <el-col :span="10"><span>{{ '姓名：'+name }}</span></el-col>
-        <el-col :span="10"><span>{{ '结算方式：'+costType }}</span></el-col>
+        <el-col :span="10"><span>{{ '编号：' + query.registrationId }}</span></el-col>
       </el-row>
       <el-row :gutter="50" style="margin-top: 10px" class="grid">
-        <el-col :span="4"><span>{{ '药品项目' }}</span></el-col>
-        <el-col :span="4"><span>{{ '金额(元)' }}</span></el-col>
-        <el-col :span="4"><span>{{ '医疗项目' }}</span></el-col>
-        <el-col :span="4"><span>{{ '金额(元)' }}</span></el-col>
-        <el-col :span="4"><span>{{ '医疗项目' }}</span></el-col>
-        <el-col :span="4"><span>{{ '金额(元)' }}</span></el-col>
+        <el-col :span="6"><span>{{ '项目名称' }}</span></el-col>
+        <el-col :span="6"><span>{{ '单价金额(元)' }}</span></el-col>
+        <el-col :span="6"><span>{{ '项目数量' }}</span></el-col>
+        <el-col :span="6"><span>{{ '总金额(元)' }}</span></el-col>
       </el-row>
-      <el-row :gutter="50" style="margin-top: 10px" class="grid_b">
-        <el-col :span="4"><span>{{ '西药' }}</span></el-col>
-        <el-col :span="4"><span>{{ westernMedicine }}</span></el-col>
-        <el-col :span="4"><span>{{ '诊察费' }}</span></el-col>
-        <el-col :span="4"><span>{{ medicalExaminationFee }}</span></el-col>
-        <el-col :span="4"><span>{{ '治疗费' }}</span></el-col>
-        <el-col :span="4"><span>{{ treatmentCosts }}</span></el-col>
-      </el-row>
-      <el-row :gutter="50" style="margin-top: 10px" class="grid_b">
-        <el-col :span="4"><span>{{ '中成药' }}</span></el-col>
-        <el-col :span="4"><span>{{ chinesePatentMedicine }}</span></el-col>
-        <el-col :span="4"><span>{{ '急诊临时床位费' }}</span></el-col>
-        <el-col :span="4"><span>{{ emergencyTemporaryBedFee }}</span></el-col>
-        <el-col :span="4"><span>{{ '麻醉费' }}</span></el-col>
-        <el-col :span="4"><span>{{ anesthesiaFee }}</span></el-col>
-      </el-row>
-      <el-row :gutter="50" style="margin-top: 10px" class="grid_b">
-        <el-col :span="4"><span>{{ '中草药' }}</span></el-col>
-        <el-col :span="4"><span>{{ chineseHerbalMedicine }}</span></el-col>
-        <el-col :span="4"><span>{{ '检查费' }}</span></el-col>
-        <el-col :span="4"><span>{{ checkFee }}</span></el-col>
-        <el-col :span="4"><span>{{ '输氧费' }}</span></el-col>
-        <el-col :span="4"><span>{{ oxygenDeliveryFee }}</span></el-col>
-      </el-row>
-      <el-row :gutter="50" style="margin-top: 10px" class="grid_b">
-        <el-col :span="4"><span>{{ '材料费' }}</span></el-col>
-        <el-col :span="4"><span>{{ materialFee }}</span></el-col>
-        <el-col :span="4"><span>{{ 'CT' }}</span></el-col>
-        <el-col :span="4"><span>{{ CT }}</span></el-col>
-        <el-col :span="4"><span>{{ '输血费' }}</span></el-col>
-        <el-col :span="4"><span>{{ bloodTransfusionFee }}</span></el-col>
-      </el-row>
-      <el-row :gutter="50" style="margin-top: 10px" class="grid_b">
-        <el-col :span="4"><span>{{ '注射费' }}</span></el-col>
-        <el-col :span="4"><span>{{ injectionFee }}</span></el-col>
-        <el-col :span="4"><span>{{ 'MRI' }}</span></el-col>
-        <el-col :span="4"><span>{{ MRI }}</span></el-col>
-        <el-col :span="4"><span>{{ '手术费' }}</span></el-col>
-        <el-col :span="4"><span>{{ surgeryFee }}</span></el-col>
-      </el-row>
-      <el-row :gutter="50" style="margin-top: 10px" class="grid_c">
-        <el-col :span="4"><span>{{ '理疗费' }}</span></el-col>
-        <el-col :span="4"><span>{{ physiotherapyFee }}</span></el-col>
-        <el-col :span="4"><span>{{ '检验费' }}</span></el-col>
-        <el-col :span="4"><span>{{ inspectionFee }}</span></el-col>
+      <el-row v-for="(item, i) in query.namelist" :key="i" :gutter="50" style="margin-top: 10px" class="grid_b">
+        <el-col :span="6"><span>{{ item }}</span></el-col>
+        <el-col :span="6"><span>{{ query.pricelist[i] }}</span></el-col>
+        <el-col :span="6"><span>{{ query.numlist[i] }}</span></el-col>
+        <el-col :span="6"><span>{{ (query.numlist[i] * query.pricelist[i]).toFixed(2) }}</span></el-col>
       </el-row>
       <el-row :gutter="40" class="grid_d">
-        <el-col :span="10"><span>{{ '合计人民币（大写）：'+sumMoney }}</span></el-col>
+        <el-col :span="10"><span>{{ '合计人民币（大写）：'+ sumMoney }}</span></el-col>
         <el-col :span="10"><span>{{ '个人缴费金额：'+personalPay }}</span></el-col>
       </el-row>
       <el-row :gutter="50" class="grid_d">
-        <el-col :span="7"><span>{{ '收费单位盖章' }}</span></el-col>
-        <el-col :span="6"><span>{{ '医生：'+doctor }}</span></el-col>
-        <el-col :span="6"><span>{{ '审核员：'+auditor }}</span></el-col>
-        <el-col :span="5"><span>{{ '收费员：'+tollCollector }}</span></el-col>
+        <el-col :span="12"><span>{{ '收费单位盖章' }}</span></el-col>
+        <el-col :span="12"><span>{{ '医生签字：'+doctor }}</span></el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
@@ -117,14 +69,23 @@ export default {
       inspectionFee: '10',
       sumMoney: '壹佰柒拾元整',
       personalPay: '伍拾元整',
-      doctor: '叶毓鑫',
+      doctor: '',
       auditor: '富润峰',
-      tollCollector: '苗华林'
+      tollCollector: '苗华林',
+      query: {}
     }
   },
   created() {
     var temp = new Date()
     this.todayDate = temp.getFullYear() + '-' + (temp.getMonth() + 1) + '-' + temp.getDate()
+    this.query = this.$route.query
+    console.log(this.query)
+    this.sumMoney = 0
+    for (var i = 0; i < this.query.numlist.length; ++i) {
+      this.sumMoney += this.query.numlist[i] * this.query.pricelist[i]
+    }
+    this.sumMoney = this.sumMoney.toFixed(2)
+    this.personalPay = this.sumMoney
   },
   methods: {
     doPrint(e) {

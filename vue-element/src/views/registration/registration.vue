@@ -5,13 +5,10 @@
     </aside>
     <div class="wordbox">
       <el-row>
-        <el-button style="float:right">
-          预约
-        </el-button>
-        <el-button type="primary" icon="document" style="float:right;margin-right:20px">
+        <el-tag type="primary" icon="document" style="float:right;margin-right:20px">
           <svg-icon icon-class="documentation" />
           挂号
-        </el-button>
+        </el-tag>
       </el-row>
       <svg-icon style="display:inline-block;margin-right:20px;margin-top:20px;" icon-class="peoples" />
       个人信息
@@ -226,7 +223,7 @@
           <el-input v-model="charge_form.should_charge" :disabled="true" />
         </el-form-item>
         <el-form-item label="实收金额">
-          <el-input v-model="charge_form.actual_charge" />
+          <el-input v-model="charge_form.actual_charge" oninput="if(value.length>9)value=value.slice(0,9)" />
         </el-form-item>
         <el-form-item label="实际找零">
           <el-input v-model="actual_exchange" :disabled="true" />
@@ -274,7 +271,7 @@ export default {
   data() {
     return {
       // 病历本是否需要
-      medicalRecordRadio: '1',
+      medicalRecordRadio: '2',
       // 表单
       registrationForm: {
         registrationId: '',
@@ -320,7 +317,7 @@ export default {
         should_charge: 0,
         actual_charge: 0
       },
-      value: '',
+      value: '选项4',
       // 选择支付方式
       options: [{
         value: '选项1',
@@ -389,9 +386,17 @@ export default {
       if (this.registrationForm.identityCardNo.length === 18) {
         this.invokeFetchPatientInfoByIdentityCardNo(this.registrationForm.identityCardNo)
       }
+    },
+    'medicalRecordRadio': function() {
+      if (this.medicalRecordRadio === '1') {
+        this.charge_form.should_charge++
+      } else {
+        this.charge_form.should_charge--
+      }
     }
   },
   created() {
+    this.registrationForm.collectorId = this.$store.getters.accountId
     this.invokeFetchDepartment()
     this.registrationForm.visitDate = new Date()
     this.invokeSelectAllRegistrationCategory()
@@ -542,6 +547,9 @@ export default {
         // console.log(response)
         this.charge_form.should_charge = response.data
         this.charge_form.actual_charge = 0
+        if (this.medicalRecordRadio === '1') {
+          this.charge_form.should_charge++
+        }
       })
     },
     invokeCharge() {

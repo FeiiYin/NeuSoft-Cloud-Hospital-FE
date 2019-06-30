@@ -178,6 +178,7 @@ export default {
   },
   created() {
     // this.getDepartmentList()
+    this.doctorId = this.$store.getters.doctorId
     this.invokeWaitingRegistrationList()
   },
   methods: {
