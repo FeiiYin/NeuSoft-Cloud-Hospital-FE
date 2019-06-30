@@ -20,7 +20,7 @@
                 />
               </el-col>
               <el-col :span="4">
-                <el-button type="primary" style="float:right;" @click="invokeSelectHistoryExam" :disabled="true">
+                <el-button type="primary" style="float:right;" :disabled="true" @click="invokeSelectHistoryExam">
                   <svg-icon icon-class="component" />
                   确认
                 </el-button>

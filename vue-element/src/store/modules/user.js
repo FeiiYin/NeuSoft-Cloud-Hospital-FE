@@ -1,5 +1,5 @@
 // origin cannot use agian
-import { logout } from '@/api/user'
+// import { logout } from '@/api/user'
 // now should use
 import {
   signIn,
