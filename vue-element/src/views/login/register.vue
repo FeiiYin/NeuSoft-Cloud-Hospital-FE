@@ -259,7 +259,7 @@ export default {
               this.$message.error('注册失败，用户名已经被注册！')
             } else {
               this.$message({
-                message: '注册失败，用户名已经被注册！',
+                message: '注册成功！',
                 type: 'success'
               })
               this.$router.push({
