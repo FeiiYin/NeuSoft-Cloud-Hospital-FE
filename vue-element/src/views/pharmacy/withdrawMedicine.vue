@@ -326,6 +326,10 @@ export default {
     },
     // 打开退费面板
     openRefundDialog(index, row) {
+      if (row.payState === 2) {
+        this.$message.error('已退款，不能退药，错误！')
+        return
+      }
       if (row.payState === 0) {
         this.$message.error('未付款，不能退费，错误！')
         return
