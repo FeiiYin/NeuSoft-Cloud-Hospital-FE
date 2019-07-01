@@ -6,7 +6,7 @@
         <el-col :span="24"><h2 style="text-align: center">医院收据</h2></el-col>
       </el-row>
       <el-row :gutter="40" style="margin-top: 10px">
-        <el-col :span="10"><div class="block"><span>{{ '日期：'+todayDate }}</span></div></el-col>
+        <el-col :span="10"><div class="block"><span>{{ '日期：'+ todayDate }}</span></div></el-col>
         <el-col :span="10"><span>{{ '编号：' + query.registrationId }}</span></el-col>
       </el-row>
       <el-row :gutter="50" style="margin-top: 10px" class="grid">
@@ -80,6 +80,17 @@ export default {
     this.todayDate = temp.getFullYear() + '-' + (temp.getMonth() + 1) + '-' + temp.getDate()
     this.query = this.$route.query
     console.log(this.query)
+    if (this.query.numlist instanceof Array === false) {
+      var list = []
+      list.push(this.query.numlist)
+      this.query.numlist = list
+      var list2 = []
+      list2.push(this.query.pricelist)
+      this.query.pricelist = list2
+      var list3 = []
+      list3.push(this.query.namelist)
+      this.query.namelist = list3
+    }
     this.sumMoney = 0
     for (var i = 0; i < this.query.numlist.length; ++i) {
       this.sumMoney += this.query.numlist[i] * this.query.pricelist[i]
