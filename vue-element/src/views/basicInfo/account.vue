@@ -416,18 +416,25 @@ export default {
       // console.log(val)
       this.accountScope = []
       if (val === '所有用户') { // 输入对应参数进行查询
+        this.accountScope = []
         this.accountScope.push('00', '01', '10', '11', '12', '13')
       } else if (val === '门诊医生') {
+        this.accountScope = []
         this.accountScope.push('00')
       } else if (val === '医技医生') {
+        this.accountScope = []
         this.accountScope.push('01')
       } else if (val === '医院管理员') {
+        this.accountScope = []
         this.accountScope.push('10')
       } else if (val === '药房操作员') {
+        this.accountScope = []
         this.accountScope.push('11')
       } else if (val === '财务管理员') {
+        this.accountScope = []
         this.accountScope.push('12')
       } else if (val === '挂号收费员') {
+        this.accountScope = []
         this.accountScope.push('13')
       }
       this.invokeSelectAccount()
@@ -439,6 +446,7 @@ export default {
         'pageSize': this.pageSize,
         'accountScope': this.accountScope
       }
+      console.log('query is', query)
       selectAccountList(query).then(response => { // 然后获取科室信息列表
         this.accountTableData = []
         console.log('selectAccountList response: ')
@@ -466,6 +474,8 @@ export default {
             respondJson['doctorScheduling'] = '是'
           } else if (respondJson['doctorScheduling'] === 0) {
             respondJson['doctorScheduling'] = '否'
+          } else {
+            respondJson['doctorScheduling'] = ''
           }
           this.accountTableData.push(respondJson)
         } this.listLoading = false

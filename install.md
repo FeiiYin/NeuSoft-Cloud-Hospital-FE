@@ -82,6 +82,6 @@ vue 里不能有多余空行与空格。
 
 npm i scp2 -g
 
-npm i cos-nodejs-sdk-v5 --save
+npm i cos-js-sdk-v5 --save
 
 npm install
