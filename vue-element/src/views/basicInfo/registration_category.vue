@@ -68,8 +68,8 @@
             <el-input v-model="addRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="是否默认" prop="isDefault_Add">
-            <el-radio v-model="addRegistrationCategoryForm.isDefault" label="true">是</el-radio>
-            <el-radio v-model="addRegistrationCategoryForm.isDefault" label="false">否</el-radio>
+            <el-radio v-model="addRegistrationCategoryForm.isDefault" label="1" @change="forceChange">是</el-radio>
+            <el-radio v-model="addRegistrationCategoryForm.isDefault" label="0" @change="forceChange">否</el-radio>
           </el-form-item>
           <el-form-item label="顺序号" prop="sequenceNo">
             <el-input v-model="addRegistrationCategoryForm.sequenceNo" auto-complete="off" />
@@ -97,8 +97,8 @@
             <el-input v-model="editRegistrationCategoryForm.registrationCategoryName" auto-complete="off" />
           </el-form-item>
           <el-form-item label="是否默认" prop="isDefault">
-            <el-radio v-model="isDefaultRadio" label="1">是</el-radio>
-            <el-radio v-model="isDefaultRadio" label="0">否</el-radio>
+            <el-radio v-model="isDefaultRadio" label="1" @change="forceChange">是</el-radio>
+            <el-radio v-model="isDefaultRadio" label="0" @change="forceChange">否</el-radio>
           </el-form-item>
           <el-form-item label="顺序号" prop="sequenceNo">
             <el-input v-model="editRegistrationCategoryForm.sequenceNo" auto-complete="off" />
@@ -216,6 +216,13 @@ export default {
         this.editRegistrationCategoryForm.isDefault = false
       }
     },
+    forceChange(val) {
+      if (val === '1') {
+        this.$set(this.editRegistrationCategoryForm, 'isDefault', true)
+      } else {
+        this.$set(this.addRegistrationCategoryForm, 'isDefault', false)
+      }
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -286,6 +293,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.editRegistrationCategoryDataDialogVisible = false
+          console.log('$$$Update', this.editRegistrationCategoryForm)
           updateRegistration_category(this.editRegistrationCategoryForm).then(response => {
             console.log('update RegistrationCategoryForm response: ')
             console.log(response)
