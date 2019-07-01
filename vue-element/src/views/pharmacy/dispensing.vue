@@ -87,10 +87,6 @@
     </el-table>
     <!-- 分页 -->
     <aside style="height:60px;">
-      <el-button type="info" style="float:right">
-        <i class="el-icon-printer" />
-        打印发票
-      </el-button>
       <el-button type="info" style="float:right;margin-right:20px" @click="invokeDispensing">
         发药
       </el-button>
@@ -426,7 +422,7 @@ export default {
             this.registrationForm.registrationCategory = '普通号'
           } else if (this.registrationForm.registrationCategoryId === 2) {
             this.registrationForm.registrationCategory = '急诊号'
-          } else if (this.registrationForm.registrationCategoryId === 2) {
+          } else if (this.registrationForm.registrationCategoryId === 3) {
             this.registrationForm.registrationCategory = '专家号'
           } else {
             this.registrationForm.registrationCategory = '其他号'

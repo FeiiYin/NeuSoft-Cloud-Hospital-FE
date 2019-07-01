@@ -799,9 +799,7 @@ export default {
         }
       }
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
-    },
+
     // 下拉菜单
     handleMenuCommand(command) {
       // this.$message('click on item ' + command)

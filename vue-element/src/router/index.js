@@ -363,6 +363,7 @@ export const asyncRoutes = [
       },
       {
         path: 'examineResult',
+        hidden: true,
         component: () => import('@/views/techWorkstation/examineResult'),
         name: 'examineResult',
         meta: { title: '检查结果录入', noCache: true }
