@@ -80,10 +80,6 @@
       </span>
       <el-input v-model="totalListMoney" :disabled="true" style="width:20%" />
 
-      <el-button type="info" style="float:right">
-        <i class="el-icon-printer" />
-        打印发票
-      </el-button>
       <el-button
         type="primary"
         style="float:right;margin-right:20px;"
