@@ -254,7 +254,7 @@ export default {
     invokeWaitingRegistrationList() {
       var query = {
         'registrationScope': 0, // 患者搜索范围：所有患者 0，本医生患者 1，本科室患者 2
-        'doctorId': this.doctorId
+        'doctorId': 1
       }
       waitingRegistrationList(query).then(response => {
         this.totalPatientList = response.data
