@@ -68,3 +68,56 @@ export function withdrawRegistration(query) {
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
+
+/**
+ * 按挂号单编号获取待支付处置项目
+ *
+ * @param registrationId 挂号单编号
+ * @return 待支付处置项目，json 数组
+ */
+export function selectUnpaidDisposal(query) {
+  console.log('selectUnpaidDisposal')
+  console.log(query)
+  return request({
+    url: '/charge/unpaid_disposal',
+    method: 'get',
+    params: query,
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 按挂号单编号获取待支付检查项目
+ *
+ * @param registrationId 挂号单编号
+ * @return 待支付检查项目，json 数组
+ */
+export function selectUnpaidExam(query) {
+  console.log('selectUnpaidExam')
+  console.log(query)
+  return request({
+    url: '/charge/unpaid_exam',
+    method: 'get',
+    params: query,
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
+/**
+ * 获取待支付处方
+ * 不包含已退费的处方
+ *
+ * @param registrationId 挂号单编号
+ * @return 待支付处方列表，json 字符串
+ */
+export function selectUnpaidPrescription(query) {
+  console.log('selectUnpaidPrescription')
+  console.log(query)
+  return request({
+    url: '/charge/unpaid_prescription',
+    method: 'get',
+    params: query,
+    contentType: 'application/x-wwww-form-urlencoded'
+  })
+}
+
