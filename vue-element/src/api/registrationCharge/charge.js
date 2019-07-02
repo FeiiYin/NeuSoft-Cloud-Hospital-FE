@@ -79,7 +79,7 @@ export function selectUnpaidDisposal(query) {
   console.log('selectUnpaidDisposal')
   console.log(query)
   return request({
-    url: '/charge/unpaid_disposal',
+    url: '/disposal/unpaid_disposal',
     method: 'get',
     params: query,
     contentType: 'application/x-wwww-form-urlencoded'
@@ -96,7 +96,7 @@ export function selectUnpaidExam(query) {
   console.log('selectUnpaidExam')
   console.log(query)
   return request({
-    url: '/charge/unpaid_exam',
+    url: '/exam/unpaid_exam',
     method: 'get',
     params: query,
     contentType: 'application/x-wwww-form-urlencoded'
@@ -114,7 +114,7 @@ export function selectUnpaidPrescription(query) {
   console.log('selectUnpaidPrescription')
   console.log(query)
   return request({
-    url: '/charge/unpaid_prescription',
+    url: '/prescription/unpaid_prescription',
     method: 'get',
     params: query,
     contentType: 'application/x-wwww-form-urlencoded'
