@@ -125,6 +125,7 @@ import {
 export default {
   data() {
     return {
+      collectorId: 1,
       registrationId: '',
       chargeFormTableList: [],
       chargeFormTableListPage: [],
@@ -149,6 +150,7 @@ export default {
     }
   },
   created() {
+    this.collectorId = this.$store.getters.accountId
     this.invokeFetchDepartmentList()
   },
   methods: {
@@ -181,6 +183,7 @@ export default {
         'refundJson': JSON.stringify({
           'invoiceTitle': '退费',
           'invoiceNums': 1,
+          'collectorId': this.collectorId,
           'registrationId': this.registrationId,
           'entryList': [{
             'entryType': this.refundForm.prescriptionBool,
