@@ -187,6 +187,7 @@ export default {
       }
       fecthSettlementCategory(this.query).then(response => {
         this.settlementCategoryForm = response.data.list
+        this.totalNumber = response.data.list.length
         console.log('s,g 返回数据', response)
       }).catch(error => {
         console.log('fetchSettlementCategory error:   ', error)

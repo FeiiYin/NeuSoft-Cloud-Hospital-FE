@@ -42,10 +42,6 @@
           prop="category"
           label="科室分类"
         />
-        <!--            <el-table-column-->
-        <!--              prop="type"-->
-        <!--              label="科室类别"-->
-        <!--            />-->
         <el-table-column
           prop="edit"
           label="编辑"
