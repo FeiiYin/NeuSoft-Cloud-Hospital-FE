@@ -80,6 +80,20 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item prop="departmentId">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-select ref="departmentId" v-model="loginForm.departmentId" placeholder="请选择" style="width:70%">
+          <el-option
+            v-for="item in departmentList"
+            :key="item.departmentId"
+            :label="item.departmentName"
+            :value="item.departmentId"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-button
         :loading="loading"
         type="primary"
@@ -111,6 +125,10 @@ import {
   addAccount
 } from '../../api/basicInfo/account'
 
+import {
+  fetchDepartmentList
+} from '../../api/basicInfo/department'
+
 export default {
   name: 'Login',
   components: { SocialSign },
@@ -134,6 +152,7 @@ export default {
         username: '',
         password: '',
         realname: '',
+        departmentId: null,
         accountScope: []
       },
       accountScope: [],
@@ -170,7 +189,8 @@ export default {
           value: '挂号收费员',
           label: '挂号收费员'
         }
-      ]
+      ],
+      departmentList: []
     }
   },
   watch: {
@@ -187,6 +207,7 @@ export default {
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
+    console.log('created')
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -194,11 +215,21 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
+    this.invokeFetchDepartmentList_withNoRegistration()
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    invokeFetchDepartmentList_withNoRegistration() {
+      console.log('fetchDepartmentList try: ')
+      var query = { 'currentPage': 1, 'pageSize': 400 }
+      fetchDepartmentList(query).then(response => {
+        console.log('fetchDepartmentList response: ')
+        console.log(response)
+        this.departmentList = response.data.list
+      })
+    },
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
@@ -244,7 +275,7 @@ export default {
             userName: this.loginForm.username,
             userPassword: this.loginForm.password,
             realName: this.loginForm.realname,
-            departmentId: '',
+            departmentId: this.loginForm.departmentId,
             accountType: this.accountScope[0],
             jobTitle: '',
             doctorScheduling: ''

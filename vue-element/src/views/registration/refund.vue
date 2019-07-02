@@ -189,6 +189,7 @@ export default {
           message: this.refundForm.refundEntryName + '退费成功!',
           type: 'success'
         })
+        this.invokeFetchChargeItemListWithRegistrationId()
       })
     },
     invokeFetchDepartmentList() {

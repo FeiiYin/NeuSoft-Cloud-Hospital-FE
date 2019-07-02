@@ -176,6 +176,12 @@
 
 <script>
 import {
+  selectUnpaidPrescription,
+  selectUnpaidDisposal,
+  selectUnpaidExam
+} from '../../api/registrationCharge/charge'
+
+import {
   checkout
 } from '../../api/registrationCharge/charge'
 
@@ -186,18 +192,6 @@ import {
 import {
   fetchDepartmentList
 } from '../../api/basicInfo/department'
-
-import {
-  selectHistoryDisposal
-} from '../../api/medicalRecord/disposal'
-
-import {
-  selectHistoryExam
-} from '../../api/medicalRecord/examination'
-
-import {
-  selectHistoryPrescription
-} from '../../api/medicalRecord/prescription'
 
 import {
   selectChargeForm,
@@ -354,7 +348,7 @@ export default {
     console.log('registrationId: ' + this.registrationId)
     this.invokeFetchRegistrationRecord()
     this.invokeFetchDepartmentList()
-    this.invokeSelectHistoryPrescription()
+    this.invokeselectUnpaidPrescription()
   },
   methods: {
     invokeFetchDepartmentList_withNoRegistration() {
@@ -373,13 +367,13 @@ export default {
         console.log(response)
         this.departmentList = response.data.list
         // problem?
-        this.invokeSelectHistoryDisposal()
-        this.invokeSelectHistoryExam()
+        this.invokeselectUnpaidDisposal()
+        this.invokeselectUnpaidExam()
       })
     },
-    invokeSelectHistoryDisposal() {
-      selectHistoryDisposal({ 'registrationId': this.registrationId }).then(response => {
-        console.log('selectHistoryDisposal response')
+    invokeselectUnpaidDisposal() {
+      selectUnpaidDisposal({ 'registrationId': this.registrationId }).then(response => {
+        console.log('selectUnpaidDisposal response')
         var tempList = JSON.parse(response.data)
         this.disposalMoney = 0
         var i
@@ -403,13 +397,13 @@ export default {
           }
         }
       }).catch(error => {
-        console.log('selectHistoryDisposal error: ')
+        console.log('selectUnpaidDisposal error: ')
         console.log(error)
       })
     },
-    invokeSelectHistoryExam() {
-      selectHistoryExam({ 'registrationId': this.registrationId }).then(response => {
-        console.log('selectHistoryExam response')
+    invokeselectUnpaidExam() {
+      selectUnpaidExam({ 'registrationId': this.registrationId }).then(response => {
+        console.log('selectUnpaidExam response')
         var tempList = JSON.parse(response.data)
         console.log(tempList)
         this.examineMoney = 0
@@ -434,17 +428,17 @@ export default {
           }
         }
       }).catch(error => {
-        console.log('selectHistoryExam error: ')
+        console.log('selectUnpaidExam error: ')
         console.log(error)
       })
     },
     filterPayState(value, row) {
       return row.payState === value
     },
-    invokeSelectHistoryPrescription() {
-      selectHistoryPrescription({ 'registrationId': this.registrationId }).then(response => {
+    invokeselectUnpaidPrescription() {
+      selectUnpaidPrescription({ 'registrationId': this.registrationId }).then(response => {
         var tempList = JSON.parse(response.data)
-        // console.log('selectHistoryPrescription response: ')
+        // console.log('selectUnpaidPrescription response: ')
         // console.log(tempList)
         var i
         this.prescriptionMoney = 0
@@ -468,7 +462,7 @@ export default {
           }
         }
       }).catch(error => {
-        console.log('selectHistoryPrescription error: ')
+        console.log('selectUnpaidPrescription error: ')
         console.log(error)
       })
     },
@@ -661,9 +655,9 @@ export default {
           type: 'success'
         })
         this.chargeFormTableList = []
-        this.invokeSelectHistoryDisposal()
-        this.invokeSelectHistoryExam()
-        this.invokeSelectHistoryPrescription()
+        this.invokeselectUnpaidDisposal()
+        this.invokeselectUnpaidExam()
+        this.invokeselectUnpaidPrescription()
       }).catch(error => {
         console.log('deleteChargeItemInForm error: ')
         console.log(error)
