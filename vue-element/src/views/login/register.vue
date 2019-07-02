@@ -84,7 +84,7 @@
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-select ref="departmentId" v-model="departmentId" placeholder="请选择" style="width:70%">
+        <el-select ref="departmentId" v-model="loginForm.departmentId" placeholder="请选择" style="width:70%">
           <el-option
             v-for="item in departmentList"
             :key="item.departmentId"
@@ -152,6 +152,7 @@ export default {
         username: '',
         password: '',
         realname: '',
+        departmentId: null,
         accountScope: []
       },
       accountScope: [],
@@ -206,7 +207,7 @@ export default {
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
-    this.invokeFetchDepartmentList_withNoRegistration
+    console.log('created')
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -214,12 +215,14 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
+    this.invokeFetchDepartmentList_withNoRegistration()
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     invokeFetchDepartmentList_withNoRegistration() {
+      console.log('fetchDepartmentList try: ')
       var query = { 'currentPage': 1, 'pageSize': 400 }
       fetchDepartmentList(query).then(response => {
         console.log('fetchDepartmentList response: ')
@@ -272,7 +275,7 @@ export default {
             userName: this.loginForm.username,
             userPassword: this.loginForm.password,
             realName: this.loginForm.realname,
-            departmentId: '',
+            departmentId: this.loginForm.departmentId,
             accountType: this.accountScope[0],
             jobTitle: '',
             doctorScheduling: ''
