@@ -178,11 +178,16 @@ export default {
     invokeRefund() {
       this.refundDialogVisible = false
       var query = {
-        'refundJson': JSON.stringify([{
-          'entryType': this.refundForm.prescriptionBool,
-          'entryId': this.refundForm.refundEntryId,
-          'refundNums': this.refundForm.refundNumber
-        }])
+        'refundJson': JSON.stringify({
+            'invoiceTitle': '退费',
+            'invoiceNums': 1,
+            'registrationId': this.registrationId
+            'entryList': [{
+              'entryType': this.refundForm.prescriptionBool,
+              'entryId': this.refundForm.refundEntryId,
+              'refundNums': this.refundForm.refundNumber
+            }]
+        })
       }
       refund(query).then(response => {
         this.$message({
