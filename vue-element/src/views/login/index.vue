@@ -208,6 +208,7 @@ export default {
             })
             .catch(() => {
               this.loading = false
+              this.$message.error('密码错误！')
             })
         } else {
           console.log('error submit!!')
