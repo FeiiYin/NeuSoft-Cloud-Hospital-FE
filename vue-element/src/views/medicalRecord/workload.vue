@@ -94,6 +94,9 @@ export default {
       piechartLegendData: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts'],
 
       pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        },
         shortcuts: [{
           text: '最近一周',
           onClick(picker) {

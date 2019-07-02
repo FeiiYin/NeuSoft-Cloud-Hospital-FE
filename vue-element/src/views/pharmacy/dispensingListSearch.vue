@@ -28,7 +28,12 @@
                 统计时间从
               </el-col>
               <el-col :span="9" style="padding:5px;">
-                <el-date-picker v-model="startDate" type="date" placeholder="选择日期" style="width: 100%;" />
+                <el-date-picker
+                  v-model="startDate"
+                  type="date"
+                  placeholder="选择日期"
+                  :picker-options="pickerOptions"
+                  style="width: 100%;" />
               </el-col>
               <!-- <el-col :span="4.5" style="padding:5px;">
                 <el-time-picker type="fixed-time" placeholder="选择时间" v-model="startTime" style="width: 100%;" ></el-time-picker>
@@ -186,7 +191,13 @@ export default {
       // 分页
       currentPage: 1,
       pageSize: 20,
-      totalNumber: 0
+      totalNumber: 0,
+
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        }
+      }
     }
   },
   created() {

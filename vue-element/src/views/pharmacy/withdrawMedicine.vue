@@ -270,6 +270,9 @@ export default {
     this.registrationId = this.$route.query.registrationId
     this.registrationForm.registrationId = this.registrationId
     this.invokeFetchDepartmentList()
+    if (typeof (this.registrationId) === 'undefined') {
+      return
+    }
     // this.invokeSelectHistoryPrescription()
     this.invokeFetchRegistrationRecord()
   },

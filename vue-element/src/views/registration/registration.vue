@@ -57,6 +57,7 @@
             <el-form-item>
               <el-date-picker
                 v-model="registrationForm.birthday"
+                :picker-options="pickerOptions"
                 type="date"
                 placeholder="选择日期"
                 style="width: 100%;"
@@ -270,6 +271,11 @@ import {
 export default {
   data() {
     return {
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        }
+      },
       // 病历本是否需要
       medicalRecordRadio: '2',
       // 表单
