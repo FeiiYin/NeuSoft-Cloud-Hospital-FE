@@ -162,7 +162,7 @@ export function deleteMedicalRecord(query) {
     url: '/doctor_work/delete',
     method: 'delete',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
+    // baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

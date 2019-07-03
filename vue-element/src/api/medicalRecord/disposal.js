@@ -135,7 +135,7 @@ export function selectDisposalTemplate(query) {
     url: '/disposal/disposal_template',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
+    // baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }

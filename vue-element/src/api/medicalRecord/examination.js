@@ -109,7 +109,6 @@ export function selectExaminationTemplate(query) {
     url: '/exam/examination_template',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -128,7 +127,6 @@ export function selectExaminationAbstract(query) {
     url: '/exam/select_exam_abstract',
     method: 'get',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
@@ -147,7 +145,6 @@ export function updateExaminationAbstract(query) {
     url: '/exam/update_exam_abstract',
     method: 'post',
     params: query,
-    baseURL: 'http://localhost:8081/cloud-hospital/',
     contentType: 'application/x-wwww-form-urlencoded'
   })
 }
