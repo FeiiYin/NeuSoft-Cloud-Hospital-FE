@@ -405,6 +405,10 @@ export default {
               }
             }
           }
+          if (tempList.length == null || tempList.length === 0) {
+            this.$message.error('没有可以退药的条目！')
+            return
+          }
           prescriptionEntryDelivery({ 'prescriptionEntryListJson': JSON.stringify(tempList) }).then(response => {
             this.$message({
               message: '退药登记成功！',
