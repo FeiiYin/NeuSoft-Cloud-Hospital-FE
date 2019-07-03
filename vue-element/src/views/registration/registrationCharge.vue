@@ -51,7 +51,7 @@
       </el-form>
     </div>
     <aside style="height:50px;">
-      <el-button type="info" style="float:right" @click="invokeDeleteChargeEntry">
+      <el-button class="el-icon-delete" type="info" style="float:right" @click="invokeDeleteChargeEntry">
         删除
       </el-button>
       <!--

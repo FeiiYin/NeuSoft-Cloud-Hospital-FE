@@ -488,6 +488,7 @@ export default {
               })
               // 跳转
             } else {
+              this.invokeSelectPatientHistoryMedicalRecords()
               this.$message({
                 message: '暂存数据成功！',
                 type: 'success'
@@ -657,8 +658,8 @@ export default {
         'registrationId': this.registrationId
       }
       selectPatientHistoryMedicalRecords(query).then(response => {
-        // console.log('selectPatientHistoryMedicalRecords response')
-        // console.log(response)
+        console.log('selectPatientHistoryMedicalRecords response')
+        console.log(response)
         this.patientHistoryTable = JSON.parse(response.data)
         for (var i = 0; i < this.patientHistoryTable.length; ++i) {
           if (this.patientHistoryTable[i].mainInfo.length > 5) { this.patientHistoryTable[i].abstract = this.patientHistoryTable[i].mainInfo.substring(0, 5) } else { this.patientHistoryTable[i].abstract = this.patientHistoryTable[i].mainInfo }

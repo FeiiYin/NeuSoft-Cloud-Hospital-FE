@@ -211,8 +211,8 @@
           </el-col>
         </el-row>
         <div style="margin-top:80px;margin-bottom:40px;text-align:center">
-          <el-button type="primary" @click="invokeCharge()">提交</el-button>
-          <el-button type="info" @click="resetForm()">清空</el-button>
+          <el-button class="el-icon-document" type="primary" @click="invokeCharge()">提交</el-button>
+          <el-button class="el-icon-close" type="info" @click="resetForm()">清空</el-button>
         </div>
       </el-form>
     </div>
