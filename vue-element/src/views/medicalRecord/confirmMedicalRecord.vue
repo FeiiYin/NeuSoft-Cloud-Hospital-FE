@@ -137,7 +137,6 @@
               <el-button type="primary" @click="submitMedicalRecordForm('medicalRecordForm', 5)">确诊</el-button>
               <el-button @click="resetForm('medicalRecordForm')">重置</el-button>
               <el-button @click="submitMedicalRecordForm('medicalRecordForm', 0)">暂存</el-button>
-              <el-button @click="doPrint('medicalRecordForm')">预览</el-button>
             </div>
           </el-main>
         </el-container>

@@ -201,6 +201,13 @@ export default {
           //   this.loading = false
           // })
           // 调用module里的模块
+          for (var i = 0; i < this.loginForm.username.length; ++i) {
+            if (this.loginForm.username[i] === ' ' || this.loginForm.username[i] === '\'' || this.loginForm.username[i] === '\"') {
+              this.$message.error('含非法字符，错误！')
+              this.loading = false
+              return
+            }
+          }
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })

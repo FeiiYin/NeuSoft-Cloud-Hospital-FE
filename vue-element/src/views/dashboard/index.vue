@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <!-- <component :is="currentRole" /> -->
     <div class="block">
-      <el-carousel height="670px">
+      <el-carousel height="670px" :interval="10000">
         <el-carousel-item>
           <img src="./img/1.png" style="width:100%;height:100%">
         </el-carousel-item>
