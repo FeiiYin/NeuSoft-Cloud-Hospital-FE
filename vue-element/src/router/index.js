@@ -153,7 +153,7 @@ export const asyncRoutes = [
     name: 'basicInfo',
     meta: {
       title: '基础信息维护',
-      icon: 'example',
+      icon: 'guide',
       roles: ['admin', 'basic']
     },
     children: [
@@ -351,7 +351,7 @@ export const asyncRoutes = [
     name: 'techWorkstation',
     meta: {
       title: '门诊医技工作站',
-      icon: 'lock',
+      icon: 'chart',
       roles: ['admin', 'tech']
     },
     children: [
@@ -396,7 +396,7 @@ export const asyncRoutes = [
     name: 'pharmacy',
     meta: {
       title: '门诊药房工作站',
-      icon: 'lock',
+      icon: 'education',
       roles: ['admin', 'pharmacy']
     },
     children: [
@@ -433,7 +433,7 @@ export const asyncRoutes = [
     name: 'finance',
     meta: {
       title: '门诊财务管理',
-      icon: 'lock',
+      icon: 'peoples',
       roles: ['admin', 'financial']
     },
     children: [
