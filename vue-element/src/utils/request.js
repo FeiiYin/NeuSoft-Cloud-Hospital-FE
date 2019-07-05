@@ -5,7 +5,9 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: window.location.protocol + '//' + window.location.hostname + ':8081/cloud-hospital/', // url = base url + request url
+  // baseURL: window.location.protocol + '//' + window.location.hostname + ':8081/cloud-hospital/', // url = base url + request url
+  // baseURL: window.location.protocol + '//192.168.255.133:8081/cloud-hospital/', // url = base url + request url
+  baseURL: window.location.protocol + '//152.136.111.79:8081/cloud-hospital/', // url = base url + request url
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 20000 // request timeout

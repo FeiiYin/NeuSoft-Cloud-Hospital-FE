@@ -405,7 +405,6 @@ export default {
       value2: '',
       dateValue: '',
       addScheduleRuleForm: {
-        schedulingRuleId: null,
         weekday: '', // 排班星期：星期日 0，星期六 6
         departmentId: '', // 排班医生所在科室的编号
         doctorId: '', // 排班医生的编号
@@ -861,10 +860,13 @@ export default {
       this.listLoading = true // 列表正在加载
       this.listQuery.currentPage = this.currentPage
       this.listQuery.pageSize = this.pageSize
+      console.log('this.query', this.listQuery)
       fetchList(this.listQuery).then(response => {
         var tableRow = {}
         this.totalNumber = response.data.list.length
+        console.log('response is is ', response)
         response.data.list.map((value) => {
+          console.log('value is', value)
           value = JSON.parse(value) // 后端传的是JSON
           tableRow = value
           if (value.noon === 0) {
@@ -894,6 +896,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addScheduleVisible = false
+          console.log(this.addScheduleRuleForm)
           saveSchedulingRule(this.addScheduleRuleForm).then(response => {
             this.addScheduleRuleForm = {}
             this.schedulingTable = []
