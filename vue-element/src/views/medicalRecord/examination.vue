@@ -503,7 +503,7 @@ export default {
       if (this.submitCheck() === false) { return }
       this.calculateTotalMoney()
       if (saveState === 1) {
-        this.$confirm('分发药品, 合计' + this.totalListMoney + '元，是否继续？', '提示', {
+        this.$confirm('检查项目申请, 合计' + this.totalListMoney + '元，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
